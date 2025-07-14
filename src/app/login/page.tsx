@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { useRouter } from 'next/navigation';
 
 
 export default function LoginForm() {
@@ -9,32 +10,47 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const[ displayError, setDisplayError] = useState(false);
+  const router = useRouter();
+ 
+  //checksessionmakeapi
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
 
-    try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const requestOptions = {  
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({   username: 'admin',
-        password: 'password', }),
-      });
+        body: JSON.stringify({   username: 'admin', password: 'password', }),
+      };
+      fetch('http://localhost:8080/api/auth/login', requestOptions
+       )
+       .then(async (response) => {
+        if(response.status === 200){
+        setDisplayError(false);
+        return await response.json();
+        }
+       setDisplayError(true);
+       throw new Error(
+            `bad credentials status code ${response.status}`,
+       )
+      })
+      .then((result) => {
+        console.log(result)
+        router.push('./home');
+        sessionStorage.setItem(
+          'access_token',
+          result.access_token,
+        );
+        // checkUserSession(result.access_token)
+      })
+      .catch((error) => {
+      setError(error);
+    });
+    };
 
-      const data = await response.json();
-
-      if (response.ok && data.token) {
-        sessionStorage.setItem('jwtToken', data.token);
-        setSuccess(true);
-      } else {
-        setError(data.message || 'Login failed');
-      }
-    } catch (err) {
-      setError('Server error');
-    }
-  };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -63,7 +79,7 @@ export default function LoginForm() {
             ✅ Login successful!
           </Typography>
         )}
-        {error && (
+        {displayError && (
           <Typography color="red" className="mt-4 text-center">
             ❌ {error}
           </Typography>
