@@ -2,13 +2,15 @@
 
 import React, { useState } from 'react';
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-
+    const router = useRouter();
+    const [successMessage, setSuccessMessage] = useState('');
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');
@@ -25,12 +27,15 @@ export default function SignUp() {
                 setMessage(errorData.error || 'Signup failed');
                 return;
             }
-
             const data = await response.json();
             sessionStorage.setItem('jwtToken', data.access_token);
-            setMessage('✅ Signup successful! You are now logged in.');
+            setSuccessMessage('✅ Signup successful! You are now logged in.');
+            setMessage('');
+            router.push('./home');
+
         } catch (err) {
             setMessage('❌ Server error');
+            setSuccessMessage('');
         }
     };
 
@@ -53,6 +58,11 @@ export default function SignUp() {
                 {message && (
                     <Typography color="red" className="mt-4 text-center">
                         {message}
+                    </Typography>
+                )}
+                 {successMessage && (
+                    <Typography color="green" className="mt-4 text-center">
+                        {successMessage}
                     </Typography>
                 )}
             </Card>

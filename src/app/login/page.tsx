@@ -23,32 +23,40 @@ export default function LoginForm() {
       const requestOptions = {  
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({   username: 'admin', password: 'password', }),
+        body: JSON.stringify({ username, password }),
       };
       fetch('http://localhost:8080/api/auth/login', requestOptions
        )
        .then(async (response) => {
+        console.log(response)
         if(response.status === 200){
         setDisplayError(false);
         return await response.json();
-        }
+        } else {
        setDisplayError(true);
-       throw new Error(
-            `bad credentials status code ${response.status}`,
-       )
+       setError("User or Password are incorrect, try again!")
+      }
       })
       .then((result) => {
-        console.log(result)
+                console.log(result)
+
+        if(result === undefined || null){
+       setDisplayError(true);
+       setError("User or Password are incorrect, try again!")
+        } else {
         router.push('./home');
         sessionStorage.setItem(
           'access_token',
           result.access_token,
         );
+        }
+      
         // checkUserSession(result.access_token)
       })
-      .catch((error) => {
-      setError(error);
-    });
+       .catch((err: any) =>{
+         console.error(err)
+        });
+        
     };
 
 
