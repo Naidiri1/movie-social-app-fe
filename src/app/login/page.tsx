@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { useRouter } from 'next/navigation';
+import jwt_decode from 'jwt-decode';
 
 
 export default function LoginForm() {
@@ -59,6 +60,27 @@ export default function LoginForm() {
         
     };
 
+ useEffect(() => {
+        const checkSessionAndRedirect = () => {
+            const token = sessionStorage.getItem('access_token');
+            if (token) {
+                const decodedToken: number = jwt_decode<{ exp: number }>(
+                    token,
+                ).exp;
+                try {
+                    const sessionValid = decodedToken > Date.now() / 1000;
+                    if (sessionValid) {
+                        router.push('/home');
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        };
+        // check if session exists and redirect if so
+        checkSessionAndRedirect();
+      },[router]);
+      
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
