@@ -47,6 +47,10 @@ const authSlice = createSlice({
             state.email = null;
             sessionStorage.removeItem('access_token');
         },
+        setUser: (state, action: PayloadAction<{ username: string; email: string }>) => {
+            state.username = action.payload.username;
+            state.email = action.payload.email;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -67,5 +71,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setUser } = authSlice.actions; 
 export default authSlice.reducer;

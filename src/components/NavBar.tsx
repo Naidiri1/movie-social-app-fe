@@ -12,9 +12,12 @@ const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
     const { username } = useSelector((state: RootState) => state.auth);
 
-    useEffect(() => {
-        dispatch(restoreUserSession());
-    }, [dispatch]);
+
+      useEffect(() => {
+        if (!username) { 
+            dispatch(restoreUserSession());
+        }
+    }, [dispatch, username]);
 
     const handleLogout = () => {
         dispatch(logout());

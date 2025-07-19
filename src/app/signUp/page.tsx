@@ -4,7 +4,14 @@ import React, { useState } from 'react';
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useRouter } from 'next/navigation';
 
+import { AppDispatch } from '../../redux/store'; // Adjust the path
+import { useEffect } from 'react';
+import { restoreUserSession, logout } from '../../redux/reducers/authSlice';
+import { useDispatch } from 'react-redux';
+import {setUser} from '../../redux/reducers/authSlice'
 export default function SignUp() {
+
+const dispatch = useDispatch<AppDispatch>();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,10 +35,11 @@ export default function SignUp() {
                 return;
             }
             const data = await response.json();
-            sessionStorage.setItem('jwtToken', data.access_token);
+            sessionStorage.setItem('access_token', data.access_token);
             setSuccessMessage('✅ Signup successful! You are now logged in.');
             setMessage('');
             router.push('./home');
+           dispatch(setUser({ username: data.username, email: data.email }));
 
         } catch (err) {
             setMessage('❌ Server error');

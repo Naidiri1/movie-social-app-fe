@@ -14,7 +14,6 @@ export default function LoginForm() {
   const[ displayError, setDisplayError] = useState(false);
   const router = useRouter();
  
-  //checksessionmakeapi
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,6 +95,7 @@ export default function LoginForm() {
             />
           <Input
             label="Password"
+            type="password"
             value={password}
             onChange={(e:any) => setPassword(e.target.value)}
           />
