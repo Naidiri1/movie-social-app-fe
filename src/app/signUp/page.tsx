@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useRouter } from 'next/navigation';
-
-import { AppDispatch } from '../../redux/store'; // Adjust the path
+import Link from 'next/link';
+import { AppDispatch } from '../../redux/store'; 
 import { useEffect } from 'react';
 import { restoreUserSession, logout } from '../../redux/reducers/authSlice';
 import { useDispatch } from 'react-redux';
 import {setUser} from '../../redux/reducers/authSlice'
-export default function SignUp() {
+
+export default function Signup() {
 
 const dispatch = useDispatch<AppDispatch>();
     const [username, setUsername] = useState('');
@@ -73,6 +74,14 @@ const dispatch = useDispatch<AppDispatch>();
                         {successMessage}
                     </Typography>
                 )}
+             <p className="text-sm mt-5 text-gray-500">
+                Do you have an account?  
+                <Link href="/login">
+                    <button className="ml-2 text-blue-500 underline hover:text-blue-700">
+                    Login
+                    </button>
+                </Link>
+             </p>
             </Card>
         </div>
     );
