@@ -4,12 +4,14 @@ interface UserState {
     username: string | null;
     email: string | null;
     loading: boolean;
+    userId: string | null;
 }
 
 const initialState: UserState = {
     username: null,
     email: null,
     loading: false,
+    userId: '',
 };
 
 export const restoreUserSession = createAsyncThunk(
@@ -31,7 +33,7 @@ export const restoreUserSession = createAsyncThunk(
             }
 
             const data = await response.json();
-            return data; // { username, email }
+            return data; 
         } catch (error) {
             return thunkAPI.rejectWithValue('Session expired');
         }
@@ -46,10 +48,13 @@ const authSlice = createSlice({
             state.username = null;
             state.email = null;
             sessionStorage.removeItem('access_token');
+            state.userId = '';
         },
-        setUser: (state, action: PayloadAction<{ username: string; email: string }>) => {
+
+        setUser: (state, action: PayloadAction<{ username: string; email: string, userId: string}>) => {
             state.username = action.payload.username;
             state.email = action.payload.email;
+            state.userId = action.payload.userId;
         },
     },
     extraReducers: (builder) => {
@@ -57,15 +62,17 @@ const authSlice = createSlice({
             .addCase(restoreUserSession.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(restoreUserSession.fulfilled, (state, action: PayloadAction<{ username: string; email: string }>) => {
+            .addCase(restoreUserSession.fulfilled, (state, action: PayloadAction<{ username: string; email: string; userId: string;}>) => {
                 state.username = action.payload.username;
                 state.email = action.payload.email;
+                state.userId = action.payload.userId;
                 state.loading = false;
             })
             .addCase(restoreUserSession.rejected, (state) => {
                 state.loading = false;
                 state.username = null;
                 state.email = null;
+                state.userId = '';
                 sessionStorage.removeItem('access_token');
             });
     },
