@@ -96,8 +96,8 @@ const dispatch = useDispatch<AppDispatch>();
   );
  
   return (
-    <Navbar className=" w-full max-w-none rounded-none bg-black px-4 py-2 lg:px-8 lg:py-4">
-      <div className="container w-full max-w-none flex flex-wrap items-center justify-between text-blue-gray-900">
+    <Navbar className="border border-none w-full max-w-none rounded-none bg-black px-4 py-2 lg:px-8 lg:py-4">
+      <div className="container w-full max-w-none flex flex-wrap items-center justify-between ">
         <Typography
           as="a"
           href="#"
@@ -107,44 +107,43 @@ const dispatch = useDispatch<AppDispatch>();
         </Typography>
         <div className="hidden items-center gap-x-2 lg:flex">
           <div className="relative flex w-full gap-2 md:w-max">
-            <Input
-              type="search"
-        //         value={movieQuery}
-        // onChange={(e: any)=> setMovieQuery(e.target.value)}
-              placeholder="Search"
-              containerProps={{
-                className: "min-w-[288px]",
-              }}
-              className=" !border-t-blue-gray-300 pl-9 placeholder:text-blue-gray-300 focus:!border-blue-gray-300"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-            />
-            <div className="!absolute left-3 top-[13px]">
-              <svg
-                width="13"
-                height="14"
-                viewBox="0 0 14 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+           <div className="w-full max-w-sm min-w-[200px]">
+            <div className="relative w-full text-white md:w-80">
+              <Input
+                type="search"
+                label="Search Movie"   
+                color="blue-gray"
+                 // value={searchQuery}
+                // onChange={(e) => setSearchQuery(e.target.value)}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter") handleSearch();
+                // }}
+                className="text-white border border-blue-gray-200"
+             
+              />
+              <button
+                // onClick={handleSearch}
+                className="absolute top-1 right-1 flex items-center rounded bg-gray-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
+                type="button"
+                placeholder='Search Movie...'
               >
-                <path
-                  d="M9.97811 7.95252C10.2126 7.38634 10.3333 6.7795 10.3333 6.16667C10.3333 4.92899 9.84167 3.742 8.9665 2.86683C8.09133 1.99167 6.90434 1.5 5.66667 1.5C4.42899 1.5 3.242 1.99167 2.36683 2.86683C1.49167 3.742 1 4.92899 1 6.16667C1 6.7795 1.12071 7.38634 1.35523 7.95252C1.58975 8.51871 1.93349 9.03316 2.36683 9.4665C2.80018 9.89984 3.31462 10.2436 3.88081 10.4781C4.447 10.7126 5.05383 10.8333 5.66667 10.8333C6.2795 10.8333 6.88634 10.7126 7.45252 10.4781C8.01871 10.2436 8.53316 9.89984 8.9665 9.4665C9.39984 9.03316 9.74358 8.51871 9.97811 7.95252Z"
-                  fill="#d7dcdeff"
-                />
-                <path
-                  d="M13 13.5L9 9.5M10.3333 6.16667C10.3333 6.7795 10.2126 7.38634 9.97811 7.95252C9.74358 8.51871 9.39984 9.03316 8.9665 9.4665C8.53316 9.89984 8.01871 10.2436 7.45252 10.4781C6.88634 10.7126 6.2795 10.8333 5.66667 10.8333C5.05383 10.8333 4.447 10.7126 3.88081 10.4781C3.31462 10.2436 2.80018 9.89984 2.36683 9.4665C1.93349 9.03316 1.58975 8.51871 1.35523 7.95252C1.12071 7.38634 1 6.7795 1 6.16667C1 4.92899 1.49167 3.742 2.36683 2.86683C3.242 1.99167 4.42899 1.5 5.66667 1.5C6.90434 1.5 8.09133 1.99167 8.9665 2.86683C9.84167 3.742 10.3333 4.92899 10.3333 6.16667Z"
-                  stroke="#CFD8DC"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  className="w-4 h-4 mr-1"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                    clipRule="evenodd"
                   />
-              </svg>
+                </svg>
+                Search
+              </button>
             </div>
           </div>
-          <Button size="md" className="rounded-lg ">
-            Search
-          </Button>
+          </div>
             <Button onClick={handleLogout} size='sm' className="flex text-white ml-[12rem] cursor-pointer bg-red-300 hover:underline">
                  Logout
              </Button>
@@ -156,7 +155,7 @@ const dispatch = useDispatch<AppDispatch>();
           onClick={() => setOpenNav(!openNav)}
         >
           {openNav ? (
-            <XMarkIcon className="h-6 w-6" strokeWidth={2} />
+            <XMarkIcon className="h-6 w-6 text-white" strokeWidth={2} />
           ) : (
             <Bars3Icon className="h-6 w-6 text-white" strokeWidth={2} />
           )}
@@ -175,44 +174,41 @@ const dispatch = useDispatch<AppDispatch>();
                  Logout
              </Button>
             </div>
-          <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
-            <div className="relative w-full gap-2 md:w-max">
+               <div className="w-full max-w-sm min-w-[200px]">
+            <div className="relative w-full text-white md:w-80">
               <Input
                 type="search"
-                placeholder="Search Movie"
-                containerProps={{
-                  className: "min-w-[288px]",
-                }}
-                className=" !border-t-blue-gray-300 pl-9 placeholder:text-blue-gray-300 focus:!border-blue-gray-300"
-                labelProps={{
-                  className: "before:content-none after:content-none",
-                }}
+                label="Search Movie"   
+                color="blue-gray"
+                 // value={searchQuery}
+                // onChange={(e) => setSearchQuery(e.target.value)}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter") handleSearch();
+                // }}
+                className="text-white border border-blue-gray-200"
+             
               />
-              <div className="!absolute left-3 top-[13px]">
+              <button
+                // onClick={handleSearch}
+                className="absolute top-1 right-1 flex items-center rounded bg-gray-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
+                type="button"
+                placeholder='Search Movie...'
+              >
                 <svg
-                  width="13"
-                  height="14"
-                  viewBox="0 0 14 15"
-                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  className="w-4 h-4 mr-1"
                 >
                   <path
-                    d="M9.97811 7.95252C10.2126 7.38634 10.3333 6.7795 10.3333 6.16667C10.3333 4.92899 9.84167 3.742 8.9665 2.86683C8.09133 1.99167 6.90434 1.5 5.66667 1.5C4.42899 1.5 3.242 1.99167 2.36683 2.86683C1.49167 3.742 1 4.92899 1 6.16667C1 6.7795 1.12071 7.38634 1.35523 7.95252C1.58975 8.51871 1.93349 9.03316 2.36683 9.4665C2.80018 9.89984 3.31462 10.2436 3.88081 10.4781C4.447 10.7126 5.05383 10.8333 5.66667 10.8333C6.2795 10.8333 6.88634 10.7126 7.45252 10.4781C8.01871 10.2436 8.53316 9.89984 8.9665 9.4665C9.39984 9.03316 9.74358 8.51871 9.97811 7.95252Z"
-                    fill="#CFD8DC"
-                  />
-                  <path
-                    d="M13 13.5L9 9.5M10.3333 6.16667C10.3333 6.7795 10.2126 7.38634 9.97811 7.95252C9.74358 8.51871 9.39984 9.03316 8.9665 9.4665C8.53316 9.89984 8.01871 10.2436 7.45252 10.4781C6.88634 10.7126 6.2795 10.8333 5.66667 10.8333C5.05383 10.8333 4.447 10.7126 3.88081 10.4781C3.31462 10.2436 2.80018 9.89984 2.36683 9.4665C1.93349 9.03316 1.58975 8.51871 1.35523 7.95252C1.12071 7.38634 1 6.7795 1 6.16667C1 4.92899 1.49167 3.742 2.36683 2.86683C3.242 1.99167 4.42899 1.5 5.66667 1.5C6.90434 1.5 8.09133 1.99167 8.9665 2.86683C9.84167 3.742 10.3333 4.92899 10.3333 6.16667Z"
-                    stroke="#CFD8DC"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    fillRule="evenodd"
+                    d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                    clipRule="evenodd"
                   />
                 </svg>
-              </div>
+                Search
+              </button>
             </div>
-            <Button size="md" className="mt-1 rounded-lg sm:mt-0">
-              Search
-            </Button>
           </div>
         </div>
       </Collapse>

@@ -51,7 +51,7 @@ interface CardMovieProps {
       </CardHeader>
       <CardBody>
         <div className="mb-3 px-2 flex items-center justify-between">
-          <Typography variant="h5" color="white" className="font-medium">
+          <Typography variant="h5" color="white" className="font-medium ">
            {movieTitle}
           </Typography>
           <Typography
@@ -73,7 +73,7 @@ interface CardMovieProps {
             {averageScoreConsistency(movieScore)}
           </Typography>
         </div>
-          <Typography  color="white" className="mt-2 mb-1 font-small">
+          <Typography  color="white" className="mt-2 mb-1 text-xs">
            {movieRelease}
           </Typography>
         <Typography
@@ -82,23 +82,35 @@ interface CardMovieProps {
         >
         {movieDescription}
         </Typography>
-        <div className="flex flex-row justify-evenly mt-3 mb-0 pb-0">
-         <Tooltip content="Watched">
-        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
+       <div className="flex flex-row justify-evenly mt-3 mb-0 pb-0 text-white text-xs">
+    <div className="flex flex-col items-center">
+        <Tooltip content="Watched">
+        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 hover:bg-gray-900/10 transition-colors">
             <EyeIcon className="h-5 w-5 text-white" />
         </span>
         </Tooltip>
-         <Tooltip content="Add to Favorites">
-        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
+        <p className="mt-0">Watched</p>
+    </div>
+
+    <div className="flex flex-col items-center">
+        <Tooltip content="Add to Favorites">
+        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 hover:bg-gray-900/10 transition-colors">
             <BookmarkIcon className="h-5 w-5 text-white" />
         </span>
         </Tooltip>
-         <Tooltip content="Add to Top 10">
-        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
+        <p className="mt-0">Favorites</p>
+    </div>
+
+    <div className="flex flex-col items-center">
+        <Tooltip content="Add to Top 10">
+        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 hover:bg-gray-900/10 transition-colors">
             <Trophy className="h-5 w-5 text-white" />
         </span>
         </Tooltip>
-        </div>
+        <p className="mt-0">Top 10</p>
+    </div>
+    </div>
+
       </CardBody>
       <CardFooter className="pt-0">
         <Button size="md" fullWidth={true}>
