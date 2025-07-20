@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { useRouter } from 'next/navigation';
 import jwt_decode from 'jwt-decode';
+import Link from 'next/link';
 
 
 export default function LoginForm() {
@@ -44,7 +45,7 @@ export default function LoginForm() {
        setDisplayError(true);
        setError("User or Password are incorrect, try again!")
         } else {
-        router.push('./home');
+        router.push('./popular');
         sessionStorage.setItem(
           'access_token',
           result.access_token,
@@ -69,7 +70,7 @@ export default function LoginForm() {
                 try {
                     const sessionValid = decodedToken > Date.now() / 1000;
                     if (sessionValid) {
-                        router.push('/home');
+                        router.push('/popular');
                     }
                 } catch (error) {
                     console.error(error);
@@ -114,6 +115,14 @@ export default function LoginForm() {
             ❌ {error}
           </Typography>
         )}
+         <p className="text-sm mt-5 text-gray-500">
+            Do you not have an account?  
+            <Link href="/signup">
+                <button className="ml-2 text-blue-500 underline hover:text-blue-700">
+                Signup
+                </button>
+            </Link>
+          </p>
       </Card>
     </div>
   );

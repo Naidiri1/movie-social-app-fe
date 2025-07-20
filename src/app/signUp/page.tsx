@@ -39,7 +39,7 @@ const dispatch = useDispatch<AppDispatch>();
             sessionStorage.setItem('access_token', data.access_token);
             setSuccessMessage('✅ Signup successful! You are now logged in.');
             setMessage('');
-            router.push('./home');
+            router.push('./popular');
            dispatch(setUser({ username: data.username, email: data.email, userId: data.userId}));
 
         } catch (err) {

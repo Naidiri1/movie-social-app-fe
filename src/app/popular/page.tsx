@@ -45,6 +45,7 @@ export default function Popular()  {
  {rowData.map((movie:any) => (
         <CardMovie
           key={movie.id}
+          movieId={movie.id}
           movieTitle={movie.title}
           movieDescription={movie.overview}
           movieScore={movie.vote_average}

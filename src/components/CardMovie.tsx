@@ -13,42 +13,44 @@ import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { Trophy } from 'lucide-react';
 import Image from "next/image";
 
-
-
 interface CardMovieProps {
-    key: any;
     movieTitle: any;
     movieDescription: any;
     movieScore: any;
     imgPoster: any;
     movieRelease: any;
+    movieId: any;
 }
   const CardMovie: React.FC<CardMovieProps> = ({
-        key,
         movieTitle,
         movieDescription,
         imgPoster,
         movieRelease,
         movieScore,
+        movieId,
     }) => {
 
- const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
+    const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
+
+    const averageScoreConsistency = (score: any) => {
+    return score.toFixed(1);
+    };
 
   return (
-    <Card key={key} className=" mx-auto mt-5 items-center justify-center bg-black  text-white  max-w-[19rem] shadow-lg">
+    <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[22rem] mx-auto shadow-lg">
       <CardHeader className="bg-black"floated={false} color="white">
          <Image
             src={IMG_BASE_URL + imgPoster}
             alt={movieTitle}
             width={300}
             height={450}
+            priority 
             className="rounded-t-xl object-cover"
       />
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
-       
       </CardHeader>
       <CardBody>
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 px-2 flex items-center justify-between">
           <Typography variant="h5" color="white" className="font-medium">
            {movieTitle}
           </Typography>
@@ -68,14 +70,19 @@ interface CardMovieProps {
                 clipRule="evenodd"
               />
             </svg>
-           {movieScore}
+            {averageScoreConsistency(movieScore)}
           </Typography>
         </div>
-        <Typography className="text-xs" color="white">
+          <Typography  color="white" className="mt-2 mb-1 font-small">
+           {movieRelease}
+          </Typography>
+        <Typography
+        className="text-xs mt-2 overflow-y-auto max-h-[4.5rem] pr-1"
+        color="white"
+        >
         {movieDescription}
-        {movieRelease}
         </Typography>
-        <div className="mt-8 inline-flex ml-[3rem] flex-wrap items-center ">
+        <div className="flex flex-row justify-evenly mt-3 mb-0 pb-0">
          <Tooltip content="Watched">
         <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
             <EyeIcon className="h-5 w-5 text-white" />
@@ -91,12 +98,11 @@ interface CardMovieProps {
             <Trophy className="h-5 w-5 text-white" />
         </span>
         </Tooltip>
-          
         </div>
       </CardBody>
-      <CardFooter className="pt-3">
-        <Button size="lg" fullWidth={true}>
-          Details...
+      <CardFooter className="pt-0">
+        <Button size="md" fullWidth={true}>
+          Details
         </Button>
       </CardFooter>
     </Card>
