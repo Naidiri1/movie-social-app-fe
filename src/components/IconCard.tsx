@@ -1,0 +1,94 @@
+import { useState } from "react";
+import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
+
+interface IconActionsProps {
+  movieTitle: string;
+}
+
+const IconCard: React.FC<IconActionsProps> =  ({ movieTitle} ) => {
+  const [actionMessage, setActionMessage] = useState("");
+  const [activeAction, setActiveAction] = useState("");
+
+  const handleAction = (type : any) => {
+    let message = "";
+
+    switch (type) {
+      case "watched":
+        message = `Added "${movieTitle}" to Watched`;
+        break;
+      case "favorite":
+        message = `Added "${movieTitle}" to Favorites`;
+        break;
+      case "top10":
+        message = `Added "${movieTitle}" to Top 10`;
+        break;
+    }
+
+    setActiveAction(type);
+    setActionMessage(message);
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setActiveAction("");
+      setActionMessage("");
+    }, 2000);
+  };
+
+  const isActive = (type: any) => activeAction === type;
+
+  return (
+    <div className="flex flex-col items-center text-xs text-white">
+      <div className="flex flex-row justify-evenly w-full">
+
+        <div className="flex flex-col mt-4 items-center">
+          <span
+            onClick={() => handleAction("favorite")}
+            className={`cursor-pointer rounded-full transition-colors ${
+              isActive("favorite")
+                ? "bg-yellow-500"
+                : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
+            }`}
+          >
+            <BookmarkIcon className="h-5 w-5 text-white" />
+          </span>
+          <p className="mt-1">Favorites</p>
+        </div>
+
+        <div className="flex flex-col mt-4 items-center">
+          <span
+            onClick={() => handleAction("watched")}
+            className={`cursor-pointer rounded-full transition-colors ${
+              isActive("watched")
+                ? "bg-green-500"
+                : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
+            }`}
+          >
+            <EyeIcon className="h-5 w-5 text-white" />
+          </span>
+          <p className="mt-1">Watched</p>
+        </div>
+
+        <div className="flex mt-3 flex-col items-center">
+          <span
+            onClick={() => handleAction("top10")}
+            className={`cursor-pointer rounded-full p-1 transition-colors ${
+              isActive("top10")
+                ? "bg-orange-500"
+                : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
+            }`}
+          >
+            <Trophy className="h-5 w-5 text-white" />
+          </span>
+          <p className="mt-1">Top 10</p>
+        </div>
+      </div>
+
+     <div className={`h-5 mt-2  text-sm animate-pulse text-center 
+        ${activeAction === 'watched' ? 'text-green-400' : activeAction === 'favorite' ? 'text-yellow-400' : 'text-orange-400'  }`}>
+        {actionMessage}
+        </div>
+    </div>
+  );
+};
+
+export default IconCard;

@@ -2,6 +2,7 @@
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { restoreUserSession, logout } from '../redux/reducers/authSlice';
 import { RootState } from '../redux/store';
 import { useRouter } from 'next/navigation';
@@ -17,7 +18,8 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
- 
+ import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
+
 const NavbarComponent = () => {
 const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
@@ -52,45 +54,58 @@ const dispatch = useDispatch<AppDispatch>();
         variant="small"
         className="p-1 font-medium text-white"
       >
-        <a href="#" className="flex items-center">
-          Popular
-        </a>
+         <Link href="/popular">
+             <button className="ml-2 text-blue-500 text-white hover:text-blue-700">
+             Popular
+           </button>
+         </Link>
       </Typography>
       <Typography
         as="li"
         variant="small"
         className="p-1 font-medium text-white"
       >
-        <a href="#" className="flex items-center">
-          Upcoming
-        </a>
+         <Link href="/upcoming">
+           <button className="ml-2 text-white  hover:text-blue-700">
+             Upcoming
+           </button>
+         </Link>
       </Typography>
       <Typography
         as="li"
         variant="small"
         className="p-1 font-medium text-white"
       >
-        <a href="#" className="flex items-center">
-          Favorites
-        </a>
+      <Link href="/favorites">
+      <button className="flex items-center ml-2 text-white hover:text-blue-700">
+        Favorites
+        <BookmarkIcon className="h-5 w-5 ml-1 text-white" />
+      </button>
+    </Link>
       </Typography>
       <Typography
         as="li"
         variant="small"
         className="p-1 font-medium text-white"
       >
-        <a href="#" className="flex items-center">
-          Watched
-        </a>
+        <Link href="/watched">
+      <button className="flex items-center ml-2 text-white  hover:text-blue-700">
+        Watched
+      <EyeIcon className="h-5 w-5 ml-1 text-white" />
+      </button>
+     </Link>
       </Typography>
           <Typography
         as="li"
         variant="small"
         className="p-1 font-medium text-white"
       >
-        <a href="#" className="flex items-center">
-          My Top 10
-        </a>
+        <Link href="/top10">
+      <button className="flex items-center ml-2 text-white hover:text-blue-700">
+        Top 10
+      <Trophy className="h-5 w-5 ml-1 text-white" />
+      </button>
+     </Link>
       </Typography>
     </ul>
   );

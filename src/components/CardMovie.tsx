@@ -12,6 +12,7 @@ import {
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { Trophy } from 'lucide-react';
 import Image from "next/image";
+import IconCard from "./IconCard";
 
 interface CardMovieProps {
     movieTitle: any;
@@ -82,34 +83,7 @@ interface CardMovieProps {
         >
         {movieDescription}
         </Typography>
-       <div className="flex flex-row justify-evenly mt-3 mb-0 pb-0 text-white text-xs">
-    <div className="flex flex-col items-center">
-        <Tooltip content="Watched">
-        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 hover:bg-gray-900/10 transition-colors">
-            <EyeIcon className="h-5 w-5 text-white" />
-        </span>
-        </Tooltip>
-        <p className="mt-0">Watched</p>
-    </div>
-
-    <div className="flex flex-col items-center">
-        <Tooltip content="Add to Favorites">
-        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 hover:bg-gray-900/10 transition-colors">
-            <BookmarkIcon className="h-5 w-5 text-white" />
-        </span>
-        </Tooltip>
-        <p className="mt-0">Favorites</p>
-    </div>
-
-    <div className="flex flex-col items-center">
-        <Tooltip content="Add to Top 10">
-        <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 hover:bg-gray-900/10 transition-colors">
-            <Trophy className="h-5 w-5 text-white" />
-        </span>
-        </Tooltip>
-        <p className="mt-0">Top 10</p>
-    </div>
-    </div>
+      < IconCard movieTitle={movieTitle}/>
 
       </CardBody>
       <CardFooter className="pt-0">
