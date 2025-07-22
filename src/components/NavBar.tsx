@@ -8,7 +8,7 @@ import { RootState } from '../redux/store';
 import { useRouter } from 'next/navigation';
 import { AppDispatch } from '../redux/store';
 import type { NavbarProps } from "@material-tailwind/react";
-import React from "react";
+import React, { useState } from "react";
 import {
   Navbar,
   Collapse,
@@ -18,13 +18,16 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
- import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
+import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
 
 const NavbarComponent = () => {
-const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
     const { username } = useSelector((state: RootState) => state.auth);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [openNav, setOpenNav] = React.useState(false);
 
+    console.log(searchQuery)
 
       useEffect(() => {
         if (!username) { 
@@ -36,9 +39,12 @@ const dispatch = useDispatch<AppDispatch>();
         dispatch(logout());
         router.push('/login');
     };
-
-
-  const [openNav, setOpenNav] = React.useState(false);
+  
+     const handleSearch = () => {
+      console.log("clicked")
+     router.push(`/searchMovie?query=${searchQuery}`)
+    };
+  
  
   React.useEffect(() => {
     window.addEventListener(
@@ -128,16 +134,16 @@ const dispatch = useDispatch<AppDispatch>();
                 type="search"
                 label="Search Movie"   
                 color="blue-gray"
-                 // value={searchQuery}
-                // onChange={(e) => setSearchQuery(e.target.value)}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter") handleSearch();
-                // }}
+                 value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch();
+                }}
                 className="text-white border border-blue-gray-200"
              
               />
               <button
-                // onClick={handleSearch}
+                onClick={handleSearch}
                 className="absolute top-1 right-1 flex items-center rounded bg-gray-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
                 type="button"
                 placeholder='Search Movie...'
@@ -195,16 +201,16 @@ const dispatch = useDispatch<AppDispatch>();
                 type="search"
                 label="Search Movie"   
                 color="blue-gray"
-                 // value={searchQuery}
-                // onChange={(e) => setSearchQuery(e.target.value)}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter") handleSearch();
-                // }}
+                 value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch();
+                }}
                 className="text-white border border-blue-gray-200"
              
               />
               <button
-                // onClick={handleSearch}
+                onClick={handleSearch}
                 className="absolute top-1 right-1 flex items-center rounded bg-gray-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
                 type="button"
                 placeholder='Search Movie...'

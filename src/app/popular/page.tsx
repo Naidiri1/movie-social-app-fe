@@ -3,26 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import  CardMovie  from '../../components/CardMovie';
+
 export default function Popular()  {
     
-    const [movieQuery, setMovieQuery] = useState<string>('');
-    const searchMovies = async () => {
-    const response = await fetch(`http://localhost:8080/api/movies/search?query=${movieQuery}`);
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch movies');
-    } 
-
-    if(response.ok){
-        const data = await response.json();
-        console.log(data)
-    }
-
-    }
     const [rowData, setRowData] = useState([]);
 
     const handleSearchPopularMovies = async () => {
-      const response = await fetch(`http://localhost:8080/api/movies/popular`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`);
 
     if (!response.ok) {
         throw new Error('Failed to fetch movies');

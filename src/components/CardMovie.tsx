@@ -13,6 +13,7 @@ import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { Trophy } from 'lucide-react';
 import Image from "next/image";
 import IconCard from "./IconCard";
+import fallback1 from '../../public/fallback1.jpg'
 
 interface CardMovieProps {
     movieTitle: any;
@@ -40,18 +41,20 @@ interface CardMovieProps {
   return (
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[22rem] mx-auto shadow-lg">
       <CardHeader className="bg-black"floated={false} color="white">
-         <Image
-            src={IMG_BASE_URL + imgPoster}
+      <div className="relative w-[300px] h-[450px]">
+        <Image
+            src={imgPoster ? IMG_BASE_URL + imgPoster : fallback1}
             alt={movieTitle}
-            width={300}
-            height={450}
-            priority 
+            fill
             className="rounded-t-xl object-cover"
-      />
+            sizes="300px"
+            priority
+        />
+        </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
       </CardHeader>
       <CardBody>
-        <div className="mb-3 px-2 flex items-center justify-between">
+        <div className="mb-3 px-2 flex items-center justify-between  min-h-[2rem] max-h-[2rem]">
           <Typography variant="h5" color="white" className="font-medium ">
            {movieTitle}
           </Typography>
@@ -74,11 +77,11 @@ interface CardMovieProps {
             {averageScoreConsistency(movieScore)}
           </Typography>
         </div>
-          <Typography  color="white" className="mt-2 mb-1 text-xs">
+          <Typography  color="white" className="mt-2 mb-1 text-xs min-h-[1rem] max-h-[1rem]">
            {movieRelease}
           </Typography>
         <Typography
-        className="text-xs mt-2 overflow-y-auto max-h-[4.5rem] pr-1"
+        className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
         color="white"
         >
         {movieDescription}
