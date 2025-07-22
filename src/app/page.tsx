@@ -1,11 +1,14 @@
 'use client';
 
-import { Button } from '@material-tailwind/react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <main className="flex justify-center items-center h-screen">
-      <Button>Test Material Button</Button>
-    </main>
-  );
+    const router = useRouter();
+
+    useEffect(() => {
+        router.replace('/popular');
+    }, [router]);
+
+    return null;
 }

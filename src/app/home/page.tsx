@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
-
+import Navbar from '@/components/NavBar';
 
 export default function Home()  {
     const [movieQuery, setMovieQuery] = useState<string>('');
@@ -36,7 +36,7 @@ export default function Home()  {
     }  
     
     return (
-        <div>
+        <div  className='max-auto w-full'>
         <Input
         label='Search'
         value={movieQuery}
