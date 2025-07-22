@@ -8,9 +8,6 @@ import {
   Tooltip,
   IconButton,
 } from "@material-tailwind/react";
- import { EyeIcon } from "@heroicons/react/24/outline";
-import { BookmarkIcon } from "@heroicons/react/24/outline";
-import { Trophy } from 'lucide-react';
 import Image from "next/image";
 import IconCard from "./IconCard";
 import fallback1 from '../../public/fallback1.jpg'
@@ -35,7 +32,11 @@ interface CardMovieProps {
     const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
     const averageScoreConsistency = (score: any) => {
-    return score.toFixed(1);
+        if(score > 0){
+     return score.toFixed(1);
+        } else {
+            return 'NR'
+        }
     };
 
   return (
@@ -51,7 +52,7 @@ interface CardMovieProps {
             priority
         />
         </div>
-        <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
+        <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />
       </CardHeader>
       <CardBody>
         <div className="mb-3 px-2 flex items-center justify-between  min-h-[2rem] max-h-[2rem]">

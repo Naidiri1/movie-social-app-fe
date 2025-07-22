@@ -5,7 +5,9 @@ import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { useRouter } from 'next/navigation';
 import jwt_decode from 'jwt-decode';
 import Link from 'next/link';
-
+import Image from "next/image";
+import login from "../../../public/login.png"; 
+import bglogin from "../../../public/bglogin.png"
 
 export default function LoginForm() {
   const [username, setUsername] = useState('');
@@ -51,16 +53,14 @@ export default function LoginForm() {
           result.access_token,
         );
         }
-      
-        // checkUserSession(result.access_token)
-      })
+        })
        .catch((err: any) =>{
          console.error(err)
         });
         
     };
 
- useEffect(() => {
+      useEffect(() => {
         const checkSessionAndRedirect = () => {
             const token = sessionStorage.getItem('access_token');
             if (token) {
@@ -77,53 +77,64 @@ export default function LoginForm() {
                 }
             }
         };
-        // check if session exists and redirect if so
+
         checkSessionAndRedirect();
       },[router]);
-      
 
-  return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <Card className="w-96 p-6">
-        <Typography variant="h4" color="blue-gray">
-          Login
-        </Typography>
-        <form onSubmit={handleLogin} className="mt-4 flex flex-col gap-4">
-           <Input
-            label="username"
-            value={username}
-            onChange={(e:any) => setUsername(e.target.value)}
+return(
+ <div className="relative min-h-screen w-full flex justify-center items-center overflow-hidden">
+      <Image
+        src={bglogin}
+        alt="Background"
+        fill
+        className="object-cover brightness-50"
+        priority
+      />
+      <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
+
+      <div className="relative z-10 flex flex-col lg:flex-row w-full max-w-[700px] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
+        <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
+          <h2 className="text-3xl font-bold mb-6">Login</h2>
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <Input
+              label="Username"
+              color="white"
+              value={username}
+              onChange={(e:any) => setUsername(e.target.value)}
             />
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e:any) => setPassword(e.target.value)}
-          />
-          <Button type="submit" fullWidth>
-            Sign In
-          </Button>
-        </form>
+            <Input
+              label="Password"
+              type="password"
+              color="white"
+              value={password}
+              onChange={(e:any) => setPassword(e.target.value)}
+            />
+            <Button type="submit" fullWidth color="white">
+              Sign In
+            </Button>
+          </form>
 
-        {success && (
-          <Typography color="green" className="mt-4 text-center">
-            ✅ Login successful!
-          </Typography>
-        )}
-        {displayError && (
-          <Typography color="red" className="mt-4 text-center">
-            ❌ {error}
-          </Typography>
-        )}
-         <p className="text-sm mt-5 text-gray-500">
-            Do you not have an account?  
-            <Link href="/signup">
-                <button className="ml-2 text-blue-500 underline hover:text-blue-700">
-                Signup
-                </button>
+          {success && <p className="text-green-400 mt-4">✅ Login successful!</p>}
+          {displayError && <p className="text-red-400 mt-4">❌ {error}</p>}
+
+          <p className="text-sm mt-5 text-gray-300">
+            Don’t have an account?
+            <Link href="/signup" className="ml-2 text-blue-300  hover:text-blue-500">
+              Signup
             </Link>
           </p>
-      </Card>
+        </div>
+
+        <div className="hidden lg:block w-1/2">
+         <Image
+        src={login}
+        alt="Background"
+        className="object-cover brightness-50"
+        priority
+      />
+        </div>
+
+      </div>
     </div>
   );
 }
