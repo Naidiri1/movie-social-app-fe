@@ -41,7 +41,9 @@ const NavbarComponent = () => {
     };
   
      const handleSearch = () => {
-      console.log("clicked")
+      if(searchQuery === '' || searchQuery === undefined){
+        return;
+      }
      router.push(`/searchMovie?query=${searchQuery}`)
     };
   
@@ -139,7 +141,7 @@ const NavbarComponent = () => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleSearch();
                 }}
-                className="text-white border border-blue-gray-200"
+                className="text-white"
              
               />
               <button
@@ -150,7 +152,7 @@ const NavbarComponent = () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
+                  fill="red"
                   viewBox="0 0 24 24"
                   className="w-4 h-4 mr-1"
                 >
@@ -169,7 +171,7 @@ const NavbarComponent = () => {
                  Logout
              </Button>
         </div>
-        <hr className="mb-3 mt-6 hidden w-full lg:block" />
+        <hr className="mb-3 mt-6 hidden w-full border-t-2 border-red-500 lg:block" />
         <IconButton
           variant="text"
           className="lg:hidden"

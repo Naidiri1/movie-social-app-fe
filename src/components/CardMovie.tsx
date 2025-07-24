@@ -1,3 +1,4 @@
+import React, {useState, useEffect } from 'react' 
 import {
   Card,
   CardHeader,
@@ -8,12 +9,10 @@ import {
   Tooltip,
   IconButton,
 } from "@material-tailwind/react";
- import { EyeIcon } from "@heroicons/react/24/outline";
-import { BookmarkIcon } from "@heroicons/react/24/outline";
-import { Trophy } from 'lucide-react';
 import Image from "next/image";
 import IconCard from "./IconCard";
 import fallback1 from '../../public/fallback1.jpg'
+import { useRouter } from 'next/navigation';
 
 interface CardMovieProps {
     movieTitle: any;
@@ -33,9 +32,22 @@ interface CardMovieProps {
     }) => {
 
     const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
+    const router = useRouter();
 
     const averageScoreConsistency = (score: any) => {
-    return score.toFixed(1);
+        if(score > 0){
+     return score.toFixed(1);
+        } else {
+            return 'NR'
+        }
+    };
+    
+    const handleMovieDEtails =() => {
+    if(movieId === '' || movieId === undefined){
+        return;
+      }
+     router.push(`/movieDetails?id=${movieId}`)
+      console.log(movieId)
     };
 
   return (
@@ -51,7 +63,7 @@ interface CardMovieProps {
             priority
         />
         </div>
-        <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
+        <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />
       </CardHeader>
       <CardBody>
         <div className="mb-3 px-2 flex items-center justify-between  min-h-[2rem] max-h-[2rem]">
@@ -90,7 +102,7 @@ interface CardMovieProps {
 
       </CardBody>
       <CardFooter className="pt-0">
-        <Button size="md" fullWidth={true}>
+        <Button size="md" onClick={handleMovieDEtails} fullWidth={true}>
           Details
         </Button>
       </CardFooter>
