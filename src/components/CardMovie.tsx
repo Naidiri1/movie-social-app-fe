@@ -1,3 +1,4 @@
+import React, {useState, useEffect } from 'react' 
 import {
   Card,
   CardHeader,
@@ -11,6 +12,7 @@ import {
 import Image from "next/image";
 import IconCard from "./IconCard";
 import fallback1 from '../../public/fallback1.jpg'
+import { useRouter } from 'next/navigation';
 
 interface CardMovieProps {
     movieTitle: any;
@@ -30,6 +32,7 @@ interface CardMovieProps {
     }) => {
 
     const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
+    const router = useRouter();
 
     const averageScoreConsistency = (score: any) => {
         if(score > 0){
@@ -37,6 +40,14 @@ interface CardMovieProps {
         } else {
             return 'NR'
         }
+    };
+    
+    const handleMovieDEtails =() => {
+    if(movieId === '' || movieId === undefined){
+        return;
+      }
+     router.push(`/movieDetails?id=${movieId}`)
+      console.log(movieId)
     };
 
   return (
@@ -91,7 +102,7 @@ interface CardMovieProps {
 
       </CardBody>
       <CardFooter className="pt-0">
-        <Button size="md" fullWidth={true}>
+        <Button size="md" onClick={handleMovieDEtails} fullWidth={true}>
           Details
         </Button>
       </CardFooter>
