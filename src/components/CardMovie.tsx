@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react' 
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -11,64 +11,62 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import IconCard from "./IconCard";
-import fallback1 from '../../public/fallback1.jpg'
-import { useRouter } from 'next/navigation';
+import fallback1 from "../../public/fallback1.jpg";
+import { useRouter } from "next/navigation";
 
 interface CardMovieProps {
-    movieTitle: any;
-    movieDescription: any;
-    movieScore: any;
-    imgPoster: any;
-    movieRelease: any;
-    movieId: any;
+  movie: any;
+  handleAddFavorites: (movie: any) => void;
+  handleAddToWatched: (movie: any) => void;
+  handleAddToTop10: (movie: any) => void;
 }
-  const CardMovie: React.FC<CardMovieProps> = ({
-        movieTitle,
-        movieDescription,
-        imgPoster,
-        movieRelease,
-        movieScore,
-        movieId,
-    }) => {
+const CardMovie: React.FC<CardMovieProps> = ({
+  movie,
+  handleAddFavorites,
+  handleAddToWatched,
+  handleAddToTop10,
+}) => {
+  console.log(movie);
+  const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
+  const router = useRouter();
 
-    const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
-    const router = useRouter();
+  const averageScoreConsistency = (score: any) => {
+    if (score > 0) {
+      return score.toFixed(1);
+    } else {
+      return "NR";
+    }
+  };
 
-    const averageScoreConsistency = (score: any) => {
-        if(score > 0){
-     return score.toFixed(1);
-        } else {
-            return 'NR'
-        }
-    };
-    
-    const handleMovieDEtails =() => {
-    if(movieId === '' || movieId === undefined){
-        return;
-      }
-     router.push(`/movieDetails?id=${movieId}`)
-      console.log(movieId)
-    };
+  const handleMovieDEtails = () => {
+    if (movie.id === "" || movie.id === undefined) {
+      return;
+    }
+    router.push(`/movieDetails?id=${movie.id}`);
+    console.log(movie.id);
+  };
 
   return (
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[22rem] mx-auto shadow-lg">
-      <CardHeader className="bg-black"floated={false} color="white">
-      <div className="relative w-[300px] h-[450px]">
-        <Image
-            src={imgPoster ? IMG_BASE_URL + imgPoster : fallback1}
-            alt={movieTitle}
+      <CardHeader className="bg-black" floated={false} color="white">
+        <div className="relative w-[300px] h-[450px]">
+          <Image
+            src={
+              movie.poster_path ? IMG_BASE_URL + movie.poster_path : fallback1
+            }
+            alt={movie.title}
             fill
             className="rounded-t-xl object-cover"
             sizes="300px"
             priority
-        />
+          />
         </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />
       </CardHeader>
       <CardBody>
         <div className="mb-3 px-2 flex items-center justify-between  min-h-[2rem] max-h-[2rem]">
           <Typography variant="h5" color="white" className="font-medium ">
-           {movieTitle}
+            {movie.title}
           </Typography>
           <Typography
             color="white"
@@ -86,20 +84,27 @@ interface CardMovieProps {
                 clipRule="evenodd"
               />
             </svg>
-            {averageScoreConsistency(movieScore)}
+            {averageScoreConsistency(movie.vote_average)}
           </Typography>
         </div>
-          <Typography  color="white" className="mt-2 mb-1 text-xs min-h-[1rem] max-h-[1rem]">
-           {movieRelease}
-          </Typography>
         <Typography
-        className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
-        color="white"
+          color="white"
+          className="mt-2 mb-1 text-xs min-h-[1rem] max-h-[1rem]"
         >
-        {movieDescription}
+          {movie.release_date}
         </Typography>
-      < IconCard movieTitle={movieTitle}/>
-
+        <Typography
+          className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
+          color="white"
+        >
+          {movie.overview}
+        </Typography>
+        <IconCard
+          movie={movie}
+          handleAddFavorites={() => handleAddFavorites(movie)}
+          handleAddToWatched={() => handleAddToWatched(movie)}
+          handleAddToTop10={() => handleAddToTop10(movie)}
+        />
       </CardBody>
       <CardFooter className="pt-0">
         <Button size="md" onClick={handleMovieDEtails} fullWidth={true}>
@@ -108,6 +113,6 @@ interface CardMovieProps {
       </CardFooter>
     </Card>
   );
-}
+};
 
 export default CardMovie;
