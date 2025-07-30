@@ -8,4 +8,5 @@ interface Movie {
   userScore?: number;
   comment?: string;
   commentEnabled?: boolean;
+  publicScore: number;
 }

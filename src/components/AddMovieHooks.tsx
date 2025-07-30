@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 export const AddMovieHooks = () => {
     const { userId } = useSelector((state: RootState) => state.auth);
-
+    console.log(userId)
      const handleAddFavorites = useCallback(async (movie: any) => {
     try {
       const response = await fetch(
@@ -17,10 +17,11 @@ export const AddMovieHooks = () => {
           title: movie.title,
           posterPath: movie.poster_path,
           comment: "pretty movie",
-          userScore: 10,
+          userScore: null,
           commentEnabled: true,
           releasedDate: movie.release_date,
           movieDescription: movie.overview,
+          publicScore: parseFloat(movie.vote_average.toFixed(1)),
         }),
       }
     );
