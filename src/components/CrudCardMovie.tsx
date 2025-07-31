@@ -8,29 +8,47 @@ import {
   Button,
   Tooltip,
   IconButton,
+  Textarea,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import IconCard from "./IconCard";
 import fallback1 from "../../public/fallback1.jpg";
 import { useRouter } from "next/navigation";
-import RatingSlider from '../components/ratingTool';
+import RatingSlider from "../components/ratingTool";
 import { FaEdit } from "react-icons/fa";
-
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { IoCloseSharp } from "react-icons/io5";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 interface CardMovieProps {
   movie: Movie;
-  handleAddFavorites: (movie: any, score?:number) => void;
- 
+  handleAddFavorites: (movie: any, score?: number) => void;
+  successScore: any;
+  handleDeleteScore: (movie: Movie) => void;
+  initialScore: number | null;
+  handleDeleteMovie: (movie: Movie) => void;
+  comment: any;
+  setComment: (comment: any) => void;
+  handleAddEditComment: (movie: any,) => void;
+  handleDeleteComment: (movie: any,) => void;
 }
+
 const CrudCardMovie: React.FC<CardMovieProps> = ({
   movie,
   handleAddFavorites,
- 
+  successScore,
+  handleDeleteScore,
+  initialScore,
+  handleDeleteMovie,
+  comment,
+  setComment,
+  handleAddEditComment,
+  handleDeleteComment,
 }) => {
-  console.log(movie);
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();
   const [enableScore, setEnableScore] = useState(false);
+
   const averageScoreConsistency = (score: any) => {
     if (score > 0) {
       return score.toFixed(1);
@@ -39,9 +57,11 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
     }
   };
 
-   const handleSubmitScore = (score: number) => {
-    handleAddFavorites(movie, score); 
-  };
+  useEffect(() => {
+  if (movie.comment) {
+    setComment(movie.comment);
+  }
+}, [movie.comment]);
 
   const handleMovieDEtails = () => {
     if (movie.movieId === null || movie.movieId === undefined) {
@@ -51,18 +71,16 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
     console.log(movie.id);
   };
 
-  const handleEnableScore =() => {
-   setEnableScore(true);
+  const handleDisplayRating = () => {
+    setEnableScore(!enableScore);
   };
 
   return (
-    <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[22rem] mx-auto shadow-lg">
+    <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[23rem] mx-auto shadow-lg">
       <CardHeader className="bg-black" floated={false} color="white">
-        <div className="relative w-[300px] h-[450px]">
+        <div className="relative w-[500px] h-[450px]">
           <Image
-            src={
-              movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1
-            }
+            src={movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1}
             alt={movie.title}
             fill
             className="rounded-t-xl object-cover"
@@ -71,6 +89,16 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           />
         </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />
+
+        <div className="absolute top-4 right-2 z-10">
+          <button
+            onClick={() => handleDeleteMovie(movie)}
+            className="bg-black/60 hover:bg-red/80 p-1 border border-red-500 rounded-full text-red"
+            aria-label="Remove from Favorites"
+          >
+            <IoCloseSharp className="h-5 w-5 text-red-800 hover:text-red-200" />
+          </button>
+        </div>
       </CardHeader>
       <CardBody>
         <div className="mb-3 px-2 flex items-center justify-between  min-h-[2rem] max-h-[2rem]">
@@ -84,12 +112,12 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
         >
           {movie.releasedDate}
         </Typography>
-         <Typography
-            color="white"
-            className="flex items-center gap-1.5 font-normal"
-          >
-             <span className="flex items-center gap-1">
-            Public Score: 
+        <Typography
+          color="white"
+          className="flex items-center gap-1.5 mb-4 font-normal"
+        >
+          <span className="flex items-center gap-1">
+            Public Score:
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -102,16 +130,16 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
                 clipRule="evenodd"
               />
             </svg>
-            </span>
-            {averageScoreConsistency(movie.publicScore)}
-          </Typography>
-          <Typography
-            color="white"
-            className="flex items-center  gap-2 font-normal"
-            >
-             <span className="flex items-center gap-1">
+          </span>
+          {averageScoreConsistency(movie.publicScore)}
+        </Typography>
+        <Typography
+          color="white"
+          className="flex items-center  gap-2 font-normal"
+        >
+          <span className="flex items-center gap-1">
             My Score:{" "}
-             <svg
+            <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="yellow"
@@ -123,27 +151,76 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
                 clipRule="evenodd"
               />
             </svg>
-            {movie.userScore != null ? movie.userScore : <span className="text-yellow-500 text-xl">?</span>}
-           
-            </span>
-            {movie.userScore != null &&  (
-            <div className="flex flex-col items-center cursor-pointer" onClick={handleEnableScore}>
-                <FaEdit className="h-4 w-4 text-orange-400 hover:text-yellow-500" />
-                <p className="mt-1 text-xs">Edit</p>
-            </div>
+            {movie.userScore != null ? (
+              movie.userScore
+            ) : (
+              <span className="text-yellow-500 text-xl">?</span>
             )}
-            </Typography>
+          </span>
+          <div className="flex ml-[2rem] flex-row">
+            {movie.userScore != null && (
+              <div className="flex flex-col items-center cursor-pointer">
+                <FaEdit
+                  onClick={handleDisplayRating}
+                  className="h-4 w-4 text-orange-400 hover:text-yellow-500"
+                />
+                <p className="mt-1 text-xs">Edit</p>
+              </div>
+            )}
+            {movie.userScore != null && (
+              <div className="flex ml-3 flex-col items-center cursor-pointer">
+                <RiDeleteBin6Line
+                  onClick={() => handleDeleteScore(movie)}
+                  className="h-4 w-4 text-orange-400 hover:text-red-500"
+                />
+                <p className="mt-1 text-xs">Delete</p>
+              </div>
+            )}
+          </div>
+        </Typography>
         <Typography
           className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
           color="white"
         >
           {movie.movieDescription}
         </Typography>
-         {!movie.userScore && (
-        <RatingSlider
-        onSubmit={(score) => handleAddFavorites(score)} 
-        />
-         )}
+        <div className="mb-3 min-h-[3.2rem] max-h-[3.2rem] ">
+          {(movie.userScore === null || enableScore) && (
+            <RatingSlider
+              onSubmit={(score) => handleAddFavorites(score)}
+              successScore={successScore}
+              initialScore={initialScore}
+            />
+          )}
+        </div>
+        <div className="w-full mt-5 flex flex-row items-start justify-between gap-2">
+          <Textarea
+            color="blue-gray"
+            label="My Opinion..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="text-white text-sm min-h-[6rem] max-h-[6rem] flex-1"
+          />
+          <div className="flex flex-col items-center justify-start gap-2 pt-3">
+            <div className="flex flex-col items-center cursor-pointer">
+              <FaEdit
+                onClick={() => handleAddEditComment(movie)}
+                className="h-5 w-5 text-white hover:text-blue-500"
+              />
+              <p className="text-[0.65rem] text-white text-center">
+                {movie.comment ? "Edit" : "Add"}
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center cursor-pointer">
+              <RiDeleteBin6Line
+                onClick={() => handleDeleteComment(movie)}
+                className="h-5 w-5 text-white hover:text-red-500"
+              />
+              <p className="text-[0.65rem] text-white text-center">Delete</p>
+            </div>
+          </div>
+        </div>
       </CardBody>
       <CardFooter className="pt-0">
         <Button size="md" onClick={handleMovieDEtails} fullWidth={true}>

@@ -38,13 +38,11 @@ const IconCard: React.FC<IconActionsProps> = ({
     setActiveAction(type);
     setActionMessage(message);
 
-    // Reset after 2 seconds
     setTimeout(() => {
       setActiveAction("");
       setActionMessage("");
     }, 2000);
 
-    //call functions based on icon selection
     if (type === "favorite") {
       handleAddFavorites();
     } else if (type === "watched") {
@@ -62,9 +60,9 @@ const IconCard: React.FC<IconActionsProps> = ({
         <div className="flex flex-col mt-4 items-center">
           <span
             onClick={() => handleAction("favorite")}
-            className={`cursor-pointer rounded-full transition-colors ${
+            className={`cursor-pointer p-2 rounded-full transition-colors ${
               isActive("favorite")
-                ? "bg-yellow-500"
+                ? "bg-yellow-700"
                 : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
             }`}
           >
@@ -73,10 +71,10 @@ const IconCard: React.FC<IconActionsProps> = ({
           <p className="mt-1">Favorites</p>
         </div>
 
-        <div className="flex flex-col mt-4 items-center">
+        <div className="flex flex-col mt-5 items-center">
           <span
             onClick={() => handleAction("watched")}
-            className={`cursor-pointer rounded-full transition-colors ${
+            className={`cursor-pointer p-2 rounded-full transition-colors ${
               isActive("watched")
                 ? "bg-green-500"
                 : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
@@ -87,10 +85,10 @@ const IconCard: React.FC<IconActionsProps> = ({
           <p className="mt-1">Watched</p>
         </div>
 
-        <div className="flex mt-3 flex-col items-center">
+        <div className="flex mt-5 flex-col items-center">
           <span
             onClick={() => handleAction("top10")}
-            className={`cursor-pointer rounded-full p-1 transition-colors ${
+            className={`cursor-pointer  p-2 rounded-full p-1 transition-colors ${
               isActive("top10")
                 ? "bg-orange-500"
                 : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
