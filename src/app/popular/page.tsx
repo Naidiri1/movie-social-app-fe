@@ -10,9 +10,11 @@ import { AddMovieHooks } from "../../components/AddMovieHooks";
 export default function Popular() {
   const [rowData, setRowData] = useState([]);
   const { userId } = useSelector((state: RootState) => state.auth);
-  const { handleAddFavorites,
+  const { 
+    handleAddFavorites,
     handleAddToWatched,
-    handleAddToTop10} = AddMovieHooks();
+    handleAddToTop10
+  } = AddMovieHooks();
   const PopularMovies = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`

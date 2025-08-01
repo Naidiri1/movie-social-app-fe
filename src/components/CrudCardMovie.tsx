@@ -22,7 +22,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 
 interface CardMovieProps {
   movie: Movie;
-  handleAddFavorites: (movie: any, score?: number) => void;
+  handleAddMovie: (movie: any, score?: number) => void;
   successScore: any;
   handleDeleteScore: (movie: Movie) => void;
   initialScore: number | null;
@@ -35,7 +35,7 @@ interface CardMovieProps {
 
 const CrudCardMovie: React.FC<CardMovieProps> = ({
   movie,
-  handleAddFavorites,
+  handleAddMovie,
   successScore,
   handleDeleteScore,
   initialScore,
@@ -191,7 +191,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
         <div className="mb-3 min-h-[3.2rem] max-h-[3.2rem] ">
           {(movie.userScore === null || enableScore) && (
             <RatingSlider
-              onSubmit={(score) => handleAddFavorites(score)}
+              onSubmit={(score) => handleAddMovie(score)}
               successScore={successScore}
               initialScore={initialScore}
             />
@@ -219,7 +219,10 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           {!isDisabled ? (
             <div className="flex flex-col items-center cursor-pointer">
               <IoAddCircleOutline
-                onClick={() => handleAddEditComment(movie)}
+                onClick={() => {
+                    {comment ? handleAddEditComment(movie) : setIsDisabled}
+                      {comment ? setIsDisabled(true) :  setIsDisabled(false);}
+                }}
                 className="h-5 w-5 text-white hover:text-blue-500"
               />
               <p className="text-[0.65rem] text-white text-center">

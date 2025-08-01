@@ -24,11 +24,11 @@ const IconCard: React.FC<IconActionsProps> = ({
     let message = "";
 
     switch (type) {
-      case "watched":
-        message = `Added "${movie.title}" to Watched`;
-        break;
       case "favorite":
         message = `Added "${movie.title}" to Favorites`;
+        break;
+      case "watched":
+        message = `Added "${movie.title}" to Watched`;
         break;
       case "top10":
         message = `Added "${movie.title}" to Top 10`;
