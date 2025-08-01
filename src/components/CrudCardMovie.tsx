@@ -29,8 +29,8 @@ interface CardMovieProps {
   handleDeleteMovie: (movie: Movie) => void;
   comment: any;
   setComment: (comment: any) => void;
-  handleAddEditComment: (movie: any,) => void;
-  handleDeleteComment: (movie: any,) => void;
+  handleAddEditComment: (movie: any) => void;
+  handleDeleteComment: (movie: any) => void;
 }
 
 const CrudCardMovie: React.FC<CardMovieProps> = ({
@@ -48,6 +48,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();
   const [enableScore, setEnableScore] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const averageScoreConsistency = (score: any) => {
     if (score > 0) {
@@ -58,10 +59,13 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   };
 
   useEffect(() => {
-  if (movie.comment) {
-    setComment(movie.comment);
-  }
-}, [movie.comment]);
+    if (movie.comment) {
+      setComment(movie.comment);
+      setIsDisabled(true);
+    } else{ 
+     setIsDisabled(false);
+    }
+  }, [movie.comment]);
 
   const handleMovieDEtails = () => {
     if (movie.movieId === null || movie.movieId === undefined) {
@@ -194,24 +198,48 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           )}
         </div>
         <div className="w-full mt-5 flex flex-row items-start justify-between gap-2">
-          <Textarea
-            color="blue-gray"
-            label="My Opinion..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="text-white text-sm min-h-[6rem] max-h-[6rem] flex-1"
-          />
+          <div
+            className={`rounded p-3 w-full min-h-[6rem] max-h-[6rem]   ${
+              isDisabled ? "bg-black text-white" : "bg-black"
+            }`}
+          >
+            <textarea
+              value={comment}
+              disabled={isDisabled}
+              onChange={(e) => setComment(e.target.value)}
+              className={`w-full p-2 rounded resize-none outline-none ${
+                isDisabled
+                  ? "bg-blue-gray-800 text-white"
+                  : "bg-black text-white border boder-white placeholder:text-white"
+              }`}
+              placeholder="My Opinion..."
+            />
+          </div>
           <div className="flex flex-col items-center justify-start gap-2 pt-3">
+          {!isDisabled ? (
             <div className="flex flex-col items-center cursor-pointer">
-              <FaEdit
+              <IoAddCircleOutline
                 onClick={() => handleAddEditComment(movie)}
                 className="h-5 w-5 text-white hover:text-blue-500"
               />
               <p className="text-[0.65rem] text-white text-center">
-                {movie.comment ? "Edit" : "Add"}
+                Post
               </p>
             </div>
-
+          ) : (
+            <div className="flex flex-col items-center cursor-pointer">
+              <FaEdit
+                onClick={() =>{
+                     handleAddEditComment(movie)
+                     setIsDisabled(false);
+                    }}
+                className="h-5 w-5 text-white hover:text-blue-500"
+              />
+              <p className="text-[0.65rem] text-white text-center">
+                Edit
+              </p>
+            </div>
+          )}
             <div className="flex flex-col items-center cursor-pointer">
               <RiDeleteBin6Line
                 onClick={() => handleDeleteComment(movie)}

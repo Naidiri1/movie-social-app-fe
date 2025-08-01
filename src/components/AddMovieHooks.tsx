@@ -16,7 +16,7 @@ export const AddMovieHooks = () => {
           movieId: movie.id,
           title: movie.title,
           posterPath: movie.poster_path,
-          comment: "pretty movie",
+          comment: "",
           userScore: null,
           commentEnabled: true,
           releasedDate: movie.release_date,
