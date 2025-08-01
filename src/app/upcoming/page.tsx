@@ -2,9 +2,14 @@
 
 import React, { useEffect, useState } from "react"
 import  CardMovie  from '../../components/CardMovie';
+import { AddMovieHooks } from "../../components/AddMovieHooks";
 
 const UpcomingMovies = () => {
     const [rowData, setRowData] = useState([]);
+
+   const { handleAddFavorites,
+    handleAddToWatched,
+    handleAddToTop10} = AddMovieHooks();
 
     const handleSearchPopularMovies = async () => {
       const response = await fetch(`http://localhost:8080/api/movies/upcoming`);
@@ -29,12 +34,10 @@ const UpcomingMovies = () => {
     {rowData.map((movie:any) => (
             <CardMovie
             key={movie.id}
-            movieId={movie.id}
-            movieTitle={movie.title}
-            movieDescription={movie.overview}
-            movieScore={movie.vote_average}
-            imgPoster={movie.poster_path}
-            movieRelease={movie.release_date}
+            movie={movie}
+            handleAddFavorites={() =>handleAddFavorites(movie)}
+            handleAddToWatched={() =>handleAddToWatched(movie)}
+            handleAddToTop10={() =>handleAddToTop10(movie)}
             />
         ))}
     </div>

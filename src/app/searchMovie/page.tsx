@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import SearchResult from "@/components/searchResult";
 import CardMovie from '@/components/CardMovie';
+import { AddMovieHooks } from "../../components/AddMovieHooks";
 
 const SearchResults = () => {
     const [rowCardData , setRowCardData] = useState([]);
     const movieString = SearchResult();
-   
+   const { handleAddFavorites,
+       handleAddToWatched,
+       handleAddToTop10} = AddMovieHooks();
     console.log(movieString)
 
     useEffect(() => {
@@ -24,12 +27,10 @@ return(
      {rowCardData.map((movie:any) => (
         <CardMovie
           key={movie.id}
-          movieId={movie.id}
-          movieTitle={movie.title}
-          movieDescription={movie.overview}
-          movieScore={movie.vote_average}
-          imgPoster={movie.poster_path}
-          movieRelease={movie.release_date}
+          movie={movie}
+          handleAddFavorites={() =>handleAddFavorites(movie)}
+          handleAddToWatched={() =>handleAddToWatched(movie)}
+          handleAddToTop10={() =>handleAddToTop10(movie)}
         />
       ))}
 </div>

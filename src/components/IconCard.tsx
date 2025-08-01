@@ -1,37 +1,55 @@
 import { useState } from "react";
 import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 interface IconActionsProps {
-  movieTitle: string;
+  movie: any;
+  handleAddFavorites: () => void;
+  handleAddToWatched: () => void;
+  handleAddToTop10: () => void;
 }
 
-const IconCard: React.FC<IconActionsProps> =  ({ movieTitle} ) => {
+const IconCard: React.FC<IconActionsProps> = ({
+  movie,
+  handleAddFavorites,
+  handleAddToWatched,
+  handleAddToTop10,
+}) => {
   const [actionMessage, setActionMessage] = useState("");
   const [activeAction, setActiveAction] = useState("");
+  const { userId } = useSelector((state: RootState) => state.auth);
 
-  const handleAction = (type : any) => {
+  const handleAction = (type: any) => {
     let message = "";
 
     switch (type) {
-      case "watched":
-        message = `Added "${movieTitle}" to Watched`;
-        break;
       case "favorite":
-        message = `Added "${movieTitle}" to Favorites`;
+        message = `Added "${movie.title}" to Favorites`;
+        break;
+      case "watched":
+        message = `Added "${movie.title}" to Watched`;
         break;
       case "top10":
-        message = `Added "${movieTitle}" to Top 10`;
+        message = `Added "${movie.title}" to Top 10`;
         break;
     }
 
     setActiveAction(type);
     setActionMessage(message);
 
-    // Reset after 2 seconds
     setTimeout(() => {
       setActiveAction("");
       setActionMessage("");
     }, 2000);
+
+    if (type === "favorite") {
+      handleAddFavorites();
+    } else if (type === "watched") {
+      handleAddToWatched();
+    } else if (type === "top10") {
+      handleAddToTop10();
+    }
   };
 
   const isActive = (type: any) => activeAction === type;
@@ -39,13 +57,12 @@ const IconCard: React.FC<IconActionsProps> =  ({ movieTitle} ) => {
   return (
     <div className="flex flex-col items-center text-xs text-white">
       <div className="flex flex-row justify-evenly w-full">
-
         <div className="flex flex-col mt-4 items-center">
           <span
             onClick={() => handleAction("favorite")}
-            className={`cursor-pointer rounded-full transition-colors ${
+            className={`cursor-pointer p-2 rounded-full transition-colors ${
               isActive("favorite")
-                ? "bg-yellow-500"
+                ? "bg-yellow-700"
                 : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
             }`}
           >
@@ -54,10 +71,10 @@ const IconCard: React.FC<IconActionsProps> =  ({ movieTitle} ) => {
           <p className="mt-1">Favorites</p>
         </div>
 
-        <div className="flex flex-col mt-4 items-center">
+        <div className="flex flex-col mt-5 items-center">
           <span
             onClick={() => handleAction("watched")}
-            className={`cursor-pointer rounded-full transition-colors ${
+            className={`cursor-pointer p-2 rounded-full transition-colors ${
               isActive("watched")
                 ? "bg-green-500"
                 : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
@@ -68,10 +85,10 @@ const IconCard: React.FC<IconActionsProps> =  ({ movieTitle} ) => {
           <p className="mt-1">Watched</p>
         </div>
 
-        <div className="flex mt-3 flex-col items-center">
+        <div className="flex mt-5 flex-col items-center">
           <span
             onClick={() => handleAction("top10")}
-            className={`cursor-pointer rounded-full p-1 transition-colors ${
+            className={`cursor-pointer  p-2 rounded-full p-1 transition-colors ${
               isActive("top10")
                 ? "bg-orange-500"
                 : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
@@ -83,10 +100,12 @@ const IconCard: React.FC<IconActionsProps> =  ({ movieTitle} ) => {
         </div>
       </div>
 
-     <div className={`h-5 mt-2  text-sm animate-pulse text-center 
-        ${activeAction === 'watched' ? 'text-green-400' : activeAction === 'favorite' ? 'text-yellow-400' : 'text-orange-400'  }`}>
+      <div
+        className={`h-5 mt-2  text-sm animate-pulse text-center 
+        ${activeAction === "watched" ? "text-green-400" : activeAction === "favorite" ? "text-yellow-400" : "text-orange-400"}`}
+      >
         {actionMessage}
-        </div>
+      </div>
     </div>
   );
 };
