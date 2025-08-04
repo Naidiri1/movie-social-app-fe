@@ -63,8 +63,33 @@ export const AddMovieHooks = () => {
     }
   }, []);
 
-  const handleAddToTop10 = useCallback((movie: any) => {
-    console.log("⭐ Added to Top 10:", movie.title);
+  const handleAddToTop10 = useCallback(async (movie: any) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            movieId: movie.id,
+            title: movie.title,
+            posterPath: movie.poster_path,
+            comment: "",
+            userScore: null,
+            commentEnabled: true,
+            releasedDate: movie.release_date,
+            movieDescription: movie.overview,
+            publicScore: parseFloat(movie.vote_average.toFixed(1)),
+          }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      }
+    } catch (error) {
+      console.error("Failed to add to favorites", error);
+    }
   }, []);
 
    return {

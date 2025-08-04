@@ -1,0 +1,176 @@
+import Image from "next/image";
+import fallback1 from "../../public/fallback1.jpg";
+import { FaEdit } from "react-icons/fa";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { IoAddCircleOutline, IoCloseSharp } from "react-icons/io5";
+import RatingSlider from "../components/ratingTool";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Typography,
+  Button,
+  Tooltip,
+  IconButton,
+  Textarea,
+} from "@material-tailwind/react";
+
+interface Props {
+  movie: Movie;
+  handleAddMovie: (movie: any, score?: number) => void;
+  successScore: any;
+  handleDeleteScore: (movie: Movie) => void;
+  initialScore: number | null;
+  handleDeleteMovie: (movie: Movie) => void;
+  comment: any;
+  setComment: (comment: any) => void;
+  handleAddEditComment: (movie: any) => void;
+  handleDeleteComment: (movie: any) => void;
+}
+
+const TMDbStyleMovieCard = ({
+  movie,
+  handleAddMovie,
+  successScore,
+  handleDeleteScore,
+  initialScore,
+  handleDeleteMovie,
+  comment,
+  setComment,
+  handleAddEditComment,
+  handleDeleteComment,
+}: Props) => {
+  const router = useRouter();
+  const [isDisabled, setIsDisabled] = useState(false);
+  const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
+
+  useEffect(() => {
+    if (movie.comment) {
+      setComment(movie.comment);
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+  }, [movie.comment]);
+
+  const averageScoreConsistency = (score: any) => {
+    if (score > 0) {
+      return score.toFixed(1);
+    } else {
+      return "NR";
+    }
+  };
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center  sm:flex-row bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 gap-6 cursor-move sm:items-start">
+      <div className="flex flex-col flex-grow text-blue-gray-600  dark:text-white">
+        <h2 className="text-xl font-semibold mb-2">{movie.title}</h2>
+
+        <div className="flex flex-row justify-center items-center gap-4">
+          <div className="w-[100px] h-[150px] relative shrink-0">
+            <Image
+              src={
+                movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1
+              }
+              alt={movie.title}
+              fill
+              priority
+              className="object-cover rounded-md"
+            />
+          </div>
+
+          <div className="flex flex-col  justify-between w-full">
+            <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
+              {movie.releasedDate}
+            </p>
+
+            <p className="text-sm min-h-[4rem] text-blue-gray-600  max-h-[5rem] overflow-y-auto text-gray-600 dark:text-gray-300 mb-3 max-w-3xl">
+              {movie.movieDescription}
+            </p>
+
+            <Typography
+              color="black"
+              className="flex items-center gap-1.5 mb-4 font-normal"
+            >
+              <span className="flex items-center gap-1">
+                Public Score:
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="orange"
+                  className="-mt-0.5 h-5 w-5 text-orange-800"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+              {averageScoreConsistency(movie.publicScore)}
+            </Typography>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col  sm:w-[290px] w-full mt-4 sm:mt-0">
+        <div className="mt-[26px]">
+          <textarea
+            value={comment}
+            disabled={isDisabled}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="My Opinion..."
+            className={`w-full p-2 rounded-md resize-none text-sm min-h-[5rem] ${
+              isDisabled
+                ? "bg-blue-gray-500 text-black"
+                : "bg-zinc-100 dark:bg-zinc-800 border border-gray-300 dark:border-white text-blue-gray-600  dark:text-white"
+            }`}
+          />
+        </div>
+
+        <div className="flex flex-row gap-4 justify-evenly items-center flex-wrap">
+          {!isDisabled ? (
+            <div className="flex flex-col items-center cursor-pointer">
+              <IoAddCircleOutline
+                onClick={() => {
+                  {
+                    comment ? handleAddEditComment(movie) : setIsDisabled;
+                  }
+                  {
+                    comment ? setIsDisabled(true) : setIsDisabled(false);
+                  }
+                }}
+                className="h-5 w-5 text-blue-500 hover:text-blue-900"
+              />
+              <p className="text-xs text-blue-gray-600 ">Post</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center cursor-pointer">
+              <FaEdit
+                onClick={() => {
+                  handleAddEditComment(movie);
+                  setIsDisabled(false);
+                }}
+                className="h-4 w-4 text-blue-500 hover:text-blue-900"
+              />
+              <p className="text-xs text-blue-gray-600 ">Edit</p>
+            </div>
+          )}
+
+          <div className="flex flex-col items-center cursor-pointer">
+            <RiDeleteBin6Line
+              onClick={() => handleDeleteComment(movie)}
+              className="h-5 w-5 text-red-500 hover:text-red-900"
+            />
+            <p className="text-xs text-blue-gray-600 ">Delete</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TMDbStyleMovieCard;

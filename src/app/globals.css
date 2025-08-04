@@ -26,3 +26,8 @@ body {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.highlight {
+  /* outline: 2px dashed #745227; */
+  background-color: rgba(236, 124, 109, 0.712);
+}
