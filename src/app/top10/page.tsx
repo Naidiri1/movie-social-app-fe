@@ -38,7 +38,7 @@ export default function Top10Movies() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
       );
       const data = await updateData.json();
-      data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+
       setTimeout(() => {
         setMovieData(data);
         const commentMap: { [movieId: string]: string } = {};
@@ -75,7 +75,6 @@ export default function Top10Movies() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
       );
       const data = await updateData.json();
-      data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       setMovieData(data);
     }
   };
@@ -88,12 +87,23 @@ export default function Top10Movies() {
         headers: { "Content-Type": "application/json" },
       }
     );
+
     if (response.ok) {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
       );
       const data = await updateData.json();
-      data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+
+      const rankedData = data.map((movie: any, index: number) => ({
+        id: movie.id,
+        rank: index + 1,
+      }));
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/rank`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rankedData),
+      });
       setMovieData(data);
     }
   };
@@ -116,12 +126,33 @@ export default function Top10Movies() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
       );
       const data = await updateData.json();
-      data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       setMovieData(data);
     }
   };
 
+  const updateRanks = async (updatedMovies: any[]) => {
+    try {
+      console.log(updatedMovies);
+      const payload = updatedMovies
+        .filter((movie) => movie?.id != null)
+        .map((movie, index) => ({
+          id: movie.id,
+          rank: index + 1,
+        }));
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/rank`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      console.log("Ranks updated!");
+    } catch (err) {
+      console.error("Error updating ranks", err);
+    }
+  };
+
   const handleDeleteComment = async (movie: any) => {
+    if (movie.comment === "") return;
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
       {
@@ -139,9 +170,6 @@ export default function Top10Movies() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
       );
       const scoreUpdated = await updateData.json();
-      scoreUpdated.sort(
-        (a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0)
-      );
       const commentMap: { [movieId: string]: string } = {};
       scoreUpdated.forEach((movie: any) => {
         commentMap[movie.id] = movie.comment || "";
@@ -156,10 +184,7 @@ export default function Top10Movies() {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => {
-        const sorted = data.sort(
-          (a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0)
-        );
-        setMovieData(sorted);
+        setMovieData(data);
       });
   }, [userId]);
 
@@ -171,15 +196,17 @@ export default function Top10Movies() {
       ghostClass: "opacity-500",
       draggable: ".draggable-item",
       swapClass: "highlight",
+      forceFallback: true,
+
       onEnd: (evt) => {
         const updated = [...movieData];
         const [moved] = updated.splice(evt.oldIndex!, 1);
         updated.splice(evt.newIndex!, 0, moved);
         setMovieData(updated);
         console.log(updated);
+        updateRanks(updated);
       },
     });
-
     return () => sortable.destroy();
   }, [movieData]);
 
@@ -194,20 +221,18 @@ export default function Top10Movies() {
             key={movie?.id ?? index}
             className="flex items-start highlight draggable-item m-5 bg-white dark:bg-zinc-900 rounded-lg shadow "
           >
-            <div className="w-6 pt-2 pr-1 items-center mt-[5rem] text-2xl font-bold text-gray-400 text-right">
+            <div className="w-6 pt-2 pr-1 items-center mt-[5rem] mr-5 ml-5 text-2xl font-bold text-white text-right">
               {index + 1}
             </div>
             {movie ? (
               <div className="relative">
-                {/* Remove Button - top-right */}
                 <button
                   onClick={() => handleDeleteMovie(movie)}
-                  className="absolute top-2 right-2 z-10 bg-black/20 hover:bg-red/80 p-1 border border-red-500 rounded-full"
+                  className="absolute top-2 right-2 z-10 bg-red-200 hover:bg-red/80 p-1 border border-red-500 rounded-full"
                   aria-label="Remove from Top 10"
                 >
-                  <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-red-200" />
+                  <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
                 </button>
-
                 <TMDbStyleMovieCard
                   key={movie.id}
                   movie={movie}

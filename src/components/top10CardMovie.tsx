@@ -65,12 +65,12 @@ const TMDbStyleMovieCard = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center  sm:flex-row bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 gap-6 cursor-move sm:items-start">
+    <div className="w-full flex flex-col items-center justify-center   sm:flex-row bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 gap-6 cursor-move sm:items-start">
       <div className="flex flex-col flex-grow text-blue-gray-600  dark:text-white">
-        <h2 className="text-xl font-semibold mb-2">{movie.title}</h2>
+        <h2 className="text-xl font-semibold mt-5 mb-2">{movie.title}</h2>
 
         <div className="flex flex-row justify-center items-center gap-4">
-          <div className="w-[100px] h-[150px] relative shrink-0">
+          <div className="relative w-[100px] h-[150px] shrink-0 overflow-hidden rounded-md">
             <Image
               src={
                 movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1
@@ -78,16 +78,15 @@ const TMDbStyleMovieCard = ({
               alt={movie.title}
               fill
               priority
-              className="object-cover rounded-md"
+              className="object-cover"
             />
           </div>
-
           <div className="flex flex-col  justify-between w-full">
             <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
               {movie.releasedDate}
             </p>
 
-            <p className="text-sm min-h-[4rem] text-blue-gray-600  max-h-[5rem] overflow-y-auto text-gray-600 dark:text-gray-300 mb-3 max-w-3xl">
+            <p className="text-sm min-h-[5rem]  max-h-[5rem] text-blue-gray-600  overflow-y-auto text-gray-600 dark:text-gray-300 mb-3 max-w-3xl">
               {movie.movieDescription}
             </p>
 
@@ -123,9 +122,9 @@ const TMDbStyleMovieCard = ({
             disabled={isDisabled}
             onChange={(e) => setComment(e.target.value)}
             placeholder="My Opinion..."
-            className={`w-full p-2 rounded-md resize-none text-sm min-h-[5rem] ${
+            className={`w-full p-2 rounded-md resize-none text-sm min-h-[7rem] ${
               isDisabled
-                ? "bg-blue-gray-500 text-black"
+                ? "bg-blue-gray-100 text-black"
                 : "bg-zinc-100 dark:bg-zinc-800 border border-gray-300 dark:border-white text-blue-gray-600  dark:text-white"
             }`}
           />
@@ -163,7 +162,7 @@ const TMDbStyleMovieCard = ({
           <div className="flex flex-col items-center cursor-pointer">
             <RiDeleteBin6Line
               onClick={() => handleDeleteComment(movie)}
-              className="h-5 w-5 text-red-500 hover:text-red-900"
+              className="h-5 w-5 text-red-500 hover:text-red-300"
             />
             <p className="text-xs text-blue-gray-600 ">Delete</p>
           </div>
