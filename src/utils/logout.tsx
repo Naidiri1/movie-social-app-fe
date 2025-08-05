@@ -1,5 +1,5 @@
 import { logout } from '../redux/reducers/authSlice';
-import { AppDispatch } from '../redux/store'; // Adjust path if needed
+import { AppDispatch } from '../redux/store';
 import { useRouter } from 'next/router';
 
 export const logoutUser = async (dispatch: AppDispatch, router: any) => {

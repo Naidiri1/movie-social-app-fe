@@ -52,52 +52,76 @@ const dispatch = useDispatch<AppDispatch>();
     };
 
     return (
-       <div className="relative min-h-screen w-full flex justify-center items-center overflow-hidden">
-      <Image
-        src={bglogin}
-        alt="Background"
-        fill
-        className="object-cover brightness-50"
-        priority
-      />
-      <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
+      <div className="relative p-2 min-h-screen w-full flex justify-center items-center overflow-hidden">
+        <Image
+          src={bglogin}
+          alt="Background"
+          fill
+          className="object-cover brightness-50"
+          priority
+        />
+        <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row w-full max-w-[700px] h-[auto] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
-  <div className="w-full lg:w-1/2 h-64 lg:h-auto relative">
-    <Image
-      src={popcorn}
-      alt="Signup visual"
-      fill
-      className="object-cover brightness-50"
-      priority
-    />
-  </div>
+        <div className="relative z-10 flex pb-2 p-3 mb-5  flex-col lg:flex-row w-full max-w-[700px] h-[auto] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
+          <div className="w-full w-[400px] h-[350px] lg:h-auto relative">
+            <Image
+              src={popcorn}
+              alt="Signup visual"
+              fill
+              className=" brightness-50"
+              priority
+            />
+          </div>
 
-  <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
-    <h2 className="text-3xl font-bold mb-6">Sign Up</h2>
-    <form onSubmit={handleSignup} className="flex flex-col gap-4">
-      <Input label="Username" color="white" value={username} onChange={(e) => setUsername(e.target.value)} />
-      <Input label="Email" color="white" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <Input label="Password" color="white" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <Button type="submit" color="white" fullWidth>Create Account</Button>
-    </form>
+          <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
+            <h2 className="text-3xl font-bold mb-6">Sign Up</h2>
+            <form onSubmit={handleSignup} className="flex flex-col gap-4">
+              <Input
+                label="Username"
+                color="white"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <Input
+                label="Email"
+                color="white"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                label="Password"
+                color="white"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button type="submit" color="white" fullWidth>
+                Create Account
+              </Button>
+            </form>
 
-    {message && (
-      <Typography color="red" className="mt-4 text-center">{message}</Typography>
-    )}
-    {successMessage && (
-      <Typography color="green" className="mt-4 text-center">{successMessage}</Typography>
-    )}
+            {message && (
+              <Typography color="red" className="mt-4 text-center">
+                {message}
+              </Typography>
+            )}
+            {successMessage && (
+              <Typography color="green" className="mt-4 text-center">
+                {successMessage}
+              </Typography>
+            )}
 
-    <p className="text-sm mt-5 text-gray-500">
-      Do you have an account?
-      <Link href="/login">
-        <button className="ml-2 text-blue-500  hover:text-blue-700">Login</button>
-      </Link>
-        </p>
-    </div>
-    </div>
-    </div>
-
-  );
+            <p className="text-sm mt-5 text-white">
+              <strong>Do you have an account?</strong>
+              <Link href="/login">
+                <button className="ml-2 text-blue-500 text-xl hover:text-blue-700">
+                  Login
+                </button>
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
 }

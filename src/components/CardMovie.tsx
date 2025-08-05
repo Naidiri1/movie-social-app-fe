@@ -26,7 +26,6 @@ const CardMovie: React.FC<CardMovieProps> = ({
   handleAddToWatched,
   handleAddToTop10,
 }) => {
-  console.log(movie);
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();
 
@@ -43,7 +42,6 @@ const CardMovie: React.FC<CardMovieProps> = ({
       return;
     }
     router.push(`/movieDetails?id=${movie.id}`);
-    console.log(movie.id);
   };
 
   return (

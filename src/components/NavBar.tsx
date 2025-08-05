@@ -24,10 +24,12 @@ import { IoArrowUndoSharp } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import { Orbitron } from "next/font/google";
 import PhoneNavlist from "./phoneNavlist";
+
 const orbitron = Orbitron({
   subsets: ["latin"],
   weight: ["400", "500"],
 });
+
 const NavbarComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -38,10 +40,10 @@ const NavbarComponent = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!username) {
-      dispatch(restoreUserSession());
+    if ((pathname !== "/searchMovie") && ( pathname !== "/movieDetails")) {
+      setSearchQuery("");
     }
-  }, [dispatch, username]);
+  }, [pathname]);
 
   const handleLogout = () => {
     dispatch(logout());
