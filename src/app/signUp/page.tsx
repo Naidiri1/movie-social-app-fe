@@ -40,13 +40,13 @@ const dispatch = useDispatch<AppDispatch>();
             }
             const data = await response.json();
             sessionStorage.setItem('access_token', data.access_token);
-            setSuccessMessage('✅ Signup successful! You are now logged in.');
+            setSuccessMessage('Signup successful! You are now logged in.');
             setMessage('');
             router.push('./popular');
            dispatch(setUser({ username: data.username, email: data.email, userId: data.userId}));
 
         } catch (err) {
-            setMessage('❌ Server error');
+            setMessage('Server error');
             setSuccessMessage('');
         }
     };
@@ -62,16 +62,16 @@ const dispatch = useDispatch<AppDispatch>();
         />
         <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
 
-        <div className="relative z-10 flex pb-2 p-3 mb-5  flex-col lg:flex-row w-full max-w-[700px] h-[auto] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
-          <div className="w-full w-[400px] h-[350px] lg:h-auto relative">
-            <Image
-              src={popcorn}
-              alt="Signup visual"
-              fill
-              className=" brightness-50"
-              priority
-            />
-          </div>
+        <div className="relative z-10 flex pb-2 p-3 mb-5 items-center flex-col lg:flex-row w-full max-w-[700px] h-[auto] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
+          
+        <div className="block flex flex-col  justify-center lg:block w-1/2 ">
+          <Image
+            src={popcorn}
+            alt="Background"
+            className="object-cover brightness-50"
+            priority
+          />
+        </div>
 
           <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
             <h2 className="text-3xl font-bold mb-6">Sign Up</h2>

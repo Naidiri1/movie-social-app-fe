@@ -122,7 +122,7 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <div className="block flex flex-col  w-full w-[400px] h-[350px]  lg:block w-1/2 items-center">
+        <div className="block flex flex-col  lg:block w-1/2 items-center">
           <Image
             src={login}
             alt="Background"
