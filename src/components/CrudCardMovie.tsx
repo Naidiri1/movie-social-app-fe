@@ -62,8 +62,8 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
     if (movie.comment) {
       setComment(movie.comment);
       setIsDisabled(true);
-    } else{ 
-     setIsDisabled(false);
+    } else {
+      setIsDisabled(false);
     }
   }, [movie.comment]);
 
@@ -93,16 +93,6 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           />
         </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />
-
-        <div className="absolute top-4 right-2 z-10">
-          <button
-            onClick={() => handleDeleteMovie(movie)}
-            className="bg-black/60 hover:bg-red/80 p-1 border border-red-500 rounded-full text-red"
-            aria-label="Remove from Favorites"
-          >
-            <IoCloseSharp className="h-5 w-5 text-red-800 hover:text-red-200" />
-          </button>
-        </div>
       </CardHeader>
       <CardBody>
         <div className="mb-3 px-2 flex items-center justify-between  min-h-[2rem] max-h-[2rem]">
@@ -216,36 +206,39 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
             />
           </div>
           <div className="flex flex-col items-center justify-start gap-2 pt-3">
-          {!isDisabled ? (
-            <div className="flex flex-col items-center cursor-pointer">
-              <IoAddCircleOutline
-                onClick={() => {
-                    {comment ? handleAddEditComment(movie) : setIsDisabled}
-                      {comment ? setIsDisabled(true) :  setIsDisabled(false);}
-                }}
-                className="h-5 w-5 text-white hover:text-blue-500"
-              />
-              <p className="text-[0.65rem] text-white text-center">
-                Post
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center cursor-pointer">
-              <FaEdit
-                onClick={() =>{
-                     handleAddEditComment(movie)
-                     setIsDisabled(false);
-                    }}
-                className="h-5 w-5 text-white hover:text-blue-500"
-              />
-              <p className="text-[0.65rem] text-white text-center">
-                Edit
-              </p>
-            </div>
-          )}
+            {!isDisabled ? (
+              <div className="flex flex-col items-center cursor-pointer">
+                <IoAddCircleOutline
+                  onClick={() => {
+                    {
+                      comment ? handleAddEditComment(movie) : setIsDisabled;
+                    }
+                    {
+                      comment ? setIsDisabled(true) : setIsDisabled(false);
+                    }
+                  }}
+                  className="h-5 w-5 text-white hover:text-blue-500"
+                />
+                <p className="text-[0.65rem] text-white text-center">Post</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center cursor-pointer">
+                <FaEdit
+                  onClick={() => {
+                    handleAddEditComment(movie);
+                    setIsDisabled(false);
+                  }}
+                  className="h-5 w-5 text-white hover:text-blue-500"
+                />
+                <p className="text-[0.65rem] text-white text-center">Edit</p>
+              </div>
+            )}
             <div className="flex flex-col items-center cursor-pointer">
               <RiDeleteBin6Line
-                onClick={() => handleDeleteComment(movie)}
+                onClick={() => {
+                  if (comment === "") return;
+                  handleDeleteComment(movie);
+                }}
                 className="h-5 w-5 text-white hover:text-red-500"
               />
               <p className="text-[0.65rem] text-white text-center">Delete</p>

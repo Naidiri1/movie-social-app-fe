@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
+import { IoCloseSharp } from "react-icons/io5";
 
 export default function FavoriteMovies() {
   const [rowData, setRowData] = useState([]);
@@ -28,7 +29,6 @@ export default function FavoriteMovies() {
       const data = await response.json();
       data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       const results = data;
-      console.log(results);
       setRowData(results);
    
     }
@@ -57,7 +57,7 @@ export default function FavoriteMovies() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`
       );
       const data = await updateData.json();
-      data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+      // data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       setTimeout(() => {
         setRowData(data);
          const commentMap: { [movieId: string]: string } = {};
@@ -172,8 +172,17 @@ export default function FavoriteMovies() {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-      {rowData.map((movie: any) => (
+   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
+        {rowData.map((movie: any) => (
+          <div key={movie.id} className="relative">
+            <button
+              onClick={() => handleDeleteMovie(movie)}
+              className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
+              aria-label="Remove from Watched"
+            >
+              <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
+            </button>
+  
         <CrudCardMovie
           key={movie.id}
           movie={movie}
@@ -188,7 +197,8 @@ export default function FavoriteMovies() {
           }
           handleAddEditComment={() => handleAddEditComment(movie)}
           handleDeleteComment={() => handleDeleteComment(movie)}
-        />
+       />
+        </div>
       ))}
     </div>
   );

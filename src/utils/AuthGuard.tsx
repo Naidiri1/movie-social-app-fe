@@ -60,6 +60,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       console.log("lest getting back");
     }
 
+     if (!token && !username) {
+      router.push('/login')
+      console.log("lest getting back");
+    }
+
     return () => {
       channel.close();
     };

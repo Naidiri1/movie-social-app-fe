@@ -9,7 +9,7 @@ export default function PhoneNavlist() {
   const pathname = usePathname();
 
   const linkClasses = (path: string) =>
-    `flex items-center ml-2 rounded p-3 ${
+    `flex items-center ml-2 text-black rounded-full px-4 py-2  ${
       pathname === path
         ? "bg-white text-black"
         : "text-white hover:text-blue-400"

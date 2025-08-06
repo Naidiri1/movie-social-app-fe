@@ -65,7 +65,7 @@ const TMDbStyleMovieCard = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center   sm:flex-row bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 gap-6 cursor-move sm:items-start">
+    <div className="w-full flex flex-col items-center justify-center   custom:flex-row bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 gap-6 cursor-move sm:items-start">
       <div className="flex flex-col flex-grow text-blue-gray-600  dark:text-white">
         <h2 className="text-xl font-semibold mt-5 mb-2">{movie.title}</h2>
 

@@ -13,7 +13,6 @@ const SearchResults = () => {
   const [displayImgResult, setDisplayImgResult] = useState(false);
   const { handleAddFavorites, handleAddToWatched, handleAddToTop10 } =
     AddMovieHooks();
-  console.log(movieString);
 
   useEffect(() => {
     if (movieString) {
@@ -22,11 +21,9 @@ const SearchResults = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
-          if (data.lenght > 0) {
+          if (data.results.length > 0) {
             setRowCardData(data.results);
             setDisplayImgResult(false);
-            console.log("fdfddf");
           } else {
             setDisplayImgResult(true);
           }
@@ -57,6 +54,7 @@ const SearchResults = () => {
             priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
+          <p className="mt-4 text-lg font-medium">Try again!</p>
         </div>
       )}
     </div>

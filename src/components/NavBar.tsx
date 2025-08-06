@@ -47,11 +47,16 @@ const NavbarComponent = () => {
   }, [pathname]);
   
   useEffect(() => {
-   if(!username === null || username === undefined){
+    const token = sessionStorage.getItem("access_token");
+   if(!token && !username === null || username === undefined){
          dispatch(restoreUserSession());
+         if(!username){
+          router.push('/login');
+         }
    }
   },[username]);
-  
+
+console.log(username)
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
     const token = sessionStorage.getItem('access_token');
@@ -107,9 +112,9 @@ const NavbarComponent = () => {
         className="p-1 font-medium text-white"
       >
         <Link href="/popular">
-          <button
-            className={`flex items-center ml-2 text-white  rounded ${
-              pathname === "/popular" ? "bg-black p-3" : ""
+         <button
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/popular" ? "bg-black" : ""
             }`}
           >
             Popular
@@ -125,8 +130,8 @@ const NavbarComponent = () => {
       >
         <Link href="/upcoming">
           <button
-            className={`flex items-center ml-2 text-white  rounded ${
-              pathname === "/upcoming" ? "bg-black p-3" : ""
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/upcoming" ? "bg-black" : ""
             }`}
           >
             Upcoming
@@ -141,9 +146,9 @@ const NavbarComponent = () => {
         className="p-1 font-medium text-white"
       >
         <Link href="/favorites">
-          <button
-            className={`flex items-center ml-2 text-white  rounded ${
-              pathname === "/favorites" ? "bg-black p-3" : ""
+        <button
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/favorites" ? "bg-black" : ""
             }`}
           >
             Favorites
@@ -158,9 +163,9 @@ const NavbarComponent = () => {
         className="p-1 font-medium text-white"
       >
         <Link href="/watched">
-          <button
-            className={`flex items-center ml-2 text-white  rounded ${
-              pathname === "/watched" ? "bg-black p-3" : ""
+         <button
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/watched" ? "bg-black" : ""
             }`}
           >
             Watched
@@ -176,8 +181,8 @@ const NavbarComponent = () => {
       >
         <Link href="/top10">
           <button
-            className={`flex items-center ml-2 text-white rounded ${
-              pathname === "/top10" ? "bg-black p-3 " : ""
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/top10" ? "bg-black" : ""
             }`}
           >
             Top 10
@@ -273,7 +278,7 @@ const NavbarComponent = () => {
             <Button
               size="sm"
               onClick={handleLogout}
-              className="flex text-white mb-3 cursor-pointer bg-red-300 hover:underline"
+              className="flex text-white mb-3 ml-5  cursor-pointer bg-red-300 hover:underline"
             >
               Logout
             </Button>

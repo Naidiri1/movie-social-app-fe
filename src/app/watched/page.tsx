@@ -4,13 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
+import { IoCloseSharp } from "react-icons/io5";
 
 export default function WatchedMovies() {
   const [movieData, setMovieData] = useState<any[]>([]);
   const { userId } = useSelector((state: RootState) => state.auth);
-  const [commentUser, setComment] = useState<{ [movieId: string]: string }>(
-    {}
-  );
+  const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
@@ -30,7 +29,6 @@ export default function WatchedMovies() {
       const results = data;
       console.log(results);
       setMovieData(results);
-   
     }
   };
 
@@ -57,15 +55,15 @@ export default function WatchedMovies() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
       );
       const data = await updateData.json();
-      data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+      // data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       setTimeout(() => {
         setMovieData(data);
-         const commentMap: { [movieId: string]: string } = {};
+        const commentMap: { [movieId: string]: string } = {};
         data.forEach((movie: any) => {
           commentMap[movie.id] = movie.comment || "";
         });
         setComment(commentMap);
-      
+
         setSuccessScoreIds((prev) => {
           const updated = new Set(prev);
           updated.delete(movie.id);
@@ -93,7 +91,7 @@ export default function WatchedMovies() {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
       );
-       const data = await updateData.json();
+      const data = await updateData.json();
       data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       setMovieData(data);
     }
@@ -125,7 +123,7 @@ export default function WatchedMovies() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userScore: movie.userScore,
-          comment:  commentUser[movie.id] ?? "",
+          comment: commentUser[movie.id] ?? "",
           commentEnabled: movie.commentEnabled,
         }),
       }
@@ -134,7 +132,7 @@ export default function WatchedMovies() {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
       );
-     const data = await updateData.json();
+      const data = await updateData.json();
       data.sort((a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
       setMovieData(data);
     }
@@ -148,7 +146,7 @@ export default function WatchedMovies() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userScore: movie.userScore,
-          comment: '',
+          comment: "",
           commentEnabled: movie.commentEnabled,
         }),
       }
@@ -161,11 +159,11 @@ export default function WatchedMovies() {
       scoreUpdated.sort(
         (a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0)
       );
-         const commentMap: { [movieId: string]: string } = {};
-        scoreUpdated.forEach((movie: any) => {
-          commentMap[movie.id] = movie.comment || "";
-        });
-        setComment(commentMap);
+      const commentMap: { [movieId: string]: string } = {};
+      scoreUpdated.forEach((movie: any) => {
+        commentMap[movie.id] = movie.comment || "";
+      });
+      setComment(commentMap);
       setMovieData(scoreUpdated);
       console.log(scoreUpdated);
     }
@@ -174,21 +172,29 @@ export default function WatchedMovies() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
       {movieData.map((movie: any) => (
-        <CrudCardMovie
-          key={movie.id}
-          movie={movie}
-          handleAddMovie={(score: any) => handleAddWatched(movie, score, )}
-          successScore={successScoreIds.has(movie.id)}
-          handleDeleteScore={() => handleDeleteScore(movie)}
-          handleDeleteMovie={() => handleDeleteMovie(movie)}
-          initialScore={movie.userScore}
-          comment={commentUser[movie.id] || ""}          
-         setComment={(newComment) =>
-          setComment((prev: any) => ({ ...prev, [movie.id]: newComment }))
-          }
-          handleAddEditComment={() => handleAddEditComment(movie)}
-          handleDeleteComment={() => handleDeleteComment(movie)}
-        />
+        <div key={movie.id} className="relative">
+          <button
+            onClick={() => handleDeleteMovie(movie)}
+            className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
+            aria-label="Remove from Watched"
+          >
+            <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
+          </button>
+          <CrudCardMovie
+            movie={movie}
+            handleAddMovie={(score: any) => handleAddWatched(movie, score)}
+            successScore={successScoreIds.has(movie.id)}
+            handleDeleteScore={() => handleDeleteScore(movie)}
+            handleDeleteMovie={() => handleDeleteMovie(movie)}
+            initialScore={movie.userScore}
+            comment={commentUser[movie.id] || ""}
+            setComment={(newComment) =>
+              setComment((prev: any) => ({ ...prev, [movie.id]: newComment }))
+            }
+            handleAddEditComment={() => handleAddEditComment(movie)}
+            handleDeleteComment={() => handleDeleteComment(movie)}
+          />
+        </div>
       ))}
     </div>
   );
