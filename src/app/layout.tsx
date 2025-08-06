@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 import Navbar from '../components/NavBar';
 import { usePathname } from 'next/navigation';
+import AuthGuard from '../utils/AuthGuard';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
@@ -17,10 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning={true}>
         <Provider store={store}>
           <ThemeProvider>
-            {!hideNavbar && <Navbar />}
-            <main>
-              {children}
-            </main>
+            <AuthGuard>
+              {!hideNavbar && <Navbar />}
+              <main>{children}</main>
+            </AuthGuard>
           </ThemeProvider>
         </Provider>
       </body>

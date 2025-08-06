@@ -42,10 +42,13 @@
     "react-icons": "^4.10.1",
     "react-redux": "^8.1.1",
     "react-select": "^5.7.7",
+    "react-sortablejs": "^6.1.4",
+    "sortablejs": "^1.15.6",
     "tailwindcss": "^3.4.3",
     "typescript": "*"
   },
   "devDependencies": {
+    "@types/sortablejs": "^1.15.8",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-standard-with-typescript": "^39.0.0",

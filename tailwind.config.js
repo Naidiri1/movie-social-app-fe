@@ -8,8 +8,12 @@ module.exports = withMT({
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  theme: {
-    extend: {},
+   theme: {
+    extend: {
+      screens: {
+        custom: '1256px', 
+      },
+    }
   },
 plugins: [require('@tailwindcss/line-clamp')],
 });
