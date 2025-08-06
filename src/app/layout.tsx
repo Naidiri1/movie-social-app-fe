@@ -7,7 +7,6 @@ import { store } from '../redux/store';
 import Navbar from '../components/NavBar';
 import { usePathname } from 'next/navigation';
 import AuthGuard from '../utils/AuthGuard';
-import BroadcastLogoutListener from "@/utils/BroadcastLsitener";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
@@ -20,7 +19,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Provider store={store}>
           <ThemeProvider>
             <AuthGuard>
-                 <BroadcastLogoutListener />
               {!hideNavbar && <Navbar />}
               <main>{children}</main>
             </AuthGuard>
