@@ -24,6 +24,8 @@ import { usePathname } from "next/navigation";
 import { Orbitron } from "next/font/google";
 import PhoneNavlist from "./phoneNavlist";
 import { logout } from '../redux/reducers/authSlice';
+import { restoreUserSession } from "../redux/reducers/authSlice";
+import { AppDispatch } from "../redux/store";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -37,14 +39,19 @@ const NavbarComponent = () => {
   const [openNav, setOpenNav] = React.useState(false);
 
   const pathname = usePathname();
-  const dispatch = useDispatch();
-
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     if (pathname !== "/searchMovie" && pathname !== "/movieDetails") {
       setSearchQuery("");
     }
   }, [pathname]);
-
+  
+  useEffect(() => {
+   if(!username === null || username === undefined){
+         dispatch(restoreUserSession());
+   }
+  },[username]);
+  
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
     const token = sessionStorage.getItem('access_token');
