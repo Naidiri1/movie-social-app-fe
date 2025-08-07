@@ -275,16 +275,8 @@ console.log(username)
             <div className="flex flex-col ">
               <PhoneNavlist />
             </div>
-            <Button
-              size="sm"
-              onClick={handleLogout}
-              className="flex text-white mb-3 ml-5  cursor-pointer bg-red-300 hover:underline"
-            >
-              Logout
-            </Button>
-          </div>
-          <div className="w-full max-w-sm min-w-[200px]">
-            <div className="relative w-full text-white md:w-80">
+               <div className="w-full max-w-sm min-w-[200px]">
+            <div className="relative  mb-5 w-full text-white md:w-80">
               <Input
                 type="search"
                 label="Search Movie"
@@ -317,6 +309,14 @@ console.log(username)
                 Search
               </button>
             </div>
+          </div>
+            <Button
+              size="sm"
+              onClick={handleLogout}
+              className="flex text-white mb-3 ml-5  cursor-pointer bg-red-300 hover:underline"
+            >
+              Logout
+            </Button>
           </div>
         </div>
       </Collapse>
