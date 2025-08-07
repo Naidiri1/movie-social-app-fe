@@ -208,7 +208,7 @@ export default function FavoriteMovies() {
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
             type="search"
-            label="Search Favorite Movie"
+            label="Search Favorite Movies"
             color="blue-gray"
             value={searchQuery}
             onChange={(e: any) => setSearchQuery(e.target.value)}
