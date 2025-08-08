@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
+import { CgSandClock } from "react-icons/cg";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
@@ -8,6 +9,7 @@ interface IconActionsProps {
   handleAddFavorites: () => void;
   handleAddToWatched: () => void;
   handleAddToTop10: () => void;
+  handleAddWatchLater: () => void;
 }
 
 const IconCard: React.FC<IconActionsProps> = ({
@@ -15,6 +17,7 @@ const IconCard: React.FC<IconActionsProps> = ({
   handleAddFavorites,
   handleAddToWatched,
   handleAddToTop10,
+  handleAddWatchLater,
 }) => {
   const [actionMessage, setActionMessage] = useState("");
   const [activeAction, setActiveAction] = useState("");
@@ -33,6 +36,9 @@ const IconCard: React.FC<IconActionsProps> = ({
       case "top10":
         message = `Added "${movie.title}" to Top 10`;
         break;
+      case "watch-later":
+        message = `Added "${movie.title}" to Watch Later`;
+        break;
     }
 
     setActiveAction(type);
@@ -49,6 +55,8 @@ const IconCard: React.FC<IconActionsProps> = ({
       handleAddToWatched();
     } else if (type === "top10") {
       handleAddToTop10();
+    } else if (type === "watch-later") {
+      handleAddWatchLater();
     }
   };
 
@@ -98,8 +106,20 @@ const IconCard: React.FC<IconActionsProps> = ({
           </span>
           <p className="mt-1">Top 10</p>
         </div>
+        <div className="flex mt-5 flex-col items-center">
+          <span
+            onClick={() => handleAction("watch-later")}
+            className={`cursor-pointer  p-2 rounded-full p-1 transition-colors ${
+              isActive("watch-later")
+                ? "bg-orange-500"
+                : "border border-gray-900/5 bg-gray-900/5 hover:bg-gray-900/10"
+            }`}
+          >
+            <CgSandClock className="h-5 w-5 text-white" />
+          </span>
+          <p className="mt-1">Watch Later</p>
+        </div>
       </div>
-
       <div
         className={`h-5 mt-2  text-sm animate-pulse text-center 
         ${activeAction === "watched" ? "text-green-400" : activeAction === "favorite" ? "text-yellow-400" : "text-orange-400"}`}

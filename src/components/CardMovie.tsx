@@ -19,12 +19,14 @@ interface CardMovieProps {
   handleAddFavorites: (movie: any) => void;
   handleAddToWatched: (movie: any) => void;
   handleAddToTop10: (movie: any) => void;
+  handleAddWatchLater: (movie: any) => void;
 }
 const CardMovie: React.FC<CardMovieProps> = ({
   movie,
   handleAddFavorites,
   handleAddToWatched,
   handleAddToTop10,
+  handleAddWatchLater,
 }) => {
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();
@@ -102,6 +104,7 @@ const CardMovie: React.FC<CardMovieProps> = ({
           handleAddFavorites={() => handleAddFavorites(movie)}
           handleAddToWatched={() => handleAddToWatched(movie)}
           handleAddToTop10={() => handleAddToTop10(movie)}
+          handleAddWatchLater={() => handleAddWatchLater(movie)}
         />
       </CardBody>
       <CardFooter className="pt-0">

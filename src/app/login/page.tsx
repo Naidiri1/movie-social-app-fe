@@ -101,18 +101,25 @@ export default function LoginForm() {
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
             />
-            <Button type="submit" fullWidth color="white">
+            <Button
+              type="submit"
+              fullWidth
+              className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
+            >
               Sign In
             </Button>
           </form>
 
-          {success && (
-            <p className="text-green-600 mt-4"> Login successful!</p>
+          {success && <p className="text-green-600 mt-4"> Login successful!</p>}
+          {displayError && (
+            <p className="text-red-600 mt-4">
+              {" "}
+              <strong>{error}</strong>
+            </p>
           )}
-          {displayError && <p className="text-red-600 mt-4"> <strong>{error}</strong></p>}
 
           <p className="text-sm mt-5 text-white">
-           <strong>Don’t have an account?</strong> 
+            <strong>Don’t have an account?</strong>
             <Link
               href="/signup"
               className="ml-2 text-blue-300 text-xl hover:text-blue-500"

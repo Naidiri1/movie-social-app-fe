@@ -9,6 +9,7 @@ interface Movie {
   comment?: string;
   commentEnabled?: boolean;
   publicScore: number;
+  username: string,
 }
 
 interface ItemType {

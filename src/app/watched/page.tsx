@@ -18,10 +18,14 @@ export default function WatchedMovies() {
   const [displayResultsSearch, setDisplayResultsSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
+  const token = sessionStorage.getItem("access_token");
 
   const handleWatchedMovies = async () => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
 
     if (!response.ok) {
@@ -44,7 +48,10 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+               headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userScore: score ?? null,
           comment: movie.comment,
@@ -55,7 +62,10 @@ export default function WatchedMovies() {
     if (response.ok) {
       setSuccessScoreIds((prev) => new Set(prev).add(movie.id));
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+        {
+        headers: { Authorization: `Bearer ${token}` },
+      }
       );
       const data = await updateData.json();
       setTimeout(() => {
@@ -80,7 +90,10 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+         headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userScore: null,
           comment: movie.comment,
@@ -90,7 +103,10 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+         {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
       setMovieData(data);
@@ -102,12 +118,18 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+       headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+          {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
       setMovieData(data);
@@ -119,7 +141,10 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+         headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userScore: movie.userScore,
           comment: commentUser[movie.id] ?? "",
@@ -129,7 +154,10 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+         {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
       setMovieData(data);
@@ -141,7 +169,10 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+         headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userScore: movie.userScore,
           comment: "",
@@ -151,7 +182,10 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+         {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const scoreUpdated = await updateData.json();
 
@@ -177,7 +211,10 @@ export default function WatchedMovies() {
     if (!searchQuery?.trim()) return;
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+       {
+          headers: { Authorization: `Bearer ${token}` },
+        }
     );
 
     if (!response.ok) throw new Error("Failed to fetch movies");
@@ -209,7 +246,7 @@ export default function WatchedMovies() {
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
             type="search"
-            label="Search Favorite Movie"
+            label="Search Watched Movies"
             color="blue-gray"
             value={searchQuery}
             onChange={(e: any) => setSearchQuery(e.target.value)}

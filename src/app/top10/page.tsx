@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import TMDbStyleMovieCard from "../../components/top10CardMovie";
 import { IoCloseSharp } from "react-icons/io5";
+import ShareTop10Toggle from "../../components/ShareToggleTop10";
+import { usePathname } from "next/navigation";
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
@@ -18,73 +20,19 @@ export default function Top10Movies() {
     new Set()
   );
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
-
-  const handleAddScore = async (movie: any, score?: number) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userScore: score ?? null,
-          comment: movie.comment,
-          commentEnabled: movie.commentEnabled,
-        }),
-      }
-    );
-    if (response.ok) {
-      setSuccessScoreIds((prev) => new Set(prev).add(movie.id));
-      const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
-      );
-      const data = await updateData.json();
-
-      setTimeout(() => {
-        setMovieData(data);
-        const commentMap: { [movieId: string]: string } = {};
-        data.forEach((movie: any) => {
-          commentMap[movie.id] = movie.comment || "";
-        });
-        setComment(commentMap);
-
-        setSuccessScoreIds((prev) => {
-          const updated = new Set(prev);
-          updated.delete(movie.id);
-          return updated;
-        });
-      }, 3000);
-      console.log(updateData);
-    }
-  };
-
-  const handleDeleteScore = async (movie: Movie) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userScore: null,
-          comment: movie.comment,
-          commentEnabled: movie.commentEnabled,
-        }),
-      }
-    );
-    if (response.ok) {
-      const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
-      );
-      const data = await updateData.json();
-      setMovieData(data);
-    }
-  };
+  const path = usePathname();
+  const readOnlySharedLink = path?.startsWith("/share/");
+  const token = sessionStorage.getItem("access_token");
 
   const handleDeleteMovie = async (movie: Movie) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
       {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -101,7 +49,10 @@ export default function Top10Movies() {
 
       await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/rank`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(rankedData),
       });
       setMovieData(data);
@@ -113,7 +64,10 @@ export default function Top10Movies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userScore: movie.userScore,
           comment: commentUser[movie.id] ?? "",
@@ -123,7 +77,10 @@ export default function Top10Movies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
       setMovieData(data);
@@ -142,7 +99,10 @@ export default function Top10Movies() {
 
       await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/rank`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(payload),
       });
       console.log("Ranks updated!");
@@ -157,7 +117,10 @@ export default function Top10Movies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userScore: movie.userScore,
           comment: "",
@@ -167,7 +130,10 @@ export default function Top10Movies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const scoreUpdated = await updateData.json();
       const commentMap: { [movieId: string]: string } = {};
@@ -181,7 +147,12 @@ export default function Top10Movies() {
   };
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`)
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setMovieData(data);
@@ -189,6 +160,7 @@ export default function Top10Movies() {
   }, [userId]);
 
   useEffect(() => {
+    if (readOnlySharedLink) return;
     if (!sortableContainerRef.current) return;
 
     const sortable = new Sortable(sortableContainerRef.current, {
@@ -212,6 +184,7 @@ export default function Top10Movies() {
 
   return (
     <div className="w-full flex flex-col">
+      <ShareTop10Toggle />
       <div
         ref={sortableContainerRef}
         className="grid grid-cols-1 md:grid-cols-2 "
@@ -236,11 +209,6 @@ export default function Top10Movies() {
                 <TMDbStyleMovieCard
                   key={movie.id}
                   movie={movie}
-                  handleAddMovie={(score: any) => handleAddScore(movie, score)}
-                  successScore={successScoreIds.has(movie.id)}
-                  handleDeleteScore={() => handleDeleteScore(movie)}
-                  handleDeleteMovie={() => handleDeleteMovie(movie)}
-                  initialScore={movie.userScore}
                   comment={commentUser[movie.id] || ""}
                   setComment={(newComment) =>
                     setComment((prev: any) => ({

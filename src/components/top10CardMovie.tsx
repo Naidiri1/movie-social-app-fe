@@ -6,6 +6,7 @@ import { IoAddCircleOutline, IoCloseSharp } from "react-icons/io5";
 import RatingSlider from "../components/ratingTool";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   Card,
   CardHeader,
@@ -20,11 +21,6 @@ import {
 
 interface Props {
   movie: Movie;
-  handleAddMovie: (movie: any, score?: number) => void;
-  successScore: any;
-  handleDeleteScore: (movie: Movie) => void;
-  initialScore: number | null;
-  handleDeleteMovie: (movie: Movie) => void;
   comment: any;
   setComment: (comment: any) => void;
   handleAddEditComment: (movie: any) => void;
@@ -33,11 +29,6 @@ interface Props {
 
 const TMDbStyleMovieCard = ({
   movie,
-  handleAddMovie,
-  successScore,
-  handleDeleteScore,
-  initialScore,
-  handleDeleteMovie,
   comment,
   setComment,
   handleAddEditComment,
@@ -63,6 +54,9 @@ const TMDbStyleMovieCard = ({
       return "NR";
     }
   };
+
+  const path = usePathname() || "";
+  const readOnlySharedLink = path.startsWith("/share/");
 
   return (
     <div className="w-full flex flex-col items-center justify-center   custom:flex-row bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 gap-6 cursor-move sm:items-start">
@@ -119,11 +113,11 @@ const TMDbStyleMovieCard = ({
         <div className="mt-[26px]">
           <textarea
             value={comment}
-            disabled={isDisabled}
+            disabled={isDisabled || readOnlySharedLink}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="My Opinion..."
+            placeholder={`${!readOnlySharedLink ? "My Opinion" : `No opinion from: ${movie.username} `}`}
             className={`w-full p-2 rounded-md resize-none text-sm min-h-[7rem] ${
-              isDisabled
+              isDisabled || readOnlySharedLink
                 ? "bg-blue-gray-100 text-black"
                 : "bg-zinc-100 dark:bg-zinc-800 border border-gray-300 dark:border-white text-blue-gray-600  dark:text-white"
             }`}
@@ -131,7 +125,7 @@ const TMDbStyleMovieCard = ({
         </div>
 
         <div className="flex flex-row gap-4 justify-evenly items-center flex-wrap">
-          {!isDisabled ? (
+          {!readOnlySharedLink && !isDisabled ? (
             <div className="flex flex-col items-center cursor-pointer">
               <IoAddCircleOutline
                 onClick={() => {
@@ -146,7 +140,7 @@ const TMDbStyleMovieCard = ({
               />
               <p className="text-xs text-blue-gray-600 ">Post</p>
             </div>
-          ) : (
+          ) : !readOnlySharedLink && isDisabled ? (
             <div className="flex flex-col items-center cursor-pointer">
               <FaEdit
                 onClick={() => {
@@ -157,15 +151,16 @@ const TMDbStyleMovieCard = ({
               />
               <p className="text-xs text-blue-gray-600 ">Edit</p>
             </div>
+          ) : null}
+          {!readOnlySharedLink && (
+            <div className="flex flex-col items-center cursor-pointer">
+              <RiDeleteBin6Line
+                onClick={() => handleDeleteComment(movie)}
+                className="h-5 w-5 text-red-500 hover:text-red-300"
+              />
+              <p className="text-xs text-blue-gray-600 ">Delete</p>
+            </div>
           )}
-
-          <div className="flex flex-col items-center cursor-pointer">
-            <RiDeleteBin6Line
-              onClick={() => handleDeleteComment(movie)}
-              className="h-5 w-5 text-red-500 hover:text-red-300"
-            />
-            <p className="text-xs text-blue-gray-600 ">Delete</p>
-          </div>
         </div>
       </div>
     </div>

@@ -96,7 +96,9 @@ const dispatch = useDispatch<AppDispatch>();
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Button type="submit" color="white" fullWidth>
+              <Button type="submit" 
+              className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
+              fullWidth>
                 Create Account
               </Button>
             </form>

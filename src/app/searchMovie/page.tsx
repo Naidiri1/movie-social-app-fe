@@ -11,13 +11,21 @@ const SearchResults = () => {
   const [rowCardData, setRowCardData] = useState([]);
   const movieString = SearchResult();
   const [displayImgResult, setDisplayImgResult] = useState(false);
-  const { handleAddFavorites, handleAddToWatched, handleAddToTop10 } =
-    AddMovieHooks();
+  const {
+    handleAddFavorites,
+    handleAddToWatched,
+    handleAddToTop10,
+    handleAddWatchLater,
+  } = AddMovieHooks();
+  const token = sessionStorage.getItem("access_token");
 
   useEffect(() => {
     if (movieString) {
       fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/search?query=${movieString}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/search?query=${movieString}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       )
         .then((res) => res.json())
         .then((data) => {
@@ -41,6 +49,7 @@ const SearchResults = () => {
             handleAddFavorites={() => handleAddFavorites(movie)}
             handleAddToWatched={() => handleAddToWatched(movie)}
             handleAddToTop10={() => handleAddToTop10(movie)}
+            handleAddWatchLater={() => handleAddWatchLater(movie)}
           />
         ))}
       </div>

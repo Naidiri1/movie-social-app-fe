@@ -9,15 +9,20 @@ import { AddMovieHooks } from "../../components/AddMovieHooks";
 
 export default function Popular() {
   const [rowData, setRowData] = useState([]);
-  const { userId } = useSelector((state: RootState) => state.auth);
-  const { 
+  const {
     handleAddFavorites,
     handleAddToWatched,
-    handleAddToTop10
+    handleAddToTop10,
+    handleAddWatchLater,
   } = AddMovieHooks();
   const PopularMovies = async () => {
+    const token = sessionStorage.getItem("access_token");
+
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
 
     if (!response.ok) {
@@ -36,16 +41,16 @@ export default function Popular() {
     PopularMovies();
   }, []);
 
-  
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
       {rowData.map((movie: any) => (
         <CardMovie
           key={movie.id}
           movie={movie}
-          handleAddFavorites={() =>handleAddFavorites(movie)}
-          handleAddToWatched={() =>handleAddToWatched(movie)}
-          handleAddToTop10={() =>handleAddToTop10(movie)}
+          handleAddFavorites={() => handleAddFavorites(movie)}
+          handleAddToWatched={() => handleAddToWatched(movie)}
+          handleAddToTop10={() => handleAddToTop10(movie)}
+          handleAddWatchLater={() => handleAddWatchLater(movie)}
         />
       ))}
     </div>

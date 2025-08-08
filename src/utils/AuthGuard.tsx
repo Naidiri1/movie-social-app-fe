@@ -53,6 +53,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     if (!token) {
       channel.postMessage({ type: "request-token" });
+      router.push('login');
     }
 
     if (token && !username) {

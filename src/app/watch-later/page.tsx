@@ -5,24 +5,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
-import { Input } from "@material-tailwind/react";
 import Fuse from "fuse.js";
+import { Input } from "@material-tailwind/react";
 
-export default function FavoriteMovies() {
-  const [rowData, setRowData] = useState([]);
+export default function WatchLaterMovies() {
+  const [movieData, setMovieData] = useState<any[]>([]);
   const { userId } = useSelector((state: RootState) => state.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
+  const [displayResultsSearch, setDisplayResultsSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
-  const [displayResultsSearch, setDisplayResultsSearch] = useState(false);
   const token = sessionStorage.getItem("access_token");
 
-  const handleFavoriteMovies = async () => {
+  const handleWatchLaterMovies = async () => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -35,17 +35,17 @@ export default function FavoriteMovies() {
     if (response.ok) {
       const data = await response.json();
       const results = data;
-      setRowData(results);
+      setMovieData(results);
     }
   };
 
   useEffect(() => {
-    handleFavoriteMovies();
+    handleWatchLaterMovies();
   }, []);
 
-  const handleAddFavorites = async (movie: any, score?: number) => {
+  const handleAddWatchLater = async (movie: any, score?: number) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
         headers: {
@@ -62,14 +62,14 @@ export default function FavoriteMovies() {
     if (response.ok) {
       setSuccessScoreIds((prev) => new Set(prev).add(movie.id));
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
       setTimeout(() => {
-        setRowData(data);
+        setMovieData(data);
         const commentMap: { [movieId: string]: string } = {};
         data.forEach((movie: any) => {
           commentMap[movie.id] = movie.comment || "";
@@ -87,7 +87,7 @@ export default function FavoriteMovies() {
 
   const handleDeleteScore = async (movie: Movie) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
         headers: {
@@ -103,22 +103,22 @@ export default function FavoriteMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
-      setRowData(data);
+      setMovieData(data);
     }
   };
 
   const handleDeleteMovie = async (movie: Movie) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "DELETE",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -126,19 +126,19 @@ export default function FavoriteMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
-      setRowData(data);
+      setMovieData(data);
     }
   };
 
   const handleAddEditComment = async (movie: any) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
         headers: {
@@ -154,19 +154,19 @@ export default function FavoriteMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
-      setRowData(data);
+      setMovieData(data);
     }
   };
 
   const handleDeleteComment = async (movie: any) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
         headers: {
@@ -182,24 +182,25 @@ export default function FavoriteMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const scoreUpdated = await updateData.json();
+
       const commentMap: { [movieId: string]: string } = {};
       scoreUpdated.forEach((movie: any) => {
         commentMap[movie.id] = movie.comment || "";
       });
       setComment(commentMap);
-      setRowData(scoreUpdated);
+      setMovieData(scoreUpdated);
     }
   };
 
   const handleResults = (results: any) => {
     if (results.length > 0) {
-      setRowData(results);
+      setMovieData(results);
       setDisplayResultsSearch(true);
     } else {
       setDisplayResultsSearch(false);
@@ -210,7 +211,7 @@ export default function FavoriteMovies() {
     if (!searchQuery?.trim()) return;
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -225,17 +226,17 @@ export default function FavoriteMovies() {
       keys: ["title"],
       threshold: 0.4,
     });
-
     const result = fuse.search(searchQuery);
 
     const matchedMovies = result.map((r) => r.item);
 
     handleResults(matchedMovies);
   };
+
   useEffect(() => {
     if (searchQuery === "" || searchQuery === undefined) {
       setDisplayResultsSearch(false);
-      handleFavoriteMovies();
+      handleWatchLaterMovies();
     }
   }, [searchQuery]);
 
@@ -245,11 +246,11 @@ export default function FavoriteMovies() {
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
             type="search"
-            label="Search Favorite Movies"
+            label="Search Watch Later Movies"
             color="blue-gray"
             value={searchQuery}
             onChange={(e: any) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
+            onKeyDown={(e: any) => {
               if (e.key === "Enter") handleSearch();
             }}
             className="text-white border border-blue-gray-200"
@@ -278,21 +279,19 @@ export default function FavoriteMovies() {
       </div>
       {!displayResultsSearch && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-          {rowData.map((movie: any) => (
+          {movieData.map((movie: any) => (
             <div key={movie.id} className="relative">
               <button
                 onClick={() => handleDeleteMovie(movie)}
                 className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                aria-label="Remove from Watched"
+                aria-label="Remove from Watch Later"
               >
                 <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
               </button>
-
               <CrudCardMovie
-                key={movie.id}
                 movie={movie}
                 handleAddMovie={(score: any) =>
-                  handleAddFavorites(movie, score)
+                  handleAddWatchLater(movie, score)
                 }
                 successScore={successScoreIds.has(movie.id)}
                 handleDeleteScore={() => handleDeleteScore(movie)}
@@ -312,23 +311,22 @@ export default function FavoriteMovies() {
           ))}
         </div>
       )}
+
       {displayResultsSearch && searchFavoriteMovie.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-          {rowData.map((movie: any) => (
+          {movieData.map((movie: any) => (
             <div key={movie.id} className="relative">
               <button
                 onClick={() => handleDeleteMovie(movie)}
                 className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                aria-label="Remove from Watched"
+                aria-label="Remove from Watch Later"
               >
                 <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
               </button>
-
               <CrudCardMovie
-                key={movie.id}
                 movie={movie}
                 handleAddMovie={(score: any) =>
-                  handleAddFavorites(movie, score)
+                  handleAddWatchLater(movie, score)
                 }
                 successScore={successScoreIds.has(movie.id)}
                 handleDeleteScore={() => handleDeleteScore(movie)}
