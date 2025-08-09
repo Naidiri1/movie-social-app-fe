@@ -10,7 +10,7 @@ import { Input } from "@material-tailwind/react";
 import Image from "next/image";
 import movieImg from '../../../public/movie.png'
 
-export default function WatchedMovies() {
+export default function WatchLaterMovies() {
   const [movieData, setMovieData] = useState<any[]>([]);
   const { userId } = useSelector((state: RootState) => state.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
@@ -22,9 +22,9 @@ export default function WatchedMovies() {
   const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
   const token = sessionStorage.getItem("access_token");
 
-  const handleWatchedMovies = async () => {
+  const handleWatchLaterMovies = async () => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -42,15 +42,15 @@ export default function WatchedMovies() {
   };
 
   useEffect(() => {
-    handleWatchedMovies();
+    handleWatchLaterMovies();
   }, []);
 
-  const handleAddWatched = async (movie: any, score?: number) => {
+  const handleAddWatchLater = async (movie: any, score?: number) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-               headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -64,10 +64,10 @@ export default function WatchedMovies() {
     if (response.ok) {
       setSuccessScoreIds((prev) => new Set(prev).add(movie.id));
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
         {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
       setTimeout(() => {
@@ -89,10 +89,10 @@ export default function WatchedMovies() {
 
   const handleDeleteScore = async (movie: Movie) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -105,8 +105,8 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-         {
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -117,10 +117,10 @@ export default function WatchedMovies() {
 
   const handleDeleteMovie = async (movie: Movie) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "DELETE",
-       headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -128,8 +128,8 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-          {
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -140,10 +140,10 @@ export default function WatchedMovies() {
 
   const handleAddEditComment = async (movie: any) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -156,8 +156,8 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-         {
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -168,10 +168,10 @@ export default function WatchedMovies() {
 
   const handleDeleteComment = async (movie: any) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -184,8 +184,8 @@ export default function WatchedMovies() {
     );
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-         {
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -213,10 +213,10 @@ export default function WatchedMovies() {
     if (!searchQuery?.trim()) return;
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-       {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
 
     if (!response.ok) throw new Error("Failed to fetch movies");
@@ -238,7 +238,7 @@ export default function WatchedMovies() {
   useEffect(() => {
     if (searchQuery === "" || searchQuery === undefined) {
       setDisplayResultsSearch(false);
-      handleWatchedMovies();
+      handleWatchLaterMovies();
     }
   }, [searchQuery]);
 
@@ -248,7 +248,7 @@ export default function WatchedMovies() {
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
             type="search"
-            label="Search Watched Movies"
+            label="Search Watch Later Movies"
             color="blue-gray"
             value={searchQuery}
             onChange={(e: any) => setSearchQuery(e.target.value)}
@@ -281,18 +281,20 @@ export default function WatchedMovies() {
       </div>
       {!displayResultsSearch && movieData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-          {movieData.map((movie: any) => (
+          {movieData.length > 0 && movieData.map((movie: any) => (
             <div key={movie.id} className="relative">
               <button
                 onClick={() => handleDeleteMovie(movie)}
                 className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                aria-label="Remove from Watched"
+                aria-label="Remove from Watch Later"
               >
                 <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
               </button>
               <CrudCardMovie
                 movie={movie}
-                handleAddMovie={(score: any) => handleAddWatched(movie, score)}
+                handleAddMovie={(score: any) =>
+                  handleAddWatchLater(movie, score)
+                }
                 successScore={successScoreIds.has(movie.id)}
                 handleDeleteScore={() => handleDeleteScore(movie)}
                 handleDeleteMovie={() => handleDeleteMovie(movie)}
@@ -310,8 +312,9 @@ export default function WatchedMovies() {
             </div>
           ))}
         </div>
-      ) :(
-       <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+      ) : (
+        
+         <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
           <Image
             src={movieImg}
             alt="No movie results"
@@ -320,9 +323,9 @@ export default function WatchedMovies() {
             priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
-        </div>  
+        </div>
       )}
-
+    
       {displayResultsSearch && searchFavoriteMovie.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
           {movieData.map((movie: any) => (
@@ -330,13 +333,15 @@ export default function WatchedMovies() {
               <button
                 onClick={() => handleDeleteMovie(movie)}
                 className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                aria-label="Remove from Watched"
+                aria-label="Remove from Watch Later"
               >
                 <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
               </button>
               <CrudCardMovie
                 movie={movie}
-                handleAddMovie={(score: any) => handleAddWatched(movie, score)}
+                handleAddMovie={(score: any) =>
+                  handleAddWatchLater(movie, score)
+                }
                 successScore={successScoreIds.has(movie.id)}
                 handleDeleteScore={() => handleDeleteScore(movie)}
                 handleDeleteMovie={() => handleDeleteMovie(movie)}

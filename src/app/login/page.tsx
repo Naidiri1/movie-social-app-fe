@@ -18,41 +18,63 @@ export default function LoginForm() {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(false);
+  e.preventDefault();
+  setError("");
+  setSuccess(false);
+  setDisplayError(false);
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    };
-    fetch("http://localhost:8080/api/auth/login", requestOptions)
-      .then(async (response) => {
-        console.log(response);
-        if (response.status === 200) {
-          setDisplayError(false);
-          return await response.json();
-        } else {
-          setDisplayError(true);
-          setError("User or Password are incorrect, try again!");
-        }
-      })
-      .then((result) => {
-        console.log(result);
+  const u = username.trim();
+  const p = password;
 
-        if (result === undefined || null) {
-          setDisplayError(true);
-          setError("User or Password are incorrect, try again!");
-        } else {
-          router.push("./popular");
-          sessionStorage.setItem("access_token", result.access_token);
-        }
-      })
-      .catch((err: any) => {
-        console.error(err);
-      });
-  };
+  const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
+
+  const usernameOk = usernameRegex.test(u);
+  const passwordOk = p.length >= 8;
+
+
+  if (!usernameOk || !passwordOk) {
+    setDisplayError(true);
+    setError("Please fix the highlighted fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
+      }
+    );
+
+    if (!res.ok) {
+      let serverMsg = "User or Password are incorrect, try again!";
+      try {
+        const data = await res.json();
+        if (data?.message || data?.error) serverMsg = data.message || data.error;
+      } catch { 
+
+       }
+      throw new Error(serverMsg);
+    }
+
+    const result = await res.json(); 
+    if (!result?.access_token) {
+      throw new Error("Login response missing access_token");
+    }
+
+    sessionStorage.setItem("access_token", result.access_token);
+    setSuccess(true);
+    setDisplayError(false);
+    router.push("/popular");
+  } catch (err: any) {
+    console.error(err);
+    setDisplayError(true);
+    setError(err?.message || "User or Password are incorrect, try again!");
+  }
+};
+
 
   useEffect(() => {
     const checkSessionAndRedirect = () => {
@@ -100,19 +122,26 @@ export default function LoginForm() {
               color="white"
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
-            />
-            <Button type="submit" fullWidth color="white">
+           />
+            <Button
+              type="submit"
+              fullWidth
+              className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
+            >
               Sign In
             </Button>
           </form>
 
-          {success && (
-            <p className="text-green-600 mt-4"> Login successful!</p>
+          {success && <p className="text-green-600 mt-4"> Login successful!</p>}
+          {displayError && (
+            <p className="text-red-600 mt-4">
+              {" "}
+              <strong>{error}</strong>
+            </p>
           )}
-          {displayError && <p className="text-red-600 mt-4"> <strong>{error}</strong></p>}
 
           <p className="text-sm mt-5 text-white">
-           <strong>Don’t have an account?</strong> 
+            <strong>Don’t have an account?</strong>
             <Link
               href="/signup"
               className="ml-2 text-blue-300 text-xl hover:text-blue-500"

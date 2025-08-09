@@ -4,6 +4,7 @@ import { Typography } from "@material-tailwind/react";
 import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
 import { IoHome } from "react-icons/io5";
 import { IoArrowUndoSharp } from "react-icons/io5";
+import { CgSandClock } from "react-icons/cg";
 
 export default function PhoneNavlist() {
   const pathname = usePathname();
@@ -55,6 +56,14 @@ export default function PhoneNavlist() {
         <Link href="/top10">
           <button className={linkClasses("/top10")}>
             Top 10 <Trophy className="h-5 w-5 ml-1" />
+          </button>
+        </Link>
+      </Typography>
+
+      <Typography as="li" variant="small" className="font-medium">
+        <Link href="/watch-later">
+          <button className={linkClasses("/watch-later")}>
+            Watch Later <CgSandClock className="h-5 w-5 ml-1" />
           </button>
         </Link>
       </Typography>

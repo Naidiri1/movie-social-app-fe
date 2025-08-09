@@ -4,14 +4,17 @@ import { useCallback, useState } from "react";
 
 export const AddMovieHooks = () => {
   const { userId } = useSelector((state: RootState) => state.auth);
-  console.log(userId);
+  const token = sessionStorage.getItem("access_token");
 
   const verifyMovieAlreadyAdded = async (
     movie: any,
-    listType: "favorites" | "top10" | "watched"
+    listType: "favorites" | "top10" | "watched" | "watch-later"
   ): Promise<boolean> => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${listType}?userId=${userId}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${listType}?userId=${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
 
     if (response.ok) {
@@ -32,7 +35,10 @@ export const AddMovieHooks = () => {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({
               movieId: movie.id,
               title: movie.title,
@@ -66,7 +72,10 @@ export const AddMovieHooks = () => {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({
               movieId: movie.id,
               title: movie.title,
@@ -94,7 +103,10 @@ export const AddMovieHooks = () => {
     async (movie: any) => {
       try {
         const top10Response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         if (!top10Response.ok) {
           throw new Error("Failed to fetch top10");
@@ -112,6 +124,10 @@ export const AddMovieHooks = () => {
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${lastRankedMovie.id}?userId=${userId}`,
             {
               method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
             }
           );
         }
@@ -119,7 +135,10 @@ export const AddMovieHooks = () => {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({
               movieId: movie.id,
               title: movie.title,
@@ -145,9 +164,47 @@ export const AddMovieHooks = () => {
     [userId]
   );
 
+  const handleAddWatchLater = useCallback(async (movie: any) => {
+    try {
+      const alreadyExist = await verifyMovieAlreadyAdded(movie, "watch-later");
+      if (alreadyExist) {
+        return;
+      } else {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              movieId: movie.id,
+              title: movie.title,
+              posterPath: movie.poster_path,
+              comment: "",
+              userScore: null,
+              commentEnabled: true,
+              releasedDate: movie.release_date,
+              movieDescription: movie.overview,
+              publicScore: parseFloat(movie.vote_average.toFixed(1)),
+            }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to add to watch later", error);
+    }
+  }, []);
+
   return {
     handleAddFavorites,
     handleAddToWatched,
     handleAddToTop10,
+    handleAddWatchLater,
   };
 };

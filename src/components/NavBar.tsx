@@ -23,9 +23,10 @@ import { IoArrowUndoSharp } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import { Orbitron } from "next/font/google";
 import PhoneNavlist from "./phoneNavlist";
-import { logout } from '../redux/reducers/authSlice';
+import { logout } from "../redux/reducers/authSlice";
 import { restoreUserSession } from "../redux/reducers/authSlice";
 import { AppDispatch } from "../redux/store";
+import { CgSandClock } from "react-icons/cg";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -45,29 +46,32 @@ const NavbarComponent = () => {
       setSearchQuery("");
     }
   }, [pathname]);
-  
-  useEffect(() => {
     const token = sessionStorage.getItem("access_token");
-   if(!token && !username === null || username === undefined){
-         dispatch(restoreUserSession());
-         if(!username){
-          router.push('/login');
-         }
-   }
-  },[username]);
 
-console.log(username)
+  useEffect(() => {
+    if ((!token && !username === null) || username === undefined) {
+      dispatch(restoreUserSession());
+      if (!username) {
+        router.push("/login");
+      }
+    }
+  }, [username,pathname, token]);
+
+  console.log(username);
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem("access_token");
     if (token) {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logoutUser`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logoutUser`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     }
 
     dispatch(logout());
@@ -112,7 +116,7 @@ console.log(username)
         className="p-1 font-medium text-white"
       >
         <Link href="/popular">
-         <button
+          <button
             className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
               pathname === "/popular" ? "bg-black" : ""
             }`}
@@ -146,7 +150,7 @@ console.log(username)
         className="p-1 font-medium text-white"
       >
         <Link href="/favorites">
-        <button
+          <button
             className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
               pathname === "/favorites" ? "bg-black" : ""
             }`}
@@ -163,7 +167,7 @@ console.log(username)
         className="p-1 font-medium text-white"
       >
         <Link href="/watched">
-         <button
+          <button
             className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
               pathname === "/watched" ? "bg-black" : ""
             }`}
@@ -187,6 +191,23 @@ console.log(username)
           >
             Top 10
             <Trophy className="h-5 w-5 ml-1 text-white" />
+          </button>
+        </Link>
+      </Typography>
+
+      <Typography
+        as="li"
+        variant="small"
+        className="p-1 font-medium text-white"
+      >
+        <Link href="/watch-later">
+          <button
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/watch-later" ? "bg-black" : ""
+            }`}
+          >
+            Watch Later
+            <CgSandClock className="h-5 w-5 ml-1 text-white" />
           </button>
         </Link>
       </Typography>
@@ -275,6 +296,41 @@ console.log(username)
             <div className="flex flex-col ">
               <PhoneNavlist />
             </div>
+            <div className="w-full max-w-sm min-w-[200px]">
+              <div className="relative  mb-5 w-full text-white md:w-80">
+                <Input
+                  type="search"
+                  label="Search Movie"
+                  color="blue-gray"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearch();
+                  }}
+                  className="text-white border border-blue-gray-200"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="absolute top-1 right-1 flex items-center rounded bg-gray-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
+                  type="button"
+                  placeholder="Search Movie..."
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4 mr-1"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Search
+                </button>
+              </div>
+            </div>
             <Button
               size="sm"
               onClick={handleLogout}
@@ -282,41 +338,6 @@ console.log(username)
             >
               Logout
             </Button>
-          </div>
-          <div className="w-full max-w-sm min-w-[200px]">
-            <div className="relative w-full text-white md:w-80">
-              <Input
-                type="search"
-                label="Search Movie"
-                color="blue-gray"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSearch();
-                }}
-                className="text-white border border-blue-gray-200"
-              />
-              <button
-                onClick={handleSearch}
-                className="absolute top-1 right-1 flex items-center rounded bg-gray-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
-                type="button"
-                placeholder="Search Movie..."
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-4 h-4 mr-1"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Search
-              </button>
-            </div>
           </div>
         </div>
       </Collapse>
