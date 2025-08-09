@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import Navbar from "@/components/NavBar";
-const token = sessionStorage.getItem("access_token");
+import Image from "next/image";
+
 
 export default function Home() {
   const [movieQuery, setMovieQuery] = useState<string>("");
+const token = sessionStorage.getItem("access_token");
 
   const searchMovies = async () => {
     const response = await fetch(

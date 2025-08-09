@@ -7,6 +7,8 @@ import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import { Input } from "@material-tailwind/react";
 import Fuse from "fuse.js";
+import Image from "next/image";
+import movieImg from '../../../public/movie.png'
 
 export default function FavoriteMovies() {
   const [rowData, setRowData] = useState([]);
@@ -241,7 +243,7 @@ export default function FavoriteMovies() {
 
   return (
     <div>
-      <div className="w-full justify-center items-center flex ">
+      <div className="w-full justify-center  items-center flex ">
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
             type="search"
@@ -276,8 +278,8 @@ export default function FavoriteMovies() {
           </button>
         </div>
       </div>
-      {!displayResultsSearch && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
+      {!displayResultsSearch && rowData.length > 0 ? (
+        <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
           {rowData.map((movie: any) => (
             <div key={movie.id} className="relative">
               <button
@@ -310,6 +312,17 @@ export default function FavoriteMovies() {
               />
             </div>
           ))}
+        </div>
+      ) : (
+       <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+          <Image
+            src={movieImg}
+            alt="No movie results"
+            width={300}
+            height={350}
+            priority
+          />
+          <p className="mt-4 text-lg font-medium">No Movie Results</p>
         </div>
       )}
       {displayResultsSearch && searchFavoriteMovie.length > 0 && (

@@ -7,6 +7,8 @@ import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
 import { Input } from "@material-tailwind/react";
+import Image from "next/image";
+import movieImg from '../../../public/movie.png'
 
 export default function WatchedMovies() {
   const [movieData, setMovieData] = useState<any[]>([]);
@@ -277,7 +279,7 @@ export default function WatchedMovies() {
           </button>
         </div>
       </div>
-      {!displayResultsSearch && (
+      {!displayResultsSearch && movieData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
           {movieData.map((movie: any) => (
             <div key={movie.id} className="relative">
@@ -308,6 +310,17 @@ export default function WatchedMovies() {
             </div>
           ))}
         </div>
+      ) :(
+       <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+          <Image
+            src={movieImg}
+            alt="No movie results"
+            width={300}
+            height={350}
+            priority
+          />
+          <p className="mt-4 text-lg font-medium">No Movie Results</p>
+        </div>  
       )}
 
       {displayResultsSearch && searchFavoriteMovie.length > 0 && (

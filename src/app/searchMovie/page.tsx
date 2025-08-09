@@ -53,7 +53,7 @@ const SearchResults = () => {
           />
         ))}
       </div>
-      {displayImgResult && (
+      {rowCardData.length < 0 && displayImgResult && (
         <div className="flex flex-col items-center justify-center h-[500px] w-full text-white">
           <Image
             src={noResult}

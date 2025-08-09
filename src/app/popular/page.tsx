@@ -6,6 +6,8 @@ import CardMovie from "../../components/CardMovie";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
+import Image from "next/image";
+import movieImg from '../../../public/movie.png'
 
 export default function Popular() {
   const [rowData, setRowData] = useState([]);
@@ -43,7 +45,7 @@ export default function Popular() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-      {rowData.map((movie: any) => (
+      {rowData.length > 0 ? rowData.map((movie: any) => (
         <CardMovie
           key={movie.id}
           movie={movie}
@@ -52,7 +54,20 @@ export default function Popular() {
           handleAddToTop10={() => handleAddToTop10(movie)}
           handleAddWatchLater={() => handleAddWatchLater(movie)}
         />
-      ))}
+      )) : (
+ <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+          <Image
+            src={movieImg}
+            alt="No movie results"
+            width={300}
+            height={350}
+            priority
+          />
+          <p className="mt-4 text-lg font-medium">No Movie Results</p>
+        </div>
+      )
+      }
+
     </div>
   );
 }

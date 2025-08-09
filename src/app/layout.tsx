@@ -8,7 +8,7 @@ import Navbar from "../components/NavBar";
 import { usePathname } from "next/navigation";
 import AuthGuard from "../utils/AuthGuard";
 import Footer from "../components/Footer";
-
+import ScrollArrows from "../components/ScrollArrows"
 export default function RootLayout({
   children,
 }: {
@@ -25,6 +25,7 @@ export default function RootLayout({
       {!hideNavbarFooter && <Navbar />}
       <main>{children}</main>
       {!hideNavbarFooter && <Footer />}
+      {!hideNavbarFooter && <ScrollArrows />}
     </>
   );
 

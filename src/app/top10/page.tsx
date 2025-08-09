@@ -8,6 +8,8 @@ import TMDbStyleMovieCard from "../../components/top10CardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import ShareTop10Toggle from "../../components/ShareToggleTop10";
 import { usePathname } from "next/navigation";
+import movieImg from "../../../public/movie.png";
+import Image from "next/image";
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
@@ -189,44 +191,57 @@ export default function Top10Movies() {
         ref={sortableContainerRef}
         className="grid grid-cols-1 md:grid-cols-2 "
       >
-        {movieData.map((movie: any, index) => (
-          <div
-            key={movie?.id ?? index}
-            className="flex items-start highlight draggable-item m-5 bg-white dark:bg-zinc-900 rounded-lg shadow "
-          >
-            <div className="w-6 pt-2 pr-1 items-center mt-[5rem] mr-5 ml-5 text-2xl font-bold text-white text-right">
-              {index + 1}
+        {movieData.length > 0 ? (
+          movieData.map((movie: any, index) => (
+            <div
+              key={movie?.id ?? index}
+              className="flex items-start highlight draggable-item m-5 bg-white dark:bg-zinc-900 rounded-lg shadow "
+            >
+              <div className="w-6 pt-2 pr-1 items-center mt-[5rem] mr-5 ml-5 text-2xl font-bold text-white text-right">
+                {index + 1}
+              </div>
+              {movie ? (
+                <div className="relative">
+                  <button
+                    onClick={() => handleDeleteMovie(movie)}
+                    className="absolute top-2 right-2 z-10 bg-red-200 hover:bg-red/80 p-1 border border-red-500 rounded-full"
+                    aria-label="Remove from Top 10"
+                  >
+                    <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
+                  </button>
+                  <TMDbStyleMovieCard
+                    key={movie.id}
+                    movie={movie}
+                    comment={commentUser[movie.id] || ""}
+                    setComment={(newComment) =>
+                      setComment((prev: any) => ({
+                        ...prev,
+                        [movie.id]: newComment,
+                      }))
+                    }
+                    handleAddEditComment={() => handleAddEditComment(movie)}
+                    handleDeleteComment={() => handleDeleteComment(movie)}
+                  />
+                </div>
+              ) : (
+                <div className="h-24 border border-dashed border-gray-300 dark:border-zinc-700 rounded flex items-center justify-center text-sm text-gray-400">
+                  Drop movie here
+                </div>
+              )}
             </div>
-            {movie ? (
-              <div className="relative">
-                <button
-                  onClick={() => handleDeleteMovie(movie)}
-                  className="absolute top-2 right-2 z-10 bg-red-200 hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                  aria-label="Remove from Top 10"
-                >
-                  <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
-                </button>
-                <TMDbStyleMovieCard
-                  key={movie.id}
-                  movie={movie}
-                  comment={commentUser[movie.id] || ""}
-                  setComment={(newComment) =>
-                    setComment((prev: any) => ({
-                      ...prev,
-                      [movie.id]: newComment,
-                    }))
-                  }
-                  handleAddEditComment={() => handleAddEditComment(movie)}
-                  handleDeleteComment={() => handleDeleteComment(movie)}
-                />
-              </div>
-            ) : (
-              <div className="h-24 border border-dashed border-gray-300 dark:border-zinc-700 rounded flex items-center justify-center text-sm text-gray-400">
-                Drop movie here
-              </div>
-            )}
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+            <Image
+              src={movieImg}
+              alt="No movie results"
+              width={300}
+              height={350}
+              priority
+            />
+            <p className="mt-4 text-lg font-medium">No Movie Results</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
