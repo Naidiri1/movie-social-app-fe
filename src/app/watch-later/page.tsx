@@ -31,7 +31,7 @@ export default function WatchLaterMovies() {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch movies");
+      console.error("Failed to fetch movies");
     }
 
     if (response.ok) {
@@ -216,7 +216,7 @@ export default function WatchLaterMovies() {
       }
     );
 
-    if (!response.ok) throw new Error("Failed to fetch movies");
+    if (!response.ok) console.error("Failed to fetch movies");
 
     const data = await response.json();
     setMovieData(data);
