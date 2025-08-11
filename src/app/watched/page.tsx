@@ -203,9 +203,6 @@ export default function WatchedMovies() {
   const handleResults = (results: any) => {
     if (results.length > 0) {
       setMovieData(results);
-      setDisplayResultsSearch(true);
-    } else {
-      setDisplayResultsSearch(false);
     }
   };
 
@@ -222,7 +219,7 @@ export default function WatchedMovies() {
     if (!response.ok) throw new Error("Failed to fetch movies");
 
     const data = await response.json();
-    setSearchFavoriteMovie(data);
+    setMovieData(data);
 
     const fuse = new Fuse(data, {
       keys: ["title"],
@@ -237,7 +234,6 @@ export default function WatchedMovies() {
 
   useEffect(() => {
     if (searchQuery === "" || searchQuery === undefined) {
-      setDisplayResultsSearch(false);
       handleWatchedMovies();
     }
   }, [searchQuery]);
@@ -279,7 +275,7 @@ export default function WatchedMovies() {
           </button>
         </div>
       </div>
-      {!displayResultsSearch && movieData.length > 0 ? (
+      {movieData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
           {movieData.map((movie: any) => (
             <div key={movie.id} className="relative">
@@ -321,39 +317,6 @@ export default function WatchedMovies() {
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
         </div>  
-      )}
-
-      {displayResultsSearch && searchFavoriteMovie.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-          {movieData.map((movie: any) => (
-            <div key={movie.id} className="relative">
-              <button
-                onClick={() => handleDeleteMovie(movie)}
-                className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                aria-label="Remove from Watched"
-              >
-                <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
-              </button>
-              <CrudCardMovie
-                movie={movie}
-                handleAddMovie={(score: any) => handleAddWatched(movie, score)}
-                successScore={successScoreIds.has(movie.id)}
-                handleDeleteScore={() => handleDeleteScore(movie)}
-                handleDeleteMovie={() => handleDeleteMovie(movie)}
-                initialScore={movie.userScore}
-                comment={commentUser[movie.id] || ""}
-                setComment={(newComment) =>
-                  setComment((prev: any) => ({
-                    ...prev,
-                    [movie.id]: newComment,
-                  }))
-                }
-                handleAddEditComment={() => handleAddEditComment(movie)}
-                handleDeleteComment={() => handleDeleteComment(movie)}
-              />
-            </div>
-          ))}
-        </div>
       )}
     </div>
   );
