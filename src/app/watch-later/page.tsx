@@ -6,12 +6,13 @@ import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
-import { Input } from "@material-tailwind/react";
 import Image from "next/image";
-import movieImg from '../../../public/movie.png'
+import movieImg from "../../../public/movie.png";
+import { Button, Card, Input, Typography } from "@material-tailwind/react";
 
 export default function WatchLaterMovies() {
   const [movieData, setMovieData] = useState<any[]>([]);
+  const [allWatchLater, setAllWatchLater] = useState([]);
   const { userId } = useSelector((state: RootState) => state.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
@@ -21,6 +22,10 @@ export default function WatchLaterMovies() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
   const token = sessionStorage.getItem("access_token");
+  const [filteredWatchLater, setFilteredWatchLater] = useState<any>([]);
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
 
   const handleWatchLaterMovies = async () => {
     const response = await fetch(
@@ -38,12 +43,48 @@ export default function WatchLaterMovies() {
       const data = await response.json();
       const results = data;
       setMovieData(results);
+      setAllWatchLater(results);
+      setFilteredWatchLater(results);
+    }
+  };
+
+  const filterByGenre = (genreName: string | null) => {
+    setSelectedGenre(genreName);
+    setCurrentPage(1);
+
+    if (genreName === null) {
+      setFilteredWatchLater(allWatchLater);
+    } else {
+      const filtered = allWatchLater.filter((movie: any) => {
+        if (movie.genres && Array.isArray(movie.genres)) {
+          return movie.genres.includes(genreName);
+        }
+        return false;
+      });
+      setFilteredWatchLater(filtered);
     }
   };
 
   useEffect(() => {
     handleWatchLaterMovies();
   }, []);
+
+  const getAvailableGenres = () => {
+    const allGenres = new Set<string>();
+
+    allWatchLater.forEach((movie: any) => {
+      if (movie.genres && Array.isArray(movie.genres)) {
+        movie.genres.forEach((genre: string) => allGenres.add(genre));
+      }
+    });
+
+    return Array.from(allGenres).sort();
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleAddWatchLater = async (movie: any, score?: number) => {
     const response = await fetch(
@@ -72,6 +113,8 @@ export default function WatchLaterMovies() {
       const data = await updateData.json();
       setTimeout(() => {
         setMovieData(data);
+        setAllWatchLater(data);
+        setFilteredWatchLater(data);
         const commentMap: { [movieId: string]: string } = {};
         data.forEach((movie: any) => {
           commentMap[movie.id] = movie.comment || "";
@@ -112,6 +155,8 @@ export default function WatchLaterMovies() {
       );
       const data = await updateData.json();
       setMovieData(data);
+      setAllWatchLater(data);
+      setFilteredWatchLater(data);
     }
   };
 
@@ -135,6 +180,8 @@ export default function WatchLaterMovies() {
       );
       const data = await updateData.json();
       setMovieData(data);
+      setAllWatchLater(data);
+      setFilteredWatchLater(data);
     }
   };
 
@@ -163,6 +210,8 @@ export default function WatchLaterMovies() {
       );
       const data = await updateData.json();
       setMovieData(data);
+      setAllWatchLater(data);
+      setFilteredWatchLater(data);
     }
   };
 
@@ -197,17 +246,16 @@ export default function WatchLaterMovies() {
       });
       setComment(commentMap);
       setMovieData(scoreUpdated);
-    }
-  };
-
-  const handleResults = (results: any) => {
-    if (results.length > 0) {
-      setMovieData(results);
+      setAllWatchLater(scoreUpdated);
+      setFilteredWatchLater(scoreUpdated);
     }
   };
 
   const handleSearch = async () => {
-    if (!searchQuery?.trim()) return;
+    if (!searchQuery?.trim()) {
+      filterByGenre(selectedGenre);
+      return;
+    }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
@@ -219,8 +267,6 @@ export default function WatchLaterMovies() {
     if (!response.ok) console.error("Failed to fetch movies");
 
     const data = await response.json();
-    setMovieData(data);
-
     const fuse = new Fuse(data, {
       keys: ["title"],
       threshold: 0.4,
@@ -229,17 +275,64 @@ export default function WatchLaterMovies() {
 
     const matchedMovies = result.map((r) => r.item);
 
-    handleResults(matchedMovies);
+    setFilteredWatchLater(matchedMovies);
+    setSelectedGenre(null);
   };
 
   useEffect(() => {
     if (searchQuery === "" || searchQuery === undefined) {
-      handleWatchLaterMovies();
+      setFilteredWatchLater(allWatchLater);
+      setSelectedGenre(null);
+      setCurrentPage(1);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allWatchLater]);
+
+  const availableGenres = getAvailableGenres();
+  const totalPages = Math.ceil(filteredWatchLater.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentMovies = filteredWatchLater.slice(startIndex, endIndex);
 
   return (
     <div>
+      {availableGenres.length > 1 && (
+        <div className="mb-6 p-4 bg-gray-900 rounded-lg mx-5">
+          <Typography variant="h6" className="text-white mb-4">
+            Filter by Genre
+          </Typography>
+
+          <div className="flex flex-wrap gap-1">
+            <Button
+              size="sm"
+              variant={selectedGenre === null ? "filled" : "outlined"}
+              color={selectedGenre === null ? "red" : "white"}
+              onClick={() => filterByGenre(null)}
+              className="mb-1 text-xs px-2 py-1"
+            >
+              All ({allWatchLater.length})
+            </Button>
+
+            {availableGenres.map((genre) => {
+              const count = allWatchLater.filter(
+                (movie: any) => movie.genres && movie.genres.includes(genre)
+              ).length;
+
+              return (
+                <Button
+                  key={genre}
+                  size="sm"
+                  variant={selectedGenre === genre ? "filled" : "outlined"}
+                  color={selectedGenre === genre ? "red" : "white"}
+                  onClick={() => filterByGenre(genre)}
+                  className="mb-1 text-xs px-2 py-1"
+                >
+                  {genre} ({count})
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+      )}
       <div className="w-full justify-center items-center flex ">
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
@@ -275,41 +368,42 @@ export default function WatchLaterMovies() {
           </button>
         </div>
       </div>
-      {movieData.length > 0 ? (
+      {filteredWatchLater.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-          {movieData.length > 0 && movieData.map((movie: any) => (
-            <div key={movie.id} className="relative">
-              <button
-                onClick={() => handleDeleteMovie(movie)}
-                className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
-                aria-label="Remove from Watch Later"
-              >
-                <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
-              </button>
-              <CrudCardMovie
-                movie={movie}
-                handleAddMovie={(score: any) =>
-                  handleAddWatchLater(movie, score)
-                }
-                successScore={successScoreIds.has(movie.id)}
-                handleDeleteScore={() => handleDeleteScore(movie)}
-                handleDeleteMovie={() => handleDeleteMovie(movie)}
-                initialScore={movie.userScore}
-                comment={commentUser[movie.id] || ""}
-                setComment={(newComment) =>
-                  setComment((prev: any) => ({
-                    ...prev,
-                    [movie.id]: newComment,
-                  }))
-                }
-                handleAddEditComment={() => handleAddEditComment(movie)}
-                handleDeleteComment={() => handleDeleteComment(movie)}
-              />
-            </div>
-          ))}
+          {currentMovies.length > 0 &&
+            currentMovies.map((movie: any) => (
+              <div key={movie.id} className="relative">
+                <button
+                  onClick={() => handleDeleteMovie(movie)}
+                  className="absolute right-20 top-8 z-10 bg-none hover:bg-red/80 p-1 border border-red-500 rounded-full"
+                  aria-label="Remove from Watch Later"
+                >
+                  <IoCloseSharp className="h-3 w-3 text-red-800 hover:text-yellow-500" />
+                </button>
+                <CrudCardMovie
+                  movie={movie}
+                  handleAddMovie={(score: any) =>
+                    handleAddWatchLater(movie, score)
+                  }
+                  successScore={successScoreIds.has(movie.id)}
+                  handleDeleteScore={() => handleDeleteScore(movie)}
+                  handleDeleteMovie={() => handleDeleteMovie(movie)}
+                  initialScore={movie.userScore}
+                  comment={commentUser[movie.id] || ""}
+                  setComment={(newComment) =>
+                    setComment((prev: any) => ({
+                      ...prev,
+                      [movie.id]: newComment,
+                    }))
+                  }
+                  handleAddEditComment={() => handleAddEditComment(movie)}
+                  handleDeleteComment={() => handleDeleteComment(movie)}
+                />
+              </div>
+            ))}
         </div>
       ) : (
-         <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+        <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
           <Image
             src={movieImg}
             alt="No movie results"
@@ -318,6 +412,49 @@ export default function WatchLaterMovies() {
             priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8 mb-4">
+          <div className="flex items-center gap-1">
+            <Button
+              size="sm"
+              variant="outlined"
+              color="white"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1"
+            >
+              ←
+            </Button>
+
+            {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => {
+              const page = i + 1;
+              return (
+                <Button
+                  key={page}
+                  size="sm"
+                  variant={currentPage === page ? "filled" : "outlined"}
+                  color={currentPage === page ? "red" : "white"}
+                  onClick={() => handlePageChange(page)}
+                  className="min-w-[32px] text-xs px-2 py-1"
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            <Button
+              size="sm"
+              variant="outlined"
+              color="white"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1"
+            >
+              →
+            </Button>
+          </div>
         </div>
       )}
     </div>

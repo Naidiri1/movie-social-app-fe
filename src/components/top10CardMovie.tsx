@@ -27,6 +27,28 @@ interface Props {
   handleDeleteComment: (movie: any) => void;
 }
 
+const GENRE_MAP: { [key: number]: string } = {
+  28: "Action",
+  12: "Adventure", 
+  16: "Animation",
+  35: "Comedy",
+  80: "Crime",
+  99: "Documentary",
+  18: "Drama",
+  10751: "Family",
+  14: "Fantasy",
+  36: "History",
+  27: "Horror",
+  10402: "Music",
+  9648: "Mystery",
+  10749: "Romance",
+  878: "Science Fiction",
+  10770: "TV Movie",
+  53: "Thriller",
+  10752: "War",
+  37: "Western"
+};
+
 const TMDbStyleMovieCard = ({
   movie,
   comment,
@@ -55,6 +77,27 @@ const TMDbStyleMovieCard = ({
     }
   };
 
+  const getGenreNames = (movie: any) => {
+    if (movie.genres && Array.isArray(movie.genres)) {
+      if (typeof movie.genres[0] === 'string') {
+        return movie.genres.slice(0, 4); 
+      }
+      return movie.genres.map((genre: any) => genre.name).slice(0, 4);
+    } else if (movie.genreIds && Array.isArray(movie.genreIds)) {
+      return movie.genreIds
+        .map((id: number) => GENRE_MAP[id])
+        .filter(Boolean)
+        .slice(0, 4);
+    } else if (movie.genre_ids && Array.isArray(movie.genre_ids)) {
+      return movie.genre_ids
+        .map((id: number) => GENRE_MAP[id])
+        .filter(Boolean)
+        .slice(0, 4);
+    }
+    return [];
+  };
+
+  const genres = getGenreNames(movie);
   const path = usePathname() || "";
   const readOnlySharedLink = path.startsWith("/share/");
 
@@ -79,6 +122,21 @@ const TMDbStyleMovieCard = ({
             <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
               {movie.releasedDate}
             </p>
+
+            {genres.length > 0 && (
+              <div className="mb-2">
+                <div className="flex flex-wrap gap-1">
+                  {genres.map((genre: any, index: any) => (
+                    <span
+                      key={index}
+                      className="inline-block bg-red-600 text-white text-xs px-2 py-1 rounded-full"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <p className="text-sm min-h-[5rem]  max-h-[5rem] text-blue-gray-600  overflow-y-auto text-gray-600 dark:text-gray-300 mb-3 max-w-3xl">
               {movie.movieDescription}

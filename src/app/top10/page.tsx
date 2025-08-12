@@ -40,7 +40,10 @@ export default function Top10Movies() {
 
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+           {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
 
