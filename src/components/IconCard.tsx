@@ -65,7 +65,7 @@ const IconCard: React.FC<IconActionsProps> = ({
   return (
     <div className="flex flex-col items-center text-xs text-white">
       <div className="flex flex-row justify-evenly w-full">
-        <div className="flex flex-col mt-4 items-center">
+        <div className="flex flex-col mt-5 items-center">
           <span
             onClick={() => handleAction("favorite")}
             className={`cursor-pointer p-2 rounded-full transition-colors ${

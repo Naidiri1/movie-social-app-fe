@@ -56,12 +56,12 @@ export default function LoginForm() {
       } catch { 
 
        }
-      throw new Error(serverMsg);
+     console.error(serverMsg);
     }
 
     const result = await res.json(); 
     if (!result?.access_token) {
-      throw new Error("Login response missing access_token");
+      console.error("Login response missing access_token");
     }
 
     sessionStorage.setItem("access_token", result.access_token);
@@ -131,7 +131,12 @@ export default function LoginForm() {
               Sign In
             </Button>
           </form>
-
+           <span className="mt-2 underline"> <Link
+              href="/forgot-password"
+              className="ml-2 text-white text-xl hover:text-blue-500"
+            >
+              Forgot Password
+            </Link></span>
           {success && <p className="text-green-600 mt-4"> Login successful!</p>}
           {displayError && (
             <p className="text-red-600 mt-4">

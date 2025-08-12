@@ -21,7 +21,7 @@ const UpcomingMovies = () => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch movies");
+      console.error("Failed to fetch movies");
     }
     if (response.ok) {
       const data = await response.json();

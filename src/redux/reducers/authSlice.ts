@@ -19,7 +19,7 @@ export const restoreUserSession = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const token = sessionStorage.getItem('access_token');
-            if (!token) throw new Error('No token found');
+            if (!token) console.error('No token found');
 
            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/userSession`, {
                 method: 'GET',
@@ -29,7 +29,7 @@ export const restoreUserSession = createAsyncThunk(
             });
 
             if (!response.ok) {
-                throw new Error('Session invalid');
+               console.error('Session invalid');
             }
 
             const data = await response.json();

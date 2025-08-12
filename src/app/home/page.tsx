@@ -19,7 +19,7 @@ const token = sessionStorage.getItem("access_token");
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch movies");
+       console.error("Failed to fetch movies");
     }
 
     if (response.ok) {
@@ -34,7 +34,7 @@ const token = sessionStorage.getItem("access_token");
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch movies");
+     console.error("Failed to fetch movies");
     }
 
     if (response.ok) {

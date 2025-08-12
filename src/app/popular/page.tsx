@@ -28,7 +28,7 @@ export default function Popular() {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch movies");
+      console.error("Failed to fetch movies");
     }
 
     if (response.ok) {

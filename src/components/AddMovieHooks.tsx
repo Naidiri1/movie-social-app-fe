@@ -109,7 +109,7 @@ export const AddMovieHooks = () => {
           }
         );
         if (!top10Response.ok) {
-          throw new Error("Failed to fetch top10");
+          console.error("Failed to fetch top10");
         }
         const top10Data = await top10Response.json();
         const alreadyExists = top10Data.some(

@@ -40,7 +40,7 @@ export default function Signup() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setMessage(errorData.error || "Signup failed");
+        setMessage("Signup failed, Username or Email already Exists");
         return;
       }
       const data = await response.json();

@@ -149,17 +149,27 @@ export default function Top10Movies() {
   };
 
   useEffect(() => {
-    fetch(
+     handleTop10();
+  }, []);
+
+  const handleTop10 = async () => {
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setMovieData(data);
-      });
-  }, [userId]);
+    );
+
+    if (!response.ok) {
+     console.error("Failed to fetch movies");
+    }
+
+    if (response.ok) {
+      const data = await response.json();
+      const results = data;
+      setMovieData(results);
+    }
+  };
 
   useEffect(() => {
     if (readOnlySharedLink) return;
@@ -189,7 +199,7 @@ export default function Top10Movies() {
       <ShareTop10Toggle />
       <div
         ref={sortableContainerRef}
-        className="grid grid-cols-1 md:grid-cols-2 "
+        className={` ${movieData.length === 0 ? 'flex justify-center items-center' :'grid grid-cols-1 md:grid-cols-2'} `}
       >
         {movieData.length > 0 ? (
           movieData.map((movie: any, index) => (
