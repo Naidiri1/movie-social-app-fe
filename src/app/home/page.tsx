@@ -24,7 +24,6 @@ const token = sessionStorage.getItem("access_token");
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
     }
   };
 
@@ -39,7 +38,6 @@ const token = sessionStorage.getItem("access_token");
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
     }
   };
 

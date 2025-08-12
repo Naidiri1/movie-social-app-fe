@@ -48,20 +48,26 @@ export default function LoginForm() {
       }
     );
 
-    if (!res.ok) {
-      let serverMsg = "User or Password are incorrect, try again!";
-      try {
-        const data = await res.json();
-        if (data?.message || data?.error) serverMsg = data.message || data.error;
-      } catch { 
-
-       }
-     console.error(serverMsg);
+    let result;
+    try {
+      result = await res.json();
+    } catch {
+      console.error("Invalid response from server");
     }
 
-    const result = await res.json(); 
+    if (!res.ok) {
+      const serverMsg = result?.message || result?.error || "User or Password are incorrect, try again!";
+      console.error(serverMsg);
+      setDisplayError(true);
+      setError(serverMsg);
+      return;
+    }
+
     if (!result?.access_token) {
       console.error("Login response missing access_token");
+      setDisplayError(true);
+      setError("Login failed - invalid response from server");
+      return;
     }
 
     sessionStorage.setItem("access_token", result.access_token);

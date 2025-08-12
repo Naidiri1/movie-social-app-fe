@@ -40,7 +40,10 @@ export default function Top10Movies() {
 
     if (response.ok) {
       const updateData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
+           {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
 
@@ -91,7 +94,6 @@ export default function Top10Movies() {
 
   const updateRanks = async (updatedMovies: any[]) => {
     try {
-      console.log(updatedMovies);
       const payload = updatedMovies
         .filter((movie) => movie?.id != null)
         .map((movie, index) => ({
@@ -107,7 +109,6 @@ export default function Top10Movies() {
         },
         body: JSON.stringify(payload),
       });
-      console.log("Ranks updated!");
     } catch (err) {
       console.error("Error updating ranks", err);
     }
@@ -144,7 +145,6 @@ export default function Top10Movies() {
       });
       setComment(commentMap);
       setMovieData(scoreUpdated);
-      console.log(scoreUpdated);
     }
   };
 
@@ -187,7 +187,6 @@ export default function Top10Movies() {
         const [moved] = updated.splice(evt.oldIndex!, 1);
         updated.splice(evt.newIndex!, 0, moved);
         setMovieData(updated);
-        console.log(updated);
         updateRanks(updated);
       },
     });

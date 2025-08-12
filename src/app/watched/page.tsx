@@ -6,9 +6,9 @@ import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
-import { Input } from "@material-tailwind/react";
 import Image from "next/image";
-import movieImg from '../../../public/movie.png'
+import movieImg from "../../../public/movie.png";
+import { Button, Card, Input, Typography } from "@material-tailwind/react";
 
 export default function WatchedMovies() {
   const [movieData, setMovieData] = useState<any[]>([]);
@@ -17,10 +17,15 @@ export default function WatchedMovies() {
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
+  const [allWatched, setAllwatched] = useState([]);
   const [displayResultsSearch, setDisplayResultsSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
   const token = sessionStorage.getItem("access_token");
+  const [filteredWatched, setFilteredWatched] = useState<any>([]);
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
 
   const handleWatchedMovies = async () => {
     const response = await fetch(
@@ -38,7 +43,43 @@ export default function WatchedMovies() {
       const data = await response.json();
       const results = data;
       setMovieData(results);
+      setAllwatched(data);
+      setFilteredWatched(data);
     }
+  };
+
+  const filterByGenre = (genreName: string | null) => {
+    setSelectedGenre(genreName);
+    setCurrentPage(1);
+
+    if (genreName === null) {
+      setFilteredWatched(allWatched);
+    } else {
+      const filtered = allWatched.filter((movie: any) => {
+        if (movie.genres && Array.isArray(movie.genres)) {
+          return movie.genres.includes(genreName);
+        }
+        return false;
+      });
+      setFilteredWatched(filtered);
+    }
+  };
+
+  const getAvailableGenres = () => {
+    const allGenres = new Set<string>();
+
+    allWatched.forEach((movie: any) => {
+      if (movie.genres && Array.isArray(movie.genres)) {
+        movie.genres.forEach((genre: string) => allGenres.add(genre));
+      }
+    });
+
+    return Array.from(allGenres).sort();
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -50,7 +91,7 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-               headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -66,12 +107,14 @@ export default function WatchedMovies() {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
         {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = await updateData.json();
       setTimeout(() => {
         setMovieData(data);
+        setAllwatched(data);
+        setFilteredWatched(data);
         const commentMap: { [movieId: string]: string } = {};
         data.forEach((movie: any) => {
           commentMap[movie.id] = movie.comment || "";
@@ -92,7 +135,7 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -106,12 +149,14 @@ export default function WatchedMovies() {
     if (response.ok) {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-         {
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
       setMovieData(data);
+      setAllwatched(data);
+      setFilteredWatched(data);
     }
   };
 
@@ -120,7 +165,7 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "DELETE",
-       headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -129,12 +174,14 @@ export default function WatchedMovies() {
     if (response.ok) {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-          {
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
       setMovieData(data);
+      setAllwatched(data);
+      setFilteredWatched(data);
     }
   };
 
@@ -143,7 +190,7 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -157,12 +204,14 @@ export default function WatchedMovies() {
     if (response.ok) {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-         {
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await updateData.json();
       setMovieData(data);
+      setAllwatched(data);
+      setFilteredWatched(data);
     }
   };
 
@@ -171,7 +220,7 @@ export default function WatchedMovies() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
         method: "PUT",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -185,7 +234,7 @@ export default function WatchedMovies() {
     if (response.ok) {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-         {
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -207,15 +256,17 @@ export default function WatchedMovies() {
   };
 
   const handleSearch = async () => {
-    if (!searchQuery?.trim()) return;
+    if (!searchQuery?.trim()) {
+      filterByGenre(selectedGenre);
+      return;
+    }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-       {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
-
     if (!response.ok) console.error("Failed to fetch movies");
 
     const data = await response.json();
@@ -230,16 +281,64 @@ export default function WatchedMovies() {
     const matchedMovies = result.map((r) => r.item);
 
     handleResults(matchedMovies);
+    setFilteredWatched(matchedMovies);
+    setCurrentPage(1);
+    setSelectedGenre(null); 
   };
 
   useEffect(() => {
     if (searchQuery === "" || searchQuery === undefined) {
-      handleWatchedMovies();
+      setFilteredWatched(allWatched);
+      setSelectedGenre(null);
+      setCurrentPage(1);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allWatched]);
 
+  const availableGenres = getAvailableGenres();
+  const totalPages = Math.ceil(filteredWatched.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentMovies = filteredWatched.slice(startIndex, endIndex);
   return (
     <div>
+      {availableGenres.length > 1 && (
+        <div className="mb-6 p-4 bg-gray-900 rounded-lg mx-5">
+          <Typography variant="h6" className="text-white mb-4">
+            Filter by Genre
+          </Typography>
+
+          <div className="flex flex-wrap gap-1">
+            <Button
+              size="sm"
+              variant={selectedGenre === null ? "filled" : "outlined"}
+              color={selectedGenre === null ? "red" : "white"}
+              onClick={() => filterByGenre(null)}
+              className="mb-1 text-xs px-2 py-1"
+            >
+              All ({allWatched.length})
+            </Button>
+
+            {availableGenres.map((genre) => {
+              const count = allWatched.filter(
+                (movie: any) => movie.genres && movie.genres.includes(genre)
+              ).length;
+
+              return (
+                <Button
+                  key={genre}
+                  size="sm"
+                  variant={selectedGenre === genre ? "filled" : "outlined"}
+                  color={selectedGenre === genre ? "red" : "white"}
+                  onClick={() => filterByGenre(genre)}
+                  className="mb-1 text-xs px-2 py-1"
+                >
+                  {genre} ({count})
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+      )}
       <div className="w-full justify-center items-center flex ">
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
@@ -275,9 +374,9 @@ export default function WatchedMovies() {
           </button>
         </div>
       </div>
-      {movieData.length > 0 ? (
+      {filteredWatched.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
-          {movieData.map((movie: any) => (
+          {currentMovies.map((movie: any) => (
             <div key={movie.id} className="relative">
               <button
                 onClick={() => handleDeleteMovie(movie)}
@@ -306,8 +405,8 @@ export default function WatchedMovies() {
             </div>
           ))}
         </div>
-      ) :(
-       <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
+      ) : (
+        <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
           <Image
             src={movieImg}
             alt="No movie results"
@@ -316,7 +415,7 @@ export default function WatchedMovies() {
             priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
-        </div>  
+        </div>
       )}
     </div>
   );

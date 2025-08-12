@@ -1,5 +1,4 @@
 "use client";
-
 import "./globals.css";
 import { ThemeProvider } from "@material-tailwind/react";
 import { Provider } from "react-redux";
@@ -27,17 +26,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const hideNavbarFooter = isAuthPage || isPublicShare;
 
   const content = (
-    <>
+    <div className="min-h-screen flex flex-col">
       {!hideNavbarFooter && <Navbar />}
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       {!hideNavbarFooter && <Footer />}
       {!hideNavbarFooter && <ScrollArrows />}
-    </>
+    </div>
   );
 
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="h-full">
         <Provider store={store}>
           <ThemeProvider>
             {isAuthPage || isPublicShare ? content : <AuthGuard>{content}</AuthGuard>}

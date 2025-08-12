@@ -31,3 +31,11 @@ body {
   /* outline: 2px dashed #745227; */
   background-color: rgba(236, 124, 109, 0.712);
 }
+
+html, body {
+  height: 100%;
+}
+
+#__next {
+  height: 100%;
+}

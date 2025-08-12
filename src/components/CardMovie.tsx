@@ -21,6 +21,30 @@ interface CardMovieProps {
   handleAddToTop10: (movie: any) => void;
   handleAddWatchLater: (movie: any) => void;
 }
+
+// Genre mapping from TMDB IDs to names
+const GENRE_MAP: { [key: number]: string } = {
+  28: "Action",
+  12: "Adventure", 
+  16: "Animation",
+  35: "Comedy",
+  80: "Crime",
+  99: "Documentary",
+  18: "Drama",
+  10751: "Family",
+  14: "Fantasy",
+  36: "History",
+  27: "Horror",
+  10402: "Music",
+  9648: "Mystery",
+  10749: "Romance",
+  878: "Sci-Fi",
+  10770: "TV Movie",
+  53: "Thriller",
+  10752: "War",
+  37: "Western"
+};
+
 const CardMovie: React.FC<CardMovieProps> = ({
   movie,
   handleAddFavorites,
@@ -45,6 +69,16 @@ const CardMovie: React.FC<CardMovieProps> = ({
     }
     router.push(`/movieDetails?id=${movie.id}`);
   };
+
+  const getGenreNames = () => {
+    const genreIds = movie.genre_ids || movie.genreIds || [];
+    return genreIds
+      .map((id: number) => GENRE_MAP[id])
+      .filter(Boolean) 
+      .slice(0, 3);
+  };
+
+  const genres = getGenreNames();
 
   return (
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[22rem] mx-auto shadow-lg">
@@ -93,6 +127,23 @@ const CardMovie: React.FC<CardMovieProps> = ({
         >
           {movie.release_date}
         </Typography>
+        
+        {/* Genre Tags */}
+        {genres.length > 0 && (
+          <div className="mb-2">
+            <div className="flex flex-wrap gap-1">
+              {genres.map((genre: any, index: any) => (
+                <span
+                  key={index}
+                  className="inline-block bg-red-600 text-white text-xs px-2 py-1 rounded-full"
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <Typography
           className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
           color="white"
