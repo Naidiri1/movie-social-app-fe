@@ -49,16 +49,16 @@ export const AddMovieHooks = () => {
               releasedDate: movie.release_date,
               movieDescription: movie.overview,
               publicScore: parseFloat(movie.vote_average.toFixed(1)),
+              genreIds: movie.genre_ids, 
             }),
           }
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
         }
       }
     } catch (error) {
-      console.error("Failed to add to favorites", error);
+      console.error("Error adding to favorites:", error);
     }
   }, []);
 
@@ -86,12 +86,12 @@ export const AddMovieHooks = () => {
               releasedDate: movie.release_date,
               movieDescription: movie.overview,
               publicScore: parseFloat(movie.vote_average.toFixed(1)),
+              genreIds: movie.genre_ids, 
             }),
           }
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
         }
       }
     } catch (error) {
@@ -150,6 +150,7 @@ export const AddMovieHooks = () => {
               movieDescription: movie.overview,
               publicScore: parseFloat(movie.vote_average.toFixed(1)),
               rank: 10,
+              genreIds: movie.genre_ids, 
             }),
           }
         );
@@ -188,12 +189,12 @@ export const AddMovieHooks = () => {
               releasedDate: movie.release_date,
               movieDescription: movie.overview,
               publicScore: parseFloat(movie.vote_average.toFixed(1)),
+              genreIds: movie.genre_ids, 
             }),
           }
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
         }
       }
     } catch (error) {

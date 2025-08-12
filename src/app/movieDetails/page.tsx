@@ -26,7 +26,6 @@ const MovieDetailsPage = () => {
   }, [id]);
 
   if (!movie) return <p>Loading...</p>;
-  console.log(movie);
   return (
     <div>
       <MovieBanner movie={movie} />

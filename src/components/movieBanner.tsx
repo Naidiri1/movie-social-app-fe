@@ -3,6 +3,29 @@ import Image from 'next/image';
 interface MovieActionsProps {
   movie: any;
 }
+
+const GENRE_MAP: { [key: number]: string } = {
+  28: "Action",
+  12: "Adventure", 
+  16: "Animation",
+  35: "Comedy",
+  80: "Crime",
+  99: "Documentary",
+  18: "Drama",
+  10751: "Family",
+  14: "Fantasy",
+  36: "History",
+  27: "Horror",
+  10402: "Music",
+  9648: "Mystery",
+  10749: "Romance",
+  878: "Sci-Fi",
+  10770: "TV Movie",
+  53: "Thriller",
+  10752: "War",
+  37: "Western"
+};
+
 const MovieBanner: React.FC<MovieActionsProps> =  ({ movie} ) => {  
     const backdrop = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
   const poster = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
@@ -22,6 +45,22 @@ const MovieBanner: React.FC<MovieActionsProps> =  ({ movie} ) => {
     return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
     };
 
+    const getGenreNames = () => {
+      if (movie.genres && Array.isArray(movie.genres)) {
+        return movie.genres.map((genre: any) => genre.name);
+      } else if (movie.genre_ids && Array.isArray(movie.genre_ids)) {
+        return movie.genre_ids
+          .map((id: number) => GENRE_MAP[id])
+          .filter(Boolean);
+      } else if (movie.genreIds && Array.isArray(movie.genreIds)) {
+        return movie.genreIds
+          .map((id: number) => GENRE_MAP[id])
+          .filter(Boolean);
+      }
+      return [];
+    };
+
+    const genres = getGenreNames();
 
   return (
     <div className="relative w-full min-h-screen pb-5 text-white">
@@ -57,6 +96,24 @@ const MovieBanner: React.FC<MovieActionsProps> =  ({ movie} ) => {
             <p className="mb-3"><strong>Time:</strong> {formatRuntime(movie.runtime)}</p>
             <p><strong>{movie.tagline}</strong></p>
             <p><strong>Release Date:</strong> {movie.release_date}</p>
+            
+            {/* Genre Tags */}
+            {genres.length > 0 && (
+              <div className="mb-3">
+                <p className="mb-2"><strong>Genres:</strong></p>
+                <div className="flex flex-wrap gap-2">
+                  {genres.map((genre, index) => (
+                    <span
+                      key={index}
+                      className="inline-block bg-red-600 text-white text-sm px-3 py-1 rounded-full font-medium"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <h3 className='flex justify-center mt-2 mb-2'>Overview</h3>
             <p className="text-gray-300 mb-4">{movie.overview}</p>
           <div className="text-md text-gray-400 space-y-1">

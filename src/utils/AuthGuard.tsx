@@ -58,12 +58,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     if (token && !username) {
       dispatch(restoreUserSession());
-      console.log("lest getting back");
     }
 
      if (!token && !username) {
       router.push('/login')
-      console.log("lest getting back");
     }
 
     return () => {

@@ -72,7 +72,6 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
       return;
     }
     router.push(`/movieDetails?id=${movie.movieId}`);
-    console.log(movie.id);
   };
 
   const handleDisplayRating = () => {

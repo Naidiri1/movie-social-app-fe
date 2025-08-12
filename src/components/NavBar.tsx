@@ -57,7 +57,6 @@ const NavbarComponent = () => {
     }
   }, [username,pathname, token]);
 
-  console.log(username);
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
     const token = sessionStorage.getItem("access_token");
@@ -216,17 +215,24 @@ const NavbarComponent = () => {
 
   return (
     <Navbar className="w-full max-w-none border border-none rounded-none bg-black px-4 py-2 lg:px-8 lg:py-4">
-      <div className="flex flex-wrap items-center justify-between">
+      <div className="flex items-center justify-between w-full">
         <Typography
           as="a"
           href="/popular"
-          className={`mr-4 ml-2 cursor-pointer py-1.5  text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-300 to-red-500 tracking-widest text-[14px] ${orbitron.className}`}
+          className={`cursor-pointer py-1.5 text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-300 to-red-500 tracking-widest text-xs sm:text-sm md:text-base lg:text-lg ${orbitron.className} flex-shrink min-w-0`}
         >
-          {username
-            ? `Welcome ${username} to Social Movie`
-            : "Welcome to Social Movie"}
+          <span className="block sm:hidden">
+            {username ? `Welcome ${username}` : "Welcome"}
+          </span>
+          <span className="hidden sm:block md:hidden">
+            {username ? `Welcome ${username} to Social Movie` : "Welcome to Social Movie"}
+          </span>
+          <span className="hidden md:block">
+            {username ? `Welcome ${username} to Social Movie` : "Welcome to Social Movie"}
+          </span>
         </Typography>
-        <div className="hidden items-center gap-x-2 lg:flex">
+
+        <div className="hidden lg:flex items-center gap-x-4 flex-shrink-0">
           <div className="relative flex w-full gap-2 md:w-max">
             <div className="w-full max-w-sm min-w-[200px]">
               <div className="relative w-full text-white md:w-80">
@@ -267,15 +273,15 @@ const NavbarComponent = () => {
           <Button
             onClick={handleLogout}
             size="sm"
-            className="flex text-white ml-[12rem] cursor-pointer bg-red-300 hover:underline"
+            className="text-white cursor-pointer bg-red-300 hover:underline"
           >
             Logout
           </Button>
         </div>
-        <hr className="mb-3 bg-red-200 m-2 hidden w-full border-t-2 border-red-500 lg:block" />
+
         <IconButton
           variant="text"
-          className="lg:hidden"
+          className="lg:hidden flex-shrink-0"
           onClick={() => setOpenNav(!openNav)}
         >
           {openNav ? (
@@ -284,20 +290,25 @@ const NavbarComponent = () => {
             <Bars3Icon className="h-6 w-6 text-white" strokeWidth={2} />
           )}
         </IconButton>
-        <div className="hidden lg:block w-full bg-red-900 px-4 py-2">
-          <div className="hidden lg:block flex flex-row justify-center">
+      </div>
+
+      <div className="hidden lg:block w-full">
+        <hr className="mb-3 bg-red-200 m-2 w-full border-t-2 border-red-500" />
+        <div className="w-full bg-red-900 px-4 py-2">
+          <div className="flex flex-row justify-center">
             {navList}
           </div>
         </div>
       </div>
+
       <Collapse open={openNav}>
         <div className="container mx-auto">
           <div>
-            <div className="flex flex-col ">
+            <div className="flex flex-col">
               <PhoneNavlist />
             </div>
             <div className="w-full max-w-sm min-w-[200px]">
-              <div className="relative  mb-5 w-full text-white md:w-80">
+              <div className="relative mb-5 w-full text-white md:w-80">
                 <Input
                   type="search"
                   label="Search Movie"
@@ -334,7 +345,7 @@ const NavbarComponent = () => {
             <Button
               size="sm"
               onClick={handleLogout}
-              className="flex text-white mb-3 ml-5  cursor-pointer bg-red-300 hover:underline"
+              className="text-white mb-3 ml-5 cursor-pointer bg-red-300 hover:underline"
             >
               Logout
             </Button>
