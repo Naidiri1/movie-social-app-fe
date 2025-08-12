@@ -27,6 +27,7 @@ import { logout } from "../redux/reducers/authSlice";
 import { restoreUserSession } from "../redux/reducers/authSlice";
 import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
+import { UserIcon } from "@heroicons/react/24/outline";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -107,7 +108,7 @@ const NavbarComponent = () => {
     );
   }, []);
 
-  const navList = (
+const navList = (
     <ul className="mb-4 mt-2  flex flex-col gap-1 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
         as="li"
@@ -210,9 +211,25 @@ const NavbarComponent = () => {
           </button>
         </Link>
       </Typography>
+
+      <Typography
+        as="li"
+        variant="small"
+        className="p-1 font-medium text-white"
+      >
+        <Link href="/search-users">
+          <button
+            className={`flex items-center ml-2 text-white rounded-full px-4 py-2 ${
+              pathname === "/search-users" ? "bg-black" : ""
+            }`}
+          >
+            Search Users
+            <UserIcon className="h-5 w-5 ml-1 text-white" />
+          </button>
+        </Link>
+      </Typography>
     </ul>
   );
-
   return (
     <Navbar className="w-full max-w-none border border-none rounded-none bg-black px-4 py-2 lg:px-8 lg:py-4">
       <div className="flex items-center justify-between w-full">
