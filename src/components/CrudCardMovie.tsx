@@ -125,7 +125,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   return (
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[23rem] mx-auto shadow-lg">
       <CardHeader className="bg-black" floated={false} color="white">
-        <div className="relative w-[500px] h-[450px]">
+        <div className="relative w-[350px] h-[200px]">
           <Image
             src={movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1}
             alt={movie.title}
@@ -249,8 +249,8 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
         </div>
         <div className="w-full mt-5 flex flex-row items-start justify-between gap-2">
           <div
-            className={`rounded p-3 w-full min-h-[6rem] max-h-[6rem]   ${
-              isDisabled ? "bg-black text-white" : "bg-black"
+            className={`rounded p-5 w-full min-h-[6rem] max-h-[6rem]   ${
+              isDisabled ? "bg-none text-white" : "bg-black"
             }`}
           >
             <textarea
