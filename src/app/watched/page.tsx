@@ -77,11 +77,6 @@ export default function WatchedMovies() {
     return Array.from(allGenres).sort();
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   useEffect(() => {
     handleWatchedMovies();
   }, []);
@@ -185,7 +180,7 @@ export default function WatchedMovies() {
     }
   };
 
-  const handleAddEditComment = async (movie: any) => {
+    const handleAddEditComment = async (movie: any) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
@@ -209,9 +204,25 @@ export default function WatchedMovies() {
         }
       );
       const data = await updateData.json();
-      setMovieData(data);
-      setAllwatched(data);
-      setFilteredWatched(data);
+     updateFilteredData(data);
+  }
+  };
+
+  const updateFilteredData = (newData: any) => {
+    setMovieData(newData);
+    setAllwatched(newData);
+
+    // Maintain current filter
+    if (selectedGenre) {
+      const filtered = newData.filter((movie: any) => {
+        if (movie.genres && Array.isArray(movie.genres)) {
+          return movie.genres.includes(selectedGenre);
+        }
+        return false;
+      });
+      setFilteredWatched(filtered);
+    } else {
+      setFilteredWatched(newData);
     }
   };
 
@@ -239,13 +250,8 @@ export default function WatchedMovies() {
         }
       );
       const scoreUpdated = await updateData.json();
+      updateFilteredData(scoreUpdated);
 
-      const commentMap: { [movieId: string]: string } = {};
-      scoreUpdated.forEach((movie: any) => {
-        commentMap[movie.id] = movie.comment || "";
-      });
-      setComment(commentMap);
-      setMovieData(scoreUpdated);
     }
   };
 

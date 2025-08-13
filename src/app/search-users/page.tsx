@@ -215,7 +215,7 @@ export default function SearchUsers() {
       <CardBody>
         <Button
           variant="text"
-          className="w-full flex items-center justify-between p-0 text-white hover:bg-gray-700"
+          className="w-full flex items-center justify-between p-5 m-0 text-white hover:bg-gray-700"
           onClick={() => loadUserMovies(selectedUser.userId, category)}
           disabled={loadingStates[category]}
         >
@@ -265,7 +265,7 @@ export default function SearchUsers() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
+              <div className="text-center  flex  flex-col items-center justify-center py-8">
                 <Image src={movieImg} alt="No movies" width={200} height={200} />
                 <Typography className="text-gray-400 mt-2">
                   No {title.toLowerCase()} yet

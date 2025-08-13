@@ -115,7 +115,7 @@ export default function Top10Movies() {
   };
 
   const handleDeleteComment = async (movie: any) => {
-    if (movie.comment === "") return;
+   
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
       {

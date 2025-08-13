@@ -247,9 +247,9 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
             />
           )}
         </div>
-        <div className="w-full mt-5 flex flex-row items-start justify-between gap-2">
+        <div className="w-full mt-5 pt-5 flex flex-row items-start justify-between gap-2">
           <div
-            className={`rounded p-5 w-full min-h-[6rem] max-h-[6rem]   ${
+            className={`rounded  w-full min-h-[6rem] max-h-[6rem]   ${
               isDisabled ? "bg-none text-white" : "bg-black"
             }`}
           >
@@ -265,7 +265,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
               placeholder="My Opinion..."
             />
           </div>
-          <div className="flex flex-col items-center justify-start gap-2 pt-3">
+          <div className="flex flex-col items-center justify-start gap-2 ">
             {!isDisabled ? (
               <div className="flex flex-col items-center cursor-pointer">
                 <IoAddCircleOutline
@@ -277,7 +277,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
                       comment ? setIsDisabled(true) : setIsDisabled(false);
                     }
                   }}
-                  className="h-5 w-5 text-white hover:text-blue-500"
+                  className="h-5 w-5 text-blue-500 hover:text-blue-500"
                 />
                 <p className="text-[0.65rem] text-white text-center">Post</p>
               </div>
@@ -288,7 +288,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
                     handleAddEditComment(movie);
                     setIsDisabled(false);
                   }}
-                  className="h-5 w-5 text-white hover:text-blue-500"
+                  className="h-5 w-5 text-blue-500 hover:text-blue-500"
                 />
                 <p className="text-[0.65rem] text-white text-center">Edit</p>
               </div>
@@ -299,7 +299,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
                   if (comment === "") return;
                   handleDeleteComment(movie);
                 }}
-                className="h-5 w-5 text-white hover:text-red-500"
+                className="h-5 w-5 text-red-300 hover:text-red-500"
               />
               <p className="text-[0.65rem] text-white text-center">Delete</p>
             </div>
