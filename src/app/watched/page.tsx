@@ -17,12 +17,10 @@ export default function WatchedMovies() {
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-  const [allWatched, setAllwatched] = useState([]);
-  const [displayResultsSearch, setDisplayResultsSearch] = useState(false);
+  const [allWatched, setAllwatched] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
   const token = sessionStorage.getItem("access_token");
-  const [filteredWatched, setFilteredWatched] = useState<any>([]);
+  const [filteredWatched, setFilteredWatched] = useState<any[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
@@ -37,14 +35,18 @@ export default function WatchedMovies() {
 
     if (!response.ok) {
       console.error("Failed to fetch movies");
+      return;
     }
 
     if (response.ok) {
       const data = await response.json();
-      const results = data;
-      setMovieData(results);
-      setAllwatched(data);
-      setFilteredWatched(data);
+      const results = data?.content || data || [];
+      
+      const moviesArray = Array.isArray(results) ? results : [];
+      
+      setMovieData(moviesArray);
+      setAllwatched(moviesArray);
+      setFilteredWatched(moviesArray);
     }
   };
 
@@ -68,18 +70,22 @@ export default function WatchedMovies() {
   const getAvailableGenres = () => {
     const allGenres = new Set<string>();
 
-    allWatched.forEach((movie: any) => {
-      if (movie.genres && Array.isArray(movie.genres)) {
-        movie.genres.forEach((genre: string) => allGenres.add(genre));
-      }
-    });
+    if (Array.isArray(allWatched)) {
+      allWatched.forEach((movie: any) => {
+        if (movie.genres && Array.isArray(movie.genres)) {
+          movie.genres.forEach((genre: string) => allGenres.add(genre));
+        }
+      });
+    }
 
     return Array.from(allGenres).sort();
   };
 
   useEffect(() => {
-    handleWatchedMovies();
-  }, []);
+    if (userId) {
+      handleWatchedMovies();
+    }
+  }, [userId]);
 
   const handleAddWatched = async (movie: any, score?: number) => {
     const response = await fetch(
@@ -106,12 +112,15 @@ export default function WatchedMovies() {
         }
       );
       const data = await updateData.json();
+      const results = data?.content || data || [];
+      const moviesArray = Array.isArray(results) ? results : [];
+      
       setTimeout(() => {
-        setMovieData(data);
-        setAllwatched(data);
-        setFilteredWatched(data);
+        setMovieData(moviesArray);
+        setAllwatched(moviesArray);
+        setFilteredWatched(moviesArray);
         const commentMap: { [movieId: string]: string } = {};
-        data.forEach((movie: any) => {
+        moviesArray.forEach((movie: any) => {
           commentMap[movie.id] = movie.comment || "";
         });
         setComment(commentMap);
@@ -125,7 +134,7 @@ export default function WatchedMovies() {
     }
   };
 
-  const handleDeleteScore = async (movie: Movie) => {
+  const handleDeleteScore = async (movie: any) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
@@ -149,13 +158,15 @@ export default function WatchedMovies() {
         }
       );
       const data = await updateData.json();
-      setMovieData(data);
-      setAllwatched(data);
-      setFilteredWatched(data);
+      const results = data?.content || data || [];
+      const moviesArray = Array.isArray(results) ? results : [];
+      setMovieData(moviesArray);
+      setAllwatched(moviesArray);
+      setFilteredWatched(moviesArray);
     }
   };
 
-  const handleDeleteMovie = async (movie: Movie) => {
+  const handleDeleteMovie = async (movie: any) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
@@ -174,13 +185,15 @@ export default function WatchedMovies() {
         }
       );
       const data = await updateData.json();
-      setMovieData(data);
-      setAllwatched(data);
-      setFilteredWatched(data);
+      const results = data?.content || data || [];
+      const moviesArray = Array.isArray(results) ? results : [];
+      setMovieData(moviesArray);
+      setAllwatched(moviesArray);
+      setFilteredWatched(moviesArray);
     }
   };
 
-    const handleAddEditComment = async (movie: any) => {
+  const handleAddEditComment = async (movie: any) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched/${movie.id}?userId=${userId}`,
       {
@@ -204,17 +217,20 @@ export default function WatchedMovies() {
         }
       );
       const data = await updateData.json();
-     updateFilteredData(data);
-  }
+      const results = data?.content || data || [];
+      const moviesArray = Array.isArray(results) ? results : [];
+      updateFilteredData(moviesArray);
+    }
   };
 
-  const updateFilteredData = (newData: any) => {
-    setMovieData(newData);
-    setAllwatched(newData);
+  const updateFilteredData = (newData: any[]) => {
+    const dataArray = Array.isArray(newData) ? newData : [];
+    
+    setMovieData(dataArray);
+    setAllwatched(dataArray);
 
-    // Maintain current filter
     if (selectedGenre) {
-      const filtered = newData.filter((movie: any) => {
+      const filtered = dataArray.filter((movie: any) => {
         if (movie.genres && Array.isArray(movie.genres)) {
           return movie.genres.includes(selectedGenre);
         }
@@ -222,7 +238,7 @@ export default function WatchedMovies() {
       });
       setFilteredWatched(filtered);
     } else {
-      setFilteredWatched(newData);
+      setFilteredWatched(dataArray);
     }
   };
 
@@ -250,8 +266,9 @@ export default function WatchedMovies() {
         }
       );
       const scoreUpdated = await updateData.json();
-      updateFilteredData(scoreUpdated);
-
+      const results = scoreUpdated?.content || scoreUpdated || [];
+      const moviesArray = Array.isArray(results) ? results : [];
+      updateFilteredData(moviesArray);
     }
   };
 
@@ -273,12 +290,17 @@ export default function WatchedMovies() {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    if (!response.ok) console.error("Failed to fetch movies");
+    if (!response.ok) {
+      console.error("Failed to fetch movies");
+      return;
+    }
 
     const data = await response.json();
-    setMovieData(data);
+    const results = data?.content || data || [];
+    const moviesArray = Array.isArray(results) ? results : [];
+    setMovieData(moviesArray);
 
-    const fuse = new Fuse(data, {
+    const fuse = new Fuse(moviesArray, {
       keys: ["title"],
       threshold: 0.4,
     });
@@ -300,11 +322,17 @@ export default function WatchedMovies() {
     }
   }, [searchQuery, allWatched]);
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  
   const availableGenres = getAvailableGenres();
   const totalPages = Math.ceil(filteredWatched.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentMovies = filteredWatched.slice(startIndex, endIndex);
+  
   return (
     <div>
       {availableGenres.length > 1 && (
@@ -362,7 +390,6 @@ export default function WatchedMovies() {
             onClick={handleSearch}
             className="absolute top-1 right-1 flex items-center rounded bg-red-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
             type="button"
-            placeholder="Search Movie..."
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -421,6 +448,49 @@ export default function WatchedMovies() {
             priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8 mb-4">
+          <div className="flex items-center gap-1">
+            <Button
+              size="sm"
+              variant="outlined"
+              color="white"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1"
+            >
+              ←
+            </Button>
+
+            {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => {
+              const page = i + 1;
+              return (
+                <Button
+                  key={page}
+                  size="sm"
+                  variant={currentPage === page ? "filled" : "outlined"}
+                  color={currentPage === page ? "red" : "white"}
+                  onClick={() => handlePageChange(page)}
+                  className="min-w-[32px] text-xs px-2 py-1"
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            <Button
+              size="sm"
+              variant="outlined"
+              color="white"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1"
+            >
+              →
+            </Button>
+          </div>
         </div>
       )}
     </div>

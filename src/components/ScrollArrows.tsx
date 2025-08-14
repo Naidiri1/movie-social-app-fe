@@ -46,10 +46,10 @@ export default function ScrollArrows() {
   return (
     <div
       className="
-        fixed right-5 
+        fixed right-20 
         [bottom:calc(env(safe-area-inset-bottom,0)+360px)]
         z-[9999]
-        flex flex-col gap-2
+        flex flex-col gap-1
         pointer-events-none
       "
     >

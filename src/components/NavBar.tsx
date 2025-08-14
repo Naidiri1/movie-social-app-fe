@@ -28,7 +28,7 @@ import { restoreUserSession } from "../redux/reducers/authSlice";
 import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
 import { UserIcon } from "@heroicons/react/24/outline";
-
+import  CoolTitle  from "../components/TitleNav"
 const orbitron = Orbitron({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -233,22 +233,7 @@ const navList = (
   return (
     <Navbar className="w-full max-w-none border border-none rounded-none bg-black px-4 py-2 lg:px-8 lg:py-4">
       <div className="flex items-center justify-between w-full">
-        <Typography
-          as="a"
-          href="/popular"
-          className={`cursor-pointer py-1.5 text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-300 to-red-500 tracking-widest text-xs sm:text-sm md:text-base lg:text-lg ${orbitron.className} flex-shrink min-w-0`}
-        >
-          <span className="block sm:hidden">
-            {username ? `Welcome ${username}` : "Welcome"}
-          </span>
-          <span className="hidden sm:block md:hidden">
-            {username ? `Welcome ${username} to Social Movie` : "Welcome to Social Movie"}
-          </span>
-          <span className="hidden md:block">
-            {username ? `Welcome ${username} to Social Movie` : "Welcome to Social Movie"}
-          </span>
-        </Typography>
-
+      <CoolTitle username={username || undefined} orbitron={orbitron} />
         <div className="hidden lg:flex items-center gap-x-4 flex-shrink-0">
           <div className="relative flex w-full gap-2 md:w-max">
             <div className="w-full max-w-sm min-w-[200px]">

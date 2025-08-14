@@ -5,6 +5,7 @@ import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
 import { IoHome } from "react-icons/io5";
 import { IoArrowUndoSharp } from "react-icons/io5";
 import { CgSandClock } from "react-icons/cg";
+import { UserIcon } from "@heroicons/react/24/outline";
 
 export default function PhoneNavlist() {
   const pathname = usePathname();
@@ -64,6 +65,14 @@ export default function PhoneNavlist() {
         <Link href="/watch-later">
           <button className={linkClasses("/watch-later")}>
             Watch Later <CgSandClock className="h-5 w-5 ml-1" />
+          </button>
+        </Link>
+      </Typography>
+
+        <Typography as="li" variant="small" className="font-medium">
+        <Link href="/search-users">
+          <button className={linkClasses("/search-users")}>
+           Search Users <UserIcon className="h-5 w-5 ml-1" />
           </button>
         </Link>
       </Typography>

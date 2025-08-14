@@ -12,17 +12,14 @@ import ScrollArrows from "../components/ScrollArrows";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname() || "";
 
-  // Auth-ish pages that should be PUBLIC (no AuthGuard)
   const isAuthPage =
     path === "/login" ||
     path === "/signup" ||
     path === "/forgot-password" ||
     path === "/reset-password";
 
-  // Public share page is PUBLIC too
   const isPublicShare = path.startsWith("/share/");
 
-  // Hide navbar/footer on auth pages and public share (keep as you prefer)
   const hideNavbarFooter = isAuthPage || isPublicShare;
 
   const content = (

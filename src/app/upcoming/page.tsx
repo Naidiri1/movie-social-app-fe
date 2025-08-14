@@ -7,7 +7,6 @@ import { AddMovieHooks } from "../../components/AddMovieHooks";
 import Image from "next/image";
 import movieImg from '../../../public/movie.png'
 
-// Common movie genres
 const GENRES = [
   { id: 28, name: "Action" },
   { id: 12, name: "Adventure" },

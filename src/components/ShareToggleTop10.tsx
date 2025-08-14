@@ -30,7 +30,6 @@ export default function ShareTop10Toggle() {
           setSlug(json.slug ?? null);
         }
       } catch {
-        // silently fail
       }
     })();
   }, []);
