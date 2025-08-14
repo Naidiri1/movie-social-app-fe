@@ -26,7 +26,7 @@ export default function Footer() {
 
           <div className="flex items-center gap-6 lg:gap-4">
             <a 
-              href="https://www.linkedin.com/in/your-profile" 
+              href="https://www.linkedin.com/in/iridian-cisneros-vargas/" 
               target="_blank"
               rel="noopener noreferrer"
               className="text-white opacity-80 hover:opacity-100 transition-all hover:scale-110"
@@ -38,7 +38,7 @@ export default function Footer() {
             </a>
 
             <a 
-              href="https://github.com/your-username" 
+              href="https://github.com/Naidiri1" 
               target="_blank"
               rel="noopener noreferrer"
               className="text-white opacity-80 hover:opacity-100 transition-all hover:scale-110"
@@ -50,7 +50,7 @@ export default function Footer() {
             </a>
 
             <a 
-              href="mailto:contact@iriscope.com" 
+              href="mailto:naidiri121510@gmail.com" 
               className="text-white opacity-80 hover:opacity-100 transition-all hover:scale-110"
               aria-label="Email"
             >
@@ -94,14 +94,14 @@ export default function Footer() {
               </Link>
               <span className="text-white opacity-60">•</span>
               <Link 
-                href="/privacy" 
+                href="/Technologies-used" 
                 className="text-white opacity-80 hover:opacity-100 transition-opacity hover:underline"
               >
-                Privacy Policy
+                Techonologies used
               </Link>
               <span className="text-white opacity-60">•</span>
               <Link 
-                href="/terms" 
+                href="/terms-of-use" 
                 className="text-white opacity-80 hover:opacity-100 transition-opacity hover:underline"
               >
                 Terms of Service
