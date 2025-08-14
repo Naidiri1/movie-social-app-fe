@@ -1,26 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 
 export default function WatchLaterMovies() {
-  const [movieData, setMovieData] = useState<any[]>([]);
   const [allWatchLater, setAllWatchLater] = useState([]);
   const { userId } = useSelector((state: RootState) => state.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-  const [displayResultsSearch, setDisplayResultsSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchFavoriteMovie, setSearchFavoriteMovie] = useState<any[]>([]);
   const token = sessionStorage.getItem("access_token");
   const [filteredWatchLater, setFilteredWatchLater] = useState<any>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
@@ -42,7 +39,6 @@ export default function WatchLaterMovies() {
     if (response.ok) {
       const data = await response.json();
       const results = data;
-      setMovieData(results);
       setAllWatchLater(results);
       setFilteredWatchLater(results);
     }
@@ -112,7 +108,6 @@ export default function WatchLaterMovies() {
       );
       const data = await updateData.json();
       setTimeout(() => {
-        setMovieData(data);
         setAllWatchLater(data);
         setFilteredWatchLater(data);
         const commentMap: { [movieId: string]: string } = {};
@@ -154,7 +149,6 @@ export default function WatchLaterMovies() {
         }
       );
       const data = await updateData.json();
-      setMovieData(data);
       setAllWatchLater(data);
       setFilteredWatchLater(data);
     }
@@ -179,7 +173,6 @@ export default function WatchLaterMovies() {
         }
       );
       const data = await updateData.json();
-      setMovieData(data);
       setAllWatchLater(data);
       setFilteredWatchLater(data);
     }
@@ -209,7 +202,6 @@ export default function WatchLaterMovies() {
         }
       );
       const data = await updateData.json();
-      setMovieData(data);
       setAllWatchLater(data);
       setFilteredWatchLater(data);
     }
@@ -245,7 +237,6 @@ export default function WatchLaterMovies() {
         commentMap[movie.id] = movie.comment || "";
       });
       setComment(commentMap);
-      setMovieData(scoreUpdated);
       setAllWatchLater(scoreUpdated);
       setFilteredWatchLater(scoreUpdated);
     }

@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { Input, Button, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppDispatch } from "../../redux/store";
-import { useEffect } from "react";
-import { restoreUserSession, logout } from "../../redux/reducers/authSlice";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/reducers/authSlice";
 import popcorn from "../../../public/popcorn.png";
@@ -30,7 +28,7 @@ export default function Signup() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
-    if(!isValidUser || !isValidEmail || !isValidPassword) return
+    if (!isValidUser || !isValidEmail || !isValidPassword) return;
     try {
       const response = await fetch("http://localhost:8080/api/auth/signup", {
         method: "POST",
@@ -90,7 +88,8 @@ export default function Signup() {
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setPassword(input);
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*[\d!@#$%^&*(),.?":{}|<>])[^\s]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*[\d!@#$%^&*(),.?":{}|<>])[^\s]{8,}$/;
     setIsvalidPassword(passwordRegex.test(input));
   };
 

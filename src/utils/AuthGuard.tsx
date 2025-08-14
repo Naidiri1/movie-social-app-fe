@@ -35,9 +35,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       }
 
       if (message.type === "logout") {
-        sessionStorage.removeItem("access_token"); 
+        sessionStorage.removeItem("access_token");
         configFetchedRef.current = false;
-        router.push("/login"); 
+        router.push("/login");
       }
     };
     if (channel) {
@@ -53,15 +53,15 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     if (!token) {
       channel.postMessage({ type: "request-token" });
-      router.push('login');
+      router.push("login");
     }
 
     if (token && !username) {
       dispatch(restoreUserSession());
     }
 
-     if (!token && !username) {
-      router.push('/login')
+    if (!token && !username) {
+      router.push("/login");
     }
 
     return () => {

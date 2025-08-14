@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { Button, Input } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
@@ -18,69 +18,70 @@ export default function LoginForm() {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  setSuccess(false);
-  setDisplayError(false);
-
-  const u = username.trim();
-  const p = password;
-
-  const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
-
-  const usernameOk = usernameRegex.test(u);
-  const passwordOk = p.length >= 8;
-
-
-  if (!usernameOk || !passwordOk) {
-    setDisplayError(true);
-    setError("Please fix the highlighted fields.");
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: u, password: p }),
-      }
-    );
-
-    let result;
-    try {
-      result = await res.json();
-    } catch {
-      console.error("Invalid response from server");
-    }
-
-    if (!res.ok) {
-      const serverMsg = result?.message || result?.error || "User or Password are incorrect, try again!";
-      console.error(serverMsg);
-      setDisplayError(true);
-      setError(serverMsg);
-      return;
-    }
-
-    if (!result?.access_token) {
-      console.error("Login response missing access_token");
-      setDisplayError(true);
-      setError("Login failed - invalid response from server");
-      return;
-    }
-
-    sessionStorage.setItem("access_token", result.access_token);
-    setSuccess(true);
+    e.preventDefault();
+    setError("");
+    setSuccess(false);
     setDisplayError(false);
-    router.push("/popular");
-  } catch (err: any) {
-    console.error(err);
-    setDisplayError(true);
-    setError(err?.message || "User or Password are incorrect, try again!");
-  }
-};
 
+    const u = username.trim();
+    const p = password;
+
+    const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
+
+    const usernameOk = usernameRegex.test(u);
+    const passwordOk = p.length >= 8;
+
+    if (!usernameOk || !passwordOk) {
+      setDisplayError(true);
+      setError("Please fix the highlighted fields.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: u, password: p }),
+        }
+      );
+
+      let result;
+      try {
+        result = await res.json();
+      } catch {
+        console.error("Invalid response from server");
+      }
+
+      if (!res.ok) {
+        const serverMsg =
+          result?.message ||
+          result?.error ||
+          "User or Password are incorrect, try again!";
+        console.error(serverMsg);
+        setDisplayError(true);
+        setError(serverMsg);
+        return;
+      }
+
+      if (!result?.access_token) {
+        console.error("Login response missing access_token");
+        setDisplayError(true);
+        setError("Login failed - invalid response from server");
+        return;
+      }
+
+      sessionStorage.setItem("access_token", result.access_token);
+      setSuccess(true);
+      setDisplayError(false);
+      router.push("/popular");
+    } catch (err: any) {
+      console.error(err);
+      setDisplayError(true);
+      setError(err?.message || "User or Password are incorrect, try again!");
+    }
+  };
 
   useEffect(() => {
     const checkSessionAndRedirect = () => {
@@ -128,7 +129,7 @@ export default function LoginForm() {
               color="white"
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
-           />
+            />
             <Button
               type="submit"
               fullWidth
@@ -137,12 +138,15 @@ export default function LoginForm() {
               Sign In
             </Button>
           </form>
-           <span className="mt-2 underline"> <Link
+          <span className="mt-2 underline">
+            {" "}
+            <Link
               href="/forgot-password"
               className="ml-2 text-white text-xl hover:text-blue-500"
             >
               Forgot Password
-            </Link></span>
+            </Link>
+          </span>
           {success && <p className="text-green-600 mt-4"> Login successful!</p>}
           {displayError && (
             <p className="text-red-600 mt-4">

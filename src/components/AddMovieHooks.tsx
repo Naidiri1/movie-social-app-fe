@@ -1,6 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 export const AddMovieHooks = () => {
   const { userId } = useSelector((state: RootState) => state.auth);

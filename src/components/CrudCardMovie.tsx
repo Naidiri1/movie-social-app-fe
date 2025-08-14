@@ -6,19 +6,16 @@ import {
   CardFooter,
   Typography,
   Button,
-  Tooltip,
-  IconButton,
-  Textarea,
 } from "@material-tailwind/react";
 import Image from "next/image";
-import IconCard from "./IconCard";
 import fallback1 from "../../public/fallback1.jpg";
 import { useRouter } from "next/navigation";
 import RatingSlider from "../components/ratingTool";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { IoCloseSharp } from "react-icons/io5";
 import { IoAddCircleOutline } from "react-icons/io5";
+import LikeDislike from "../components/LikeDislike";
+import { usePathname } from "next/navigation";
 
 interface CardMovieProps {
   movie: Movie;
@@ -26,16 +23,21 @@ interface CardMovieProps {
   successScore: any;
   handleDeleteScore: (movie: Movie) => void;
   initialScore: number | null;
-  handleDeleteMovie: (movie: Movie) => void;
   comment: any;
   setComment: (comment: any) => void;
   handleAddEditComment: (movie: any) => void;
   handleDeleteComment: (movie: any) => void;
+  entryId?: number;
+  entryType?: "favorites" | "watched" | "top10" | "watch-later";
+  movieOwnerId?: string;
+  commentLikes?: number;
+  commentDislikes?: number;
+  userLikeStatus?: "liked" | "disliked" | null;
 }
 
 const GENRE_MAP: { [key: number]: string } = {
   28: "Action",
-  12: "Adventure", 
+  12: "Adventure",
   16: "Animation",
   35: "Comedy",
   80: "Crime",
@@ -52,7 +54,7 @@ const GENRE_MAP: { [key: number]: string } = {
   10770: "TV Movie",
   53: "Thriller",
   10752: "War",
-  37: "Western"
+  37: "Western",
 };
 
 const CrudCardMovie: React.FC<CardMovieProps> = ({
@@ -61,11 +63,16 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   successScore,
   handleDeleteScore,
   initialScore,
-  handleDeleteMovie,
   comment,
   setComment,
   handleAddEditComment,
   handleDeleteComment,
+  entryId,
+  entryType,
+  movieOwnerId,
+  commentLikes,
+  commentDislikes,
+  userLikeStatus,
 }) => {
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();
@@ -79,6 +86,8 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
       return "NR";
     }
   };
+  const path = usePathname() || "";
+  const isReadOnly = path.startsWith("/search-users");
 
   useEffect(() => {
     if (movie.comment) {
@@ -102,20 +111,20 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
 
   const getGenreNames = (movie: any) => {
     if (movie.genres && Array.isArray(movie.genres)) {
-      if (typeof movie.genres[0] === 'string') {
-        return movie.genres.slice(0, 3); 
+      if (typeof movie.genres[0] === "string") {
+        return movie.genres.slice(0, 3);
       }
       return movie.genres.map((genre: any) => genre.name).slice(0, 3);
     } else if (movie.genreIds && Array.isArray(movie.genreIds)) {
       return movie.genreIds
         .map((id: number) => GENRE_MAP[id])
         .filter(Boolean)
-        .slice(0, 3); 
+        .slice(0, 3);
     } else if (movie.genre_ids && Array.isArray(movie.genre_ids)) {
       return movie.genre_ids
         .map((id: number) => GENRE_MAP[id])
         .filter(Boolean)
-        .slice(0, 3); 
+        .slice(0, 3);
     }
     return [];
   };
@@ -125,7 +134,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   return (
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[23rem] mx-auto shadow-lg">
       <CardHeader className="bg-black" floated={false} color="white">
-        <div className="relative w-[500px] h-[450px]">
+        <div className="relative w-[350px] h-[200px]">
           <Image
             src={movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1}
             alt={movie.title}
@@ -150,7 +159,6 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           {movie.releasedDate}
         </Typography>
 
-        {/* Genre Tags */}
         {genres.length > 0 && (
           <div className="mb-2">
             <div className="flex flex-wrap gap-1">
@@ -192,7 +200,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           className="flex items-center  gap-2 font-normal"
         >
           <span className="flex items-center gap-1">
-            My Score:{" "}
+            {!isReadOnly ? "My Score:" : "User's Score:"}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -208,29 +216,33 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
             {movie.userScore != null ? (
               movie.userScore
             ) : (
-              <span className="text-yellow-500 text-xl">?</span>
+              <span className="text-yellow-500 text-xl">
+                {!isReadOnly ? "?" : "NR"}
+              </span>
             )}
           </span>
-          <div className="flex ml-[2rem] flex-row">
-            {movie.userScore != null && (
-              <div className="flex flex-col items-center cursor-pointer">
-                <FaEdit
-                  onClick={handleDisplayRating}
-                  className="h-4 w-4 text-orange-400 hover:text-yellow-500"
-                />
-                <p className="mt-1 text-xs">Edit</p>
-              </div>
-            )}
-            {movie.userScore != null && (
-              <div className="flex ml-3 flex-col items-center cursor-pointer">
-                <RiDeleteBin6Line
-                  onClick={() => handleDeleteScore(movie)}
-                  className="h-4 w-4 text-orange-400 hover:text-red-500"
-                />
-                <p className="mt-1 text-xs">Delete</p>
-              </div>
-            )}
-          </div>
+          {!isReadOnly && (
+            <div className="flex ml-[2rem] flex-row">
+              {movie.userScore != null && (
+                <div className="flex flex-col items-center cursor-pointer">
+                  <FaEdit
+                    onClick={handleDisplayRating}
+                    className="h-4 w-4 text-orange-400 hover:text-yellow-500"
+                  />
+                  <p className="mt-1 text-xs">Edit</p>
+                </div>
+              )}
+              {movie.userScore != null && (
+                <div className="flex ml-3 flex-col items-center cursor-pointer">
+                  <RiDeleteBin6Line
+                    onClick={() => handleDeleteScore(movie)}
+                    className="h-4 w-4 text-orange-400 hover:text-red-500"
+                  />
+                  <p className="mt-1 text-xs">Delete</p>
+                </div>
+              )}
+            </div>
+          )}
         </Typography>
         <Typography
           className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
@@ -238,72 +250,90 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
         >
           {movie.movieDescription}
         </Typography>
-        <div className="mb-3 min-h-[3.2rem] max-h-[3.2rem] ">
-          {(movie.userScore === null || enableScore) && (
-            <RatingSlider
-              onSubmit={(score) => handleAddMovie(score)}
-              successScore={successScore}
-              initialScore={initialScore}
-            />
-          )}
-        </div>
-        <div className="w-full mt-5 flex flex-row items-start justify-between gap-2">
+        {!isReadOnly && (
+          <div className="mb-3 min-h-[3.2rem] max-h-[3.2rem] ">
+            {(movie.userScore === null || enableScore) && (
+              <RatingSlider
+                onSubmit={(score) => handleAddMovie(score)}
+                successScore={successScore}
+                initialScore={initialScore}
+              />
+            )}
+          </div>
+        )}
+        <div className="w-full mt-5 pt-5 flex flex-row items-start justify-between gap-2">
           <div
-            className={`rounded p-3 w-full min-h-[6rem] max-h-[6rem]   ${
-              isDisabled ? "bg-black text-white" : "bg-black"
+            className={`rounded  w-full min-h-[6rem] max-h-[6rem]   ${
+              isDisabled ? "bg-none text-white" : "bg-black"
             }`}
           >
             <textarea
               value={comment}
-              disabled={isDisabled}
+              disabled={isDisabled || isReadOnly}
               onChange={(e) => setComment(e.target.value)}
               className={`w-full p-2 rounded resize-none outline-none ${
-                isDisabled
+                isDisabled || isReadOnly
                   ? "bg-blue-gray-800 text-white"
                   : "bg-black text-white border boder-white placeholder:text-white"
               }`}
-              placeholder="My Opinion..."
+              placeholder={!isReadOnly ? "My Review..." : "Empty User's Review"}
             />
           </div>
-          <div className="flex flex-col items-center justify-start gap-2 pt-3">
-            {!isDisabled ? (
-              <div className="flex flex-col items-center cursor-pointer">
-                <IoAddCircleOutline
-                  onClick={() => {
-                    {
-                      comment ? handleAddEditComment(movie) : setIsDisabled;
-                    }
-                    {
-                      comment ? setIsDisabled(true) : setIsDisabled(false);
-                    }
-                  }}
-                  className="h-5 w-5 text-white hover:text-blue-500"
-                />
-                <p className="text-[0.65rem] text-white text-center">Post</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center cursor-pointer">
-                <FaEdit
-                  onClick={() => {
-                    handleAddEditComment(movie);
-                    setIsDisabled(false);
-                  }}
-                  className="h-5 w-5 text-white hover:text-blue-500"
-                />
-                <p className="text-[0.65rem] text-white text-center">Edit</p>
-              </div>
-            )}
-            <div className="flex flex-col items-center cursor-pointer">
-              <RiDeleteBin6Line
-                onClick={() => {
-                  if (comment === "") return;
-                  handleDeleteComment(movie);
-                }}
-                className="h-5 w-5 text-white hover:text-red-500"
+
+          {entryId && entryType && movieOwnerId && (
+            <div className="flex flex-col items-center justify-start gap-2 ">
+              <LikeDislike
+                entryId={entryId}
+                entryType={entryType}
+                movieOwnerId={movieOwnerId}
+                initialLikes={commentLikes}
+                initialDislikes={commentDislikes}
+                initialUserStatus={userLikeStatus}
+                comment={comment}
               />
-              <p className="text-[0.65rem] text-white text-center">Delete</p>
             </div>
-          </div>
+          )}
+          {!isReadOnly && (
+            <div className="flex flex-col items-center justify-start gap-2 ">
+              {!isDisabled ? (
+                <div className="flex flex-col items-center cursor-pointer">
+                  <IoAddCircleOutline
+                    onClick={() => {
+                      {
+                        comment ? handleAddEditComment(movie) : setIsDisabled;
+                      }
+                      {
+                        comment ? setIsDisabled(true) : setIsDisabled(false);
+                      }
+                    }}
+                    className="h-5 w-5 text-blue-500 hover:text-blue-500"
+                  />
+                  <p className="text-[0.65rem] text-white text-center">Post</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center cursor-pointer">
+                  <FaEdit
+                    onClick={() => {
+                      handleAddEditComment(movie);
+                      setIsDisabled(false);
+                    }}
+                    className="h-5 w-5 text-blue-500 hover:text-blue-500"
+                  />
+                  <p className="text-[0.65rem] text-white text-center">Edit</p>
+                </div>
+              )}
+              <div className="flex flex-col items-center cursor-pointer">
+                <RiDeleteBin6Line
+                  onClick={() => {
+                    if (comment === "") return;
+                    handleDeleteComment(movie);
+                  }}
+                  className="h-5 w-5 text-red-300 hover:text-red-500"
+                />
+                <p className="text-[0.65rem] text-white text-center">Delete</p>
+              </div>
+            </div>
+          )}
         </div>
       </CardBody>
       <CardFooter className="pt-0">

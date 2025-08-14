@@ -18,9 +18,6 @@ export default function Top10Movies() {
     Array(NUM_SLOTS).fill(null)
   );
   const sortableContainerRef = useRef<HTMLDivElement | null>(null);
-  const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
-    new Set()
-  );
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const path = usePathname();
   const readOnlySharedLink = path?.startsWith("/share/");
@@ -41,7 +38,7 @@ export default function Top10Movies() {
     if (response.ok) {
       const updateData = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10?userId=${userId}`,
-           {
+        {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -115,7 +112,6 @@ export default function Top10Movies() {
   };
 
   const handleDeleteComment = async (movie: any) => {
-    if (movie.comment === "") return;
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/top10/${movie.id}?userId=${userId}`,
       {
@@ -149,7 +145,7 @@ export default function Top10Movies() {
   };
 
   useEffect(() => {
-     handleTop10();
+    handleTop10();
   }, []);
 
   const handleTop10 = async () => {
@@ -161,7 +157,7 @@ export default function Top10Movies() {
     );
 
     if (!response.ok) {
-     console.error("Failed to fetch movies");
+      console.error("Failed to fetch movies");
     }
 
     if (response.ok) {
@@ -198,7 +194,7 @@ export default function Top10Movies() {
       <ShareTop10Toggle />
       <div
         ref={sortableContainerRef}
-        className={` ${movieData.length === 0 ? 'flex justify-center items-center' :'grid grid-cols-1 md:grid-cols-2'} `}
+        className={` ${movieData.length === 0 ? "flex justify-center items-center" : "grid grid-cols-1 md:grid-cols-2"} `}
       >
         {movieData.length > 0 ? (
           movieData.map((movie: any, index) => (

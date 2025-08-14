@@ -87,7 +87,6 @@ export default function FavoriteMovies() {
     setRowData(newData);
     setAllFavorites(newData);
 
-    // Maintain current filter
     if (selectedGenre) {
       const filtered = newData.filter((movie: any) => {
         if (movie.genres && Array.isArray(movie.genres)) {

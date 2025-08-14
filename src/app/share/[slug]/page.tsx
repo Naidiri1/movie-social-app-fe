@@ -9,9 +9,9 @@ export default function SharePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
 
   const [data, setData] = useState<any[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [commentMap, setCommentMap] = useState<Record<string, string>>({});
   const [displayError, setDispalyError] = useState(false);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -38,7 +38,6 @@ export default function SharePage({ params }: { params: { slug: string } }) {
   const handleAddEditComment = () => {};
   const handleDeleteComment = () => {};
 
- 
   return (
     <div className="w-full itesm-center justify-center flex flex-col">
       {data && (
@@ -99,19 +98,19 @@ export default function SharePage({ params }: { params: { slug: string } }) {
           ))}
       </div>
       {!data && displayError ? (
-      <div className="flex flex-col items-center justify-center ">
-      <div className="relative w-[400px] h-[400px]">
-          <Image
-            src={userError}
-            alt={'Error'}
-            fill
-            className=""
-            sizes="300px"
-            priority
-          />
+        <div className="flex flex-col items-center justify-center ">
+          <div className="relative w-[400px] h-[400px]">
+            <Image
+              src={userError}
+              alt={"Error"}
+              fill
+              className=""
+              sizes="300px"
+              priority
+            />
+          </div>
+          <p>User Top 10 not Available!</p>
         </div>
-        <p>User Top 10 not Available!</p>
-      </div>
       ) : null}
     </div>
   );

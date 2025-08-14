@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
 
 const SearchResults = () => {
-    const searchParams = useSearchParams();
-    const queryMovie = searchParams.get('query');
+  const searchParams = useSearchParams();
+  const queryMovie = searchParams.get("query");
 
-    return queryMovie;
+  return queryMovie;
 };
 
 export default SearchResults;

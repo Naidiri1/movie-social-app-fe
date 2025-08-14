@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export default function ScrollArrows() {
   const [showUp, setShowUp] = useState(false);
@@ -23,22 +23,21 @@ export default function ScrollArrows() {
       setShowDown(canScroll && !atBottom);
     };
 
-    compute(); 
-    window.addEventListener('scroll', compute, { passive: true });
-    window.addEventListener('resize', compute);
+    compute();
+    window.addEventListener("scroll", compute, { passive: true });
+    window.addEventListener("resize", compute);
 
     const vv = (window as any).visualViewport as VisualViewport | undefined;
-    vv?.addEventListener('resize', compute);
+    vv?.addEventListener("resize", compute);
 
     return () => {
-      window.removeEventListener('scroll', compute);
-      window.removeEventListener('resize', compute);
-      vv?.removeEventListener('resize', compute);
+      window.removeEventListener("scroll", compute);
+      window.removeEventListener("resize", compute);
+      vv?.removeEventListener("resize", compute);
     };
   }, []);
 
-  const smooth = (top: number) =>
-    window.scrollTo({ top, behavior: 'smooth' });
+  const smooth = (top: number) => window.scrollTo({ top, behavior: "smooth" });
 
   const scrollTop = () => smooth(0);
   const scrollBottom = () => smooth(document.documentElement.scrollHeight);
@@ -46,10 +45,10 @@ export default function ScrollArrows() {
   return (
     <div
       className="
-        fixed right-5 
+        fixed right-20 
         [bottom:calc(env(safe-area-inset-bottom,0)+360px)]
         z-[9999]
-        flex flex-col gap-2
+        flex flex-col gap-1
         pointer-events-none
       "
     >
@@ -60,11 +59,21 @@ export default function ScrollArrows() {
           pointer-events-auto rounded-full p-3 shadow-lg
           bg-blue-gray-500 text-white hover:bg-blue-gray-500 transition
           backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60
-          ${showUp ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          ${showUp ? "opacity-100" : "opacity-0 pointer-events-none"}
         `}
       >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="red" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="red"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 15l7-7 7 7"
+          />
         </svg>
       </button>
 
@@ -75,11 +84,21 @@ export default function ScrollArrows() {
           pointer-events-auto rounded-full p-3 shadow-lg
           bg-blue-gray-500 text-white hover:bg-blue-gray-500 transition
           backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60
-          ${showDown ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          ${showDown ? "opacity-100" : "opacity-0 pointer-events-none"}
         `}
       >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="red" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="red"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
     </div>

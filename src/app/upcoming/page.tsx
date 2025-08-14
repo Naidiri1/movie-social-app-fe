@@ -5,9 +5,8 @@ import { Button, Typography } from "@material-tailwind/react";
 import CardMovie from "../../components/CardMovie";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
 import Image from "next/image";
-import movieImg from '../../../public/movie.png'
+import movieImg from "../../../public/movie.png";
 
-// Common movie genres
 const GENRES = [
   { id: 28, name: "Action" },
   { id: 12, name: "Adventure" },
@@ -27,7 +26,7 @@ const GENRES = [
   { id: 10770, name: "TV Movie" },
   { id: 53, name: "Thriller" },
   { id: 10752, name: "War" },
-  { id: 37, name: "Western" }
+  { id: 37, name: "Western" },
 ];
 
 const UpcomingMovies = () => {
@@ -43,21 +42,24 @@ const UpcomingMovies = () => {
     handleAddWatchLater,
   } = AddMovieHooks();
 
-  const handleSearchUpcomingMovies = async (genreId: number | null = null, page: number = 1) => {
+  const handleSearchUpcomingMovies = async (
+    genreId: number | null = null,
+    page: number = 1
+  ) => {
     const token = sessionStorage.getItem("access_token");
 
     // Build URL with or without genre parameter
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/upcoming`;
     const params = new URLSearchParams();
-    
+
     if (genreId) {
-      params.append('with_genres', genreId.toString());
+      params.append("with_genres", genreId.toString());
     }
-    
+
     if (page > 1) {
-      params.append('page', page.toString());
+      params.append("page", page.toString());
     }
-    
+
     if (params.toString()) {
       url += `?${params.toString()}`;
     }
@@ -78,7 +80,7 @@ const UpcomingMovies = () => {
 
   const filterByGenre = async (genreId: number | null) => {
     setSelectedGenre(genreId);
-    setCurrentPage(1); // Reset to page 1 when changing genre
+    setCurrentPage(1);
     setLoading(true);
     await handleSearchUpcomingMovies(genreId, 1);
     setLoading(false);
@@ -101,7 +103,7 @@ const UpcomingMovies = () => {
         <Typography variant="h6" className="text-white mb-4">
           Filter by Genre
         </Typography>
-        
+
         <div className="flex flex-wrap gap-1 ">
           <Button
             size="sm"
@@ -128,19 +130,21 @@ const UpcomingMovies = () => {
             </Button>
           ))}
         </div>
-        
+
         {selectedGenre && (
           <Typography variant="small" className="text-gray-300 mt-2">
-            Showing {rowData.length} upcoming movies in {GENRES.find(g => g.id === selectedGenre)?.name} genre - Page {currentPage}
+            Showing {rowData.length} upcoming movies in{" "}
+            {GENRES.find((g) => g.id === selectedGenre)?.name} genre - Page{" "}
+            {currentPage}
           </Typography>
         )}
-        
+
         {!selectedGenre && currentPage > 1 && (
           <Typography variant="small" className="text-gray-300 mt-2">
             Showing upcoming movies - Page {currentPage}
           </Typography>
         )}
-        
+
         {loading && (
           <Typography variant="small" className="text-gray-300 mt-2">
             Loading movies...
@@ -150,16 +154,18 @@ const UpcomingMovies = () => {
 
       {/* Movies Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {rowData.length > 0 ? rowData.map((movie: any) => (
-          <CardMovie
-            key={movie.id}
-            movie={movie}
-            handleAddFavorites={() => handleAddFavorites(movie)}
-            handleAddToWatched={() => handleAddToWatched(movie)}
-            handleAddToTop10={() => handleAddToTop10(movie)}
-            handleAddWatchLater={() => handleAddWatchLater(movie)}
-          />
-        )) : (
+        {rowData.length > 0 ? (
+          rowData.map((movie: any) => (
+            <CardMovie
+              key={movie.id}
+              movie={movie}
+              handleAddFavorites={() => handleAddFavorites(movie)}
+              handleAddToWatched={() => handleAddToWatched(movie)}
+              handleAddToTop10={() => handleAddToTop10(movie)}
+              handleAddWatchLater={() => handleAddWatchLater(movie)}
+            />
+          ))
+        ) : (
           <div className="col-span-full flex flex-col items-center justify-center h-[400px] w-full text-white">
             <Image
               src={movieImg}
@@ -169,10 +175,9 @@ const UpcomingMovies = () => {
               priority
             />
             <p className="mt-4 text-lg font-medium">
-              {selectedGenre 
-                ? `No upcoming movies found in ${GENRES.find(g => g.id === selectedGenre)?.name} genre`
-                : "No Upcoming Movie Results"
-              }
+              {selectedGenre
+                ? `No upcoming movies found in ${GENRES.find((g) => g.id === selectedGenre)?.name} genre`
+                : "No Upcoming Movie Results"}
             </p>
           </div>
         )}

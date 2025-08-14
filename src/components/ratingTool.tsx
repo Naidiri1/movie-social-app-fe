@@ -39,7 +39,7 @@ export default function RatingSlider({
             Rating: {score} ⭐
           </span>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center flex-wrap gap-3">
             <Slider
               color="yellow"
               value={sliderValue}
