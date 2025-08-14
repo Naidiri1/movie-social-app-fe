@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
 import { CgSandClock } from "react-icons/cg";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
 interface IconActionsProps {

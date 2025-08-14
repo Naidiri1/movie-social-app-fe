@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Card,
   CardHeader,
@@ -6,8 +6,6 @@ import {
   CardFooter,
   Typography,
   Button,
-  Tooltip,
-  IconButton,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import IconCard from "./IconCard";
@@ -22,10 +20,9 @@ interface CardMovieProps {
   handleAddWatchLater: (movie: any) => void;
 }
 
-// Genre mapping from TMDB IDs to names
 const GENRE_MAP: { [key: number]: string } = {
   28: "Action",
-  12: "Adventure", 
+  12: "Adventure",
   16: "Animation",
   35: "Comedy",
   80: "Crime",
@@ -42,7 +39,7 @@ const GENRE_MAP: { [key: number]: string } = {
   10770: "TV Movie",
   53: "Thriller",
   10752: "War",
-  37: "Western"
+  37: "Western",
 };
 
 const CardMovie: React.FC<CardMovieProps> = ({
@@ -74,7 +71,7 @@ const CardMovie: React.FC<CardMovieProps> = ({
     const genreIds = movie.genre_ids || movie.genreIds || [];
     return genreIds
       .map((id: number) => GENRE_MAP[id])
-      .filter(Boolean) 
+      .filter(Boolean)
       .slice(0, 3);
   };
 
@@ -127,8 +124,7 @@ const CardMovie: React.FC<CardMovieProps> = ({
         >
           {movie.release_date}
         </Typography>
-        
-        {/* Genre Tags */}
+
         {genres.length > 0 && (
           <div className="mb-2">
             <div className="flex flex-wrap gap-1">

@@ -1,13 +1,13 @@
-'use client';
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import authUserSlice from '../redux/reducers/authSlice'
+"use client";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import authUserSlice from "../redux/reducers/authSlice";
 
 const rootReducer = combineReducers({
-auth: authUserSlice,
+  auth: authUserSlice,
 });
 
 export const store = configureStore({
-    reducer: rootReducer,
+  reducer: rootReducer,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

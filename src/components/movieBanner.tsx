@@ -102,7 +102,7 @@ const MovieBanner: React.FC<MovieActionsProps> =  ({ movie} ) => {
               <div className="mb-3">
                 <p className="mb-2"><strong>Genres:</strong></p>
                 <div className="flex flex-wrap gap-2">
-                  {genres.map((genre, index) => (
+                  {genres.map((genre:any, index:any) => (
                     <span
                       key={index}
                       className="inline-block bg-red-600 text-white text-sm px-3 py-1 rounded-full font-medium"

@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
 import CardMovie from "../../components/CardMovie";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
 import Image from "next/image";
-import movieImg from '../../../public/movie.png'
+import movieImg from "../../../public/movie.png";
 
 const GENRES = [
   { id: 28, name: "Action" },
@@ -28,7 +26,7 @@ const GENRES = [
   { id: 10770, name: "TV Movie" },
   { id: 53, name: "Thriller" },
   { id: 10752, name: "War" },
-  { id: 37, name: "Western" }
+  { id: 37, name: "Western" },
 ];
 
 export default function Popular() {
@@ -36,7 +34,7 @@ export default function Popular() {
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const {
     handleAddFavorites,
     handleAddToWatched,
@@ -44,20 +42,23 @@ export default function Popular() {
     handleAddWatchLater,
   } = AddMovieHooks();
 
-  const PopularMovies = async (genreId: number | null = null, page: number = 1) => {
+  const PopularMovies = async (
+    genreId: number | null = null,
+    page: number = 1
+  ) => {
     const token = sessionStorage.getItem("access_token");
 
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`;
     const params = new URLSearchParams();
-    
+
     if (genreId) {
-      params.append('with_genres', genreId.toString());
+      params.append("with_genres", genreId.toString());
     }
-    
+
     if (page > 1) {
-      params.append('page', page.toString());
+      params.append("page", page.toString());
     }
-    
+
     if (params.toString()) {
       url += `?${params.toString()}`;
     }
@@ -78,7 +79,7 @@ export default function Popular() {
 
   const filterByGenre = async (genreId: number | null) => {
     setSelectedGenre(genreId);
-    setCurrentPage(1); 
+    setCurrentPage(1);
     setLoading(true);
     await PopularMovies(genreId, 1);
     setLoading(false);
@@ -127,19 +128,21 @@ export default function Popular() {
             </Button>
           ))}
         </div>
-        
+
         {selectedGenre && (
           <Typography variant="small" className="text-gray-300 mt-2">
-            Showing {rowData.length} popular movies in {GENRES.find(g => g.id === selectedGenre)?.name} genre - Page {currentPage}
+            Showing {rowData.length} popular movies in{" "}
+            {GENRES.find((g) => g.id === selectedGenre)?.name} genre - Page{" "}
+            {currentPage}
           </Typography>
         )}
-        
+
         {!selectedGenre && currentPage > 1 && (
           <Typography variant="small" className="text-gray-300 mt-2">
             Showing popular movies - Page {currentPage}
           </Typography>
         )}
-        
+
         {loading && (
           <Typography variant="small" className="text-gray-300 mt-2">
             Loading movies...
@@ -148,16 +151,18 @@ export default function Popular() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {rowData.length > 0 ? rowData.map((movie: any) => (
-          <CardMovie
-            key={movie.id}
-            movie={movie}
-            handleAddFavorites={() => handleAddFavorites(movie)}
-            handleAddToWatched={() => handleAddToWatched(movie)}
-            handleAddToTop10={() => handleAddToTop10(movie)}
-            handleAddWatchLater={() => handleAddWatchLater(movie)}
-          />
-        )) : (
+        {rowData.length > 0 ? (
+          rowData.map((movie: any) => (
+            <CardMovie
+              key={movie.id}
+              movie={movie}
+              handleAddFavorites={() => handleAddFavorites(movie)}
+              handleAddToWatched={() => handleAddToWatched(movie)}
+              handleAddToTop10={() => handleAddToTop10(movie)}
+              handleAddWatchLater={() => handleAddWatchLater(movie)}
+            />
+          ))
+        ) : (
           <div className="col-span-full flex flex-col items-center justify-center h-[400px] w-full text-white">
             <Image
               src={movieImg}
@@ -167,10 +172,9 @@ export default function Popular() {
               priority
             />
             <p className="mt-4 text-lg font-medium">
-              {selectedGenre 
-                ? `No movies found in ${GENRES.find(g => g.id === selectedGenre)?.name} genre`
-                : "No Movie Results"
-              }
+              {selectedGenre
+                ? `No movies found in ${GENRES.find((g) => g.id === selectedGenre)?.name} genre`
+                : "No Movie Results"}
             </p>
           </div>
         )}

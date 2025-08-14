@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 
 export default function WatchedMovies() {
-  const [movieData, setMovieData] = useState<any[]>([]);
   const { userId } = useSelector((state: RootState) => state.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
@@ -41,11 +40,7 @@ export default function WatchedMovies() {
     if (response.ok) {
       const data = await response.json();
       const results = data?.content || data || [];
-      
       const moviesArray = Array.isArray(results) ? results : [];
-      
-      setMovieData(moviesArray);
-      setAllwatched(moviesArray);
       setFilteredWatched(moviesArray);
     }
   };
@@ -69,7 +64,6 @@ export default function WatchedMovies() {
 
   const getAvailableGenres = () => {
     const allGenres = new Set<string>();
-
     if (Array.isArray(allWatched)) {
       allWatched.forEach((movie: any) => {
         if (movie.genres && Array.isArray(movie.genres)) {
@@ -116,7 +110,6 @@ export default function WatchedMovies() {
       const moviesArray = Array.isArray(results) ? results : [];
       
       setTimeout(() => {
-        setMovieData(moviesArray);
         setAllwatched(moviesArray);
         setFilteredWatched(moviesArray);
         const commentMap: { [movieId: string]: string } = {};
@@ -160,7 +153,6 @@ export default function WatchedMovies() {
       const data = await updateData.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
-      setMovieData(moviesArray);
       setAllwatched(moviesArray);
       setFilteredWatched(moviesArray);
     }
@@ -187,7 +179,6 @@ export default function WatchedMovies() {
       const data = await updateData.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
-      setMovieData(moviesArray);
       setAllwatched(moviesArray);
       setFilteredWatched(moviesArray);
     }
@@ -225,9 +216,7 @@ export default function WatchedMovies() {
 
   const updateFilteredData = (newData: any[]) => {
     const dataArray = Array.isArray(newData) ? newData : [];
-    
-    setMovieData(dataArray);
-    setAllwatched(dataArray);
+      setAllwatched(dataArray);
 
     if (selectedGenre) {
       const filtered = dataArray.filter((movie: any) => {
@@ -272,12 +261,6 @@ export default function WatchedMovies() {
     }
   };
 
-  const handleResults = (results: any) => {
-    if (results.length > 0) {
-      setMovieData(results);
-    }
-  };
-
   const handleSearch = async () => {
     if (!searchQuery?.trim()) {
       filterByGenre(selectedGenre);
@@ -298,7 +281,6 @@ export default function WatchedMovies() {
     const data = await response.json();
     const results = data?.content || data || [];
     const moviesArray = Array.isArray(results) ? results : [];
-    setMovieData(moviesArray);
 
     const fuse = new Fuse(moviesArray, {
       keys: ["title"],
@@ -308,7 +290,6 @@ export default function WatchedMovies() {
 
     const matchedMovies = result.map((r) => r.item);
 
-    handleResults(matchedMovies);
     setFilteredWatched(matchedMovies);
     setCurrentPage(1);
     setSelectedGenre(null); 

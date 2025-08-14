@@ -14,25 +14,21 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   ArrowLeftIcon,
-  HandThumbUpIcon,
-  HandThumbDownIcon,
 } from "@heroicons/react/24/outline";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { BookmarkIcon, EyeIcon, Trophy } from "lucide-react";
 import { CgSandClock } from "react-icons/cg";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-import { useRouter } from "next/router";
-import { usePathname } from "next/navigation";
 
 export default function SearchUsers() {
   type CategoryType = "favorites" | "watched" | "top10" | "watchLater";
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [originalSearchResults, setOriginalSearchResults] = useState<any[]>([]); 
+  const [originalSearchResults, setOriginalSearchResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -66,7 +62,7 @@ export default function SearchUsers() {
       watchLater: false,
     });
 
-  const { username, userId } = useSelector((state: RootState) => state.auth);
+  const { userId } = useSelector((state: RootState) => state.auth);
   const currentUserId = userId;
 
   const saveStateToSessionStorage = () => {
@@ -106,7 +102,6 @@ export default function SearchUsers() {
   };
 
   useEffect(() => {
-
     try {
       const savedResults = sessionStorage.getItem("userSearch_results");
       const savedOriginalResults = sessionStorage.getItem(
@@ -438,33 +433,32 @@ export default function SearchUsers() {
     }
   };
 
-   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchQuery(newValue);
-    
-    if (newValue === '' && searchQuery !== '') {
+
+    if (newValue === "" && searchQuery !== "") {
       clearAllSearchData();
     }
   };
-  
+
   const clearAllSearchData = () => {
-    
     const keys = [
-      'userSearchQuery',
-      'userSearch_query',
-      'userSearchResults', 
-      'userSearch_results',
-      'userSearch_selectedUser',
-      'userSearch_userMovies',
-      'userSearch_openSections',
-      'userSearch_loadedCategories',
-      'userSearch_hasSearched',
-      'userSearch_originalResults'
+      "userSearchQuery",
+      "userSearch_query",
+      "userSearchResults",
+      "userSearch_results",
+      "userSearch_selectedUser",
+      "userSearch_userMovies",
+      "userSearch_openSections",
+      "userSearch_loadedCategories",
+      "userSearch_hasSearched",
+      "userSearch_originalResults",
     ];
-    
-    keys.forEach(key => sessionStorage.removeItem(key));
-    
-    setSearchQuery('');
+
+    keys.forEach((key) => sessionStorage.removeItem(key));
+
+    setSearchQuery("");
     setSearchResults([]);
     setOriginalSearchResults([]);
     setSelectedUser(null);
@@ -473,28 +467,27 @@ export default function SearchUsers() {
       favorites: [],
       watched: [],
       top10: [],
-      watchLater: []
+      watchLater: [],
     });
     setOpenSections({
       favorites: false,
       watched: false,
       top10: false,
-      watchLater: false
+      watchLater: false,
     });
     setLoadedCategories({
       favorites: false,
       watched: false,
       top10: false,
-      watchLater: false
+      watchLater: false,
     });
   };
 
-   useEffect(() => {
+  useEffect(() => {
     return () => {
-      sessionStorage.setItem('previousPath', window.location.pathname);
+      sessionStorage.setItem("previousPath", window.location.pathname);
     };
   }, []);
-
 
   const renderMovieSection = (
     category: CategoryType,

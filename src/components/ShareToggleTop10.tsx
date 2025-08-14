@@ -29,8 +29,7 @@ export default function ShareTop10Toggle() {
           setEnabled(!!json.enabled);
           setSlug(json.slug ?? null);
         }
-      } catch {
-      }
+      } catch {}
     })();
   }, []);
 

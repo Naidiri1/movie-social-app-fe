@@ -29,7 +29,7 @@ interface Props {
 
 const GENRE_MAP: { [key: number]: string } = {
   28: "Action",
-  12: "Adventure", 
+  12: "Adventure",
   16: "Animation",
   35: "Comedy",
   80: "Crime",
@@ -46,7 +46,7 @@ const GENRE_MAP: { [key: number]: string } = {
   10770: "TV Movie",
   53: "Thriller",
   10752: "War",
-  37: "Western"
+  37: "Western",
 };
 
 const TMDbStyleMovieCard = ({
@@ -79,8 +79,8 @@ const TMDbStyleMovieCard = ({
 
   const getGenreNames = (movie: any) => {
     if (movie.genres && Array.isArray(movie.genres)) {
-      if (typeof movie.genres[0] === 'string') {
-        return movie.genres.slice(0, 4); 
+      if (typeof movie.genres[0] === "string") {
+        return movie.genres.slice(0, 4);
       }
       return movie.genres.map((genre: any) => genre.name).slice(0, 4);
     } else if (movie.genreIds && Array.isArray(movie.genreIds)) {
@@ -104,7 +104,6 @@ const TMDbStyleMovieCard = ({
   return (
     <div className="w-full h-full flex flex-col bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 cursor-move">
       <div className="flex flex-col lg:flex-row gap-4 h-full">
-        
         <div className="flex flex-col flex-1 text-blue-gray-600 dark:text-white">
           <h2 className="text-lg lg:text-xl font-semibold mb-3 line-clamp-2 min-h-[3.5rem]">
             {movie.title}
@@ -213,9 +212,11 @@ const TMDbStyleMovieCard = ({
                 disabled={!comment}
               >
                 <IoAddCircleOutline
-                  className={`h-5 w-5 ${comment ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400'}`}
+                  className={`h-5 w-5 ${comment ? "text-blue-500 hover:text-blue-700" : "text-gray-400"}`}
                 />
-                <p className="text-xs text-blue-gray-600 dark:text-gray-400 mt-1">Post</p>
+                <p className="text-xs text-blue-gray-600 dark:text-gray-400 mt-1">
+                  Post
+                </p>
               </button>
             ) : !readOnlySharedLink && isDisabled ? (
               <button
@@ -226,17 +227,21 @@ const TMDbStyleMovieCard = ({
                 className="flex flex-col items-center cursor-pointer hover:scale-110 transition-transform"
               >
                 <FaEdit className="h-4 w-4 text-blue-500 hover:text-blue-700" />
-                <p className="text-xs text-blue-gray-600 dark:text-gray-400 mt-1">Edit</p>
+                <p className="text-xs text-blue-gray-600 dark:text-gray-400 mt-1">
+                  Edit
+                </p>
               </button>
             ) : null}
-            
+
             {!readOnlySharedLink && (
               <button
                 onClick={() => handleDeleteComment(movie)}
                 className="flex flex-col items-center cursor-pointer hover:scale-110 transition-transform"
               >
                 <RiDeleteBin6Line className="h-5 w-5 text-red-500 hover:text-red-700" />
-                <p className="text-xs text-blue-gray-600 dark:text-gray-400 mt-1">Delete</p>
+                <p className="text-xs text-blue-gray-600 dark:text-gray-400 mt-1">
+                  Delete
+                </p>
               </button>
             )}
           </div>

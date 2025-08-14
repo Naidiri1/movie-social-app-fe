@@ -6,18 +6,13 @@ import {
   CardFooter,
   Typography,
   Button,
-  Tooltip,
-  IconButton,
-  Textarea,
 } from "@material-tailwind/react";
 import Image from "next/image";
-import IconCard from "./IconCard";
 import fallback1 from "../../public/fallback1.jpg";
 import { useRouter } from "next/navigation";
 import RatingSlider from "../components/ratingTool";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { IoCloseSharp } from "react-icons/io5";
 import { IoAddCircleOutline } from "react-icons/io5";
 import LikeDislike from "../components/LikeDislike";
 import { usePathname } from "next/navigation";
@@ -28,14 +23,13 @@ interface CardMovieProps {
   successScore: any;
   handleDeleteScore: (movie: Movie) => void;
   initialScore: number | null;
-  handleDeleteMovie: (movie: Movie) => void;
   comment: any;
   setComment: (comment: any) => void;
   handleAddEditComment: (movie: any) => void;
   handleDeleteComment: (movie: any) => void;
-  entryId?: number; 
+  entryId?: number;
   entryType?: "favorites" | "watched" | "top10" | "watch-later";
-  movieOwnerId?: string; 
+  movieOwnerId?: string;
   commentLikes?: number;
   commentDislikes?: number;
   userLikeStatus?: "liked" | "disliked" | null;
@@ -69,7 +63,6 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   successScore,
   handleDeleteScore,
   initialScore,
-  handleDeleteMovie,
   comment,
   setComment,
   handleAddEditComment,
@@ -93,9 +86,8 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
       return "NR";
     }
   };
-    const path = usePathname() || "";
-    const isReadOnly = path.startsWith('/search-users');
-
+  const path = usePathname() || "";
+  const isReadOnly = path.startsWith("/search-users");
 
   useEffect(() => {
     if (movie.comment) {
@@ -167,7 +159,6 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           {movie.releasedDate}
         </Typography>
 
-        {/* Genre Tags */}
         {genres.length > 0 && (
           <div className="mb-2">
             <div className="flex flex-wrap gap-1">
@@ -209,7 +200,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           className="flex items-center  gap-2 font-normal"
         >
           <span className="flex items-center gap-1">
-          {!isReadOnly ? "My Score:" : "User's Score:"}  
+            {!isReadOnly ? "My Score:" : "User's Score:"}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -225,30 +216,32 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
             {movie.userScore != null ? (
               movie.userScore
             ) : (
-              <span className="text-yellow-500 text-xl">{!isReadOnly ? '?' : 'NR'}</span>
+              <span className="text-yellow-500 text-xl">
+                {!isReadOnly ? "?" : "NR"}
+              </span>
             )}
           </span>
           {!isReadOnly && (
-          <div className="flex ml-[2rem] flex-row">
-            {movie.userScore != null && (
-              <div className="flex flex-col items-center cursor-pointer">
-                <FaEdit
-                  onClick={handleDisplayRating}
-                  className="h-4 w-4 text-orange-400 hover:text-yellow-500"
-                />
-                <p className="mt-1 text-xs">Edit</p>
-              </div>
-            )}
-            {movie.userScore != null && (
-              <div className="flex ml-3 flex-col items-center cursor-pointer">
-                <RiDeleteBin6Line
-                  onClick={() => handleDeleteScore(movie)}
-                  className="h-4 w-4 text-orange-400 hover:text-red-500"
-                />
-                <p className="mt-1 text-xs">Delete</p>
-              </div>
-            )}
-          </div>
+            <div className="flex ml-[2rem] flex-row">
+              {movie.userScore != null && (
+                <div className="flex flex-col items-center cursor-pointer">
+                  <FaEdit
+                    onClick={handleDisplayRating}
+                    className="h-4 w-4 text-orange-400 hover:text-yellow-500"
+                  />
+                  <p className="mt-1 text-xs">Edit</p>
+                </div>
+              )}
+              {movie.userScore != null && (
+                <div className="flex ml-3 flex-col items-center cursor-pointer">
+                  <RiDeleteBin6Line
+                    onClick={() => handleDeleteScore(movie)}
+                    className="h-4 w-4 text-orange-400 hover:text-red-500"
+                  />
+                  <p className="mt-1 text-xs">Delete</p>
+                </div>
+              )}
+            </div>
           )}
         </Typography>
         <Typography
@@ -258,15 +251,15 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           {movie.movieDescription}
         </Typography>
         {!isReadOnly && (
-        <div className="mb-3 min-h-[3.2rem] max-h-[3.2rem] ">
-          {(movie.userScore === null || enableScore) && (
-            <RatingSlider
-              onSubmit={(score) => handleAddMovie(score)}
-              successScore={successScore}
-              initialScore={initialScore}
-            />
-          )}
-        </div>
+          <div className="mb-3 min-h-[3.2rem] max-h-[3.2rem] ">
+            {(movie.userScore === null || enableScore) && (
+              <RatingSlider
+                onSubmit={(score) => handleAddMovie(score)}
+                successScore={successScore}
+                initialScore={initialScore}
+              />
+            )}
+          </div>
         )}
         <div className="w-full mt-5 pt-5 flex flex-row items-start justify-between gap-2">
           <div
@@ -288,7 +281,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           </div>
 
           {entryId && entryType && movieOwnerId && (
-          <div className="flex flex-col items-center justify-start gap-2 ">
+            <div className="flex flex-col items-center justify-start gap-2 ">
               <LikeDislike
                 entryId={entryId}
                 entryType={entryType}
@@ -300,47 +293,47 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
               />
             </div>
           )}
-         {!isReadOnly && (
-          <div className="flex flex-col items-center justify-start gap-2 ">
-            {!isDisabled ? (
+          {!isReadOnly && (
+            <div className="flex flex-col items-center justify-start gap-2 ">
+              {!isDisabled ? (
+                <div className="flex flex-col items-center cursor-pointer">
+                  <IoAddCircleOutline
+                    onClick={() => {
+                      {
+                        comment ? handleAddEditComment(movie) : setIsDisabled;
+                      }
+                      {
+                        comment ? setIsDisabled(true) : setIsDisabled(false);
+                      }
+                    }}
+                    className="h-5 w-5 text-blue-500 hover:text-blue-500"
+                  />
+                  <p className="text-[0.65rem] text-white text-center">Post</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center cursor-pointer">
+                  <FaEdit
+                    onClick={() => {
+                      handleAddEditComment(movie);
+                      setIsDisabled(false);
+                    }}
+                    className="h-5 w-5 text-blue-500 hover:text-blue-500"
+                  />
+                  <p className="text-[0.65rem] text-white text-center">Edit</p>
+                </div>
+              )}
               <div className="flex flex-col items-center cursor-pointer">
-                <IoAddCircleOutline
+                <RiDeleteBin6Line
                   onClick={() => {
-                    {
-                      comment ? handleAddEditComment(movie) : setIsDisabled;
-                    }
-                    {
-                      comment ? setIsDisabled(true) : setIsDisabled(false);
-                    }
+                    if (comment === "") return;
+                    handleDeleteComment(movie);
                   }}
-                  className="h-5 w-5 text-blue-500 hover:text-blue-500"
+                  className="h-5 w-5 text-red-300 hover:text-red-500"
                 />
-                <p className="text-[0.65rem] text-white text-center">Post</p>
+                <p className="text-[0.65rem] text-white text-center">Delete</p>
               </div>
-            ) : (
-              <div className="flex flex-col items-center cursor-pointer">
-                <FaEdit
-                  onClick={() => {
-                    handleAddEditComment(movie);
-                    setIsDisabled(false);
-                  }}
-                  className="h-5 w-5 text-blue-500 hover:text-blue-500"
-                />
-                <p className="text-[0.65rem] text-white text-center">Edit</p>
-              </div>
-            )}
-            <div className="flex flex-col items-center cursor-pointer">
-              <RiDeleteBin6Line
-                onClick={() => {
-                  if (comment === "") return;
-                  handleDeleteComment(movie);
-                }}
-                className="h-5 w-5 text-red-300 hover:text-red-500"
-              />
-              <p className="text-[0.65rem] text-white text-center">Delete</p>
             </div>
-          </div>
-         )}
+          )}
         </div>
       </CardBody>
       <CardFooter className="pt-0">

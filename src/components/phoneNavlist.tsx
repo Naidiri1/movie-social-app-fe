@@ -69,10 +69,10 @@ export default function PhoneNavlist() {
         </Link>
       </Typography>
 
-        <Typography as="li" variant="small" className="font-medium">
+      <Typography as="li" variant="small" className="font-medium">
         <Link href="/search-users">
           <button className={linkClasses("/search-users")}>
-           Search Users <UserIcon className="h-5 w-5 ml-1" />
+            Search Users <UserIcon className="h-5 w-5 ml-1" />
           </button>
         </Link>
       </Typography>
