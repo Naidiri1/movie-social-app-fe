@@ -1,43 +1,70 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useFetchUserIfNull } from "../utils/sessionRecover";
 import decodeJWT from 'jwt-decode';
 
 const Auth = ({ setIsAuth }: any) => { 
   const pathname = usePathname();
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
   const router = useRouter();
-  const configFetchedRef = useRef(false);
-  const { username, loading } = useSelector((state: any) => state.auth);
+  const { username } = useSelector((state: any) => state.auth);
+  const hasInitialized = useRef(false);
+  const channelRef = useRef<BroadcastChannel | null>(null);
+  
+  // Check if we're on auth pages
+  const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/signUp';
+  
+  // Call the hook
   useFetchUserIfNull();
+  
+  // Initialize only once
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+    
+    // Set up broadcast channel
     const channel = new BroadcastChannel("my-channel");
-       const checkTokenExp = (token: any) => {
-            if (token) {
-                const decodedToken = decodeJWT(token) as any;
-                if (decodedToken.exp <= Date.now() / 1000) {
-                    sessionStorage.removeItem('access_token');
-                    setIsAuth(false);
-                    router.push('/login');
-                    configFetchedRef.current = false;
-                }  
-            } else {
-                setIsAuth(false);
-                router.push('/login');
-                configFetchedRef.current = false;
-            }
-        };
+    channelRef.current = channel;
+    
+    const checkTokenExp = (token: string | null) => {
+      if (!token) {
+        setIsAuth(false);
+        if (!isAuthPage) {
+          router.push('/login');
+        }
+        return false;
+      }
+      
+      try {
+        const decodedToken = decodeJWT(token) as any;
+        if (decodedToken.exp <= Date.now() / 1000) {
+          sessionStorage.removeItem('access_token');
+          setIsAuth(false);
+          if (!isAuthPage) {
+            router.push('/login');
+          }
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Invalid token:', error);
+        sessionStorage.removeItem('access_token');
+        setIsAuth(false);
+        if (!isAuthPage) {
+          router.push('/login');
+        }
+        return false;
+      }
+    };
 
-    const handleMessage = (event: any) => {
+    const handleMessage = (event: MessageEvent) => {
       const message = event.data;
 
       if (message.type === "new-token") {
         sessionStorage.setItem("access_token", message.token);
-        configFetchedRef.current = false;
-         checkTokenExp(message.token);
+        checkTokenExp(message.token);
       }
 
       if (message.type === "request-token") {
@@ -48,40 +75,42 @@ const Auth = ({ setIsAuth }: any) => {
       }
 
       if (message.type === "logout") {
-        sessionStorage.removeItem("access_token"); 
-        configFetchedRef.current = false;
-        router.push("/login"); 
+        sessionStorage.removeItem("access_token");
+        setIsAuth(false);
+        if (!isAuthPage) {
+          router.push("/login");
+        }
       }
     };
-    if (channel) {
-      channel.postMessage({ type: "request-token" });
-      channel.onmessage = handleMessage;
-    }
-
+    
+    // Set up channel listener
+    channel.onmessage = handleMessage;
+    channel.postMessage({ type: "request-token" });
+    
+    // Initial token check
     const token = sessionStorage.getItem("access_token");
-    if (token && !username && !configFetchedRef.current) {
-      configFetchedRef.current = true;
+    const isValid = checkTokenExp(token);
+    
+    if (isValid || isAuthPage) {
+      setIsAuth(isValid);
     }
-
-    if (!token) {
-      channel.postMessage({ type: "request-token" });
-      router.push('/login');
-    }
-
-    if (!token && !isAuthPage) { 
-    router.push('/login');
-  }
-
+    
+    // Cleanup
     return () => {
-      channel.close();
+      if (channelRef.current) {
+        channelRef.current.close();
+      }
     };
-  }, []);
-
-useEffect(() => {
+  }, []); // Empty dependency array - runs once
+  
+  // Update auth state when username changes
+  useEffect(() => {
     if (username) {
       setIsAuth(true);
     }
   }, [username, setIsAuth]);
+  
   return null;
 }
+
 export default Auth;
