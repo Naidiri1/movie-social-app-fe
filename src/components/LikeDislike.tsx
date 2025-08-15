@@ -2,7 +2,7 @@ import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useAuth } from "../utils/useAuth";
+import {  selectUser } from '../redux/reducers/userSlice';
 
 interface LikeDislikeProps {
   entryId: number;
@@ -23,8 +23,9 @@ export default function LikeDislike({
   initialUserStatus = null,
   comment,
 }: LikeDislikeProps) {
-   const { userId, token, isReady } = useAuth();
- 
+  const user = useSelector(selectUser);
+      const userId= user.userId;
+    const token = sessionStorage.getItem('access_token')
   const currentUserId = userId;
   const isOwnContent = movieOwnerId === currentUserId;
   const hasComment = comment && comment.trim().length > 0;
