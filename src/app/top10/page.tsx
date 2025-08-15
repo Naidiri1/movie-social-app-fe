@@ -10,10 +10,12 @@ import ShareTop10Toggle from "../../components/ShareToggleTop10";
 import { usePathname } from "next/navigation";
 import movieImg from "../../../public/movie.png";
 import Image from "next/image";
+import {  selectUser } from '../../redux/reducers/userSlice';
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
-  const  userId  = useSelector((state: RootState) => state?.auth?.userId);
+  const  user  = useSelector(selectUser);
+  const userId =user.userId;
   const [movieData, setMovieData] = useState<(Movie | null)[]>(
     Array(NUM_SLOTS).fill(null)
   );

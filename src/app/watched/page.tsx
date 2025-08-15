@@ -9,15 +9,17 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Input, Typography } from "@material-tailwind/react";
-import { useAuth } from "../../utils/useAuth";
+ import {  selectUser } from '../../redux/reducers/userSlice';
 
 export default function WatchedMovies() {
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-    const { userId, token, isReady } = useAuth();
-  
+
+       const user = useSelector(selectUser);
+     const userId= user.userId;
+   const token = sessionStorage.getItem('access_token')  
   const [allWatched, setAllwatched] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredWatched, setFilteredWatched] = useState<any[]>([]);

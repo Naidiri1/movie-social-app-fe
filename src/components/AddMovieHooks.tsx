@@ -1,13 +1,14 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useCallback, useEffect, useState} from "react";
-import { useAuth } from "../utils/useAuth";
+import {  selectUser } from '../redux/reducers/userSlice';
 
 export const AddMovieHooks = () => {
   const [mounted, setMounted] = useState(false);
 
-
-  const { userId, token, isReady, isAuthenticated } = useAuth();
+  const user = useSelector(selectUser);
+     const userId= user.userId;
+   const token = sessionStorage.getItem('access_token')
 
   const verifyMovieAlreadyAdded = async (
     movie: any,

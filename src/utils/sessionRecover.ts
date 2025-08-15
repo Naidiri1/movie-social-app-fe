@@ -1,19 +1,14 @@
 import { useEffect } from 'react';
+import { fetchUser, selectUser } from '@/redux/reducers/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { restoreUserSession, selectUsername } from "../redux/reducers/authSlice";
 
 export const useFetchUserIfNull = () => {
-    const username = useSelector(selectUsername);
+    const user = useSelector(selectUser);
     const dispatch: any = useDispatch();
 
     useEffect(() => {
-        if (username === null) {
-            const token = sessionStorage.getItem('access_token');
-            console.log('Token in hook:', token); // ADD THIS
-            if (token) {
-                console.log('Dispatching restoreUserSession'); // ADD THIS
-                dispatch(restoreUserSession());
-            }
+        if (user.userId === null) {
+            dispatch(fetchUser());
         }
-    }, [username, dispatch]);
+    }, [user.userId]);
 };

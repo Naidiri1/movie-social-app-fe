@@ -15,17 +15,17 @@ import {
   ChevronUpIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
-import { useAuth } from "../../utils/useAuth";
 import { RootState } from "../../redux/store";
 import { BookmarkIcon, EyeIcon, Trophy } from "lucide-react";
 import { CgSandClock } from "react-icons/cg";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
+import {  selectUser } from '../../redux/reducers/userSlice';
+import { useSelector } from "react-redux";
 
 export default function SearchUsers() {
   type CategoryType = "favorites" | "watched" | "top10" | "watchLater";
-  const { userId, token, isReady } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -36,6 +36,9 @@ export default function SearchUsers() {
   const [mounted, setMounted] = useState(false);
 
 
+  const user = useSelector(selectUser);
+     const userId= user.userId;
+   const token = sessionStorage.getItem('access_token')
 
   const [userMovies, setUserMovies] = useState<UserMoviesState>({
     favorites: [],
@@ -391,7 +394,7 @@ export default function SearchUsers() {
     }
   };
 
-  const selectUser = (user: any) => {
+  const selectUserF = (user: any) => {
     setSelectedUser(user);
     setUserMovies({
       favorites: [],
@@ -642,7 +645,7 @@ export default function SearchUsers() {
               <Card
                 key={user.userId}
                 className="bg-gray-800 hover:bg-gray-700 cursor-pointer transition-colors"
-                onClick={() => selectUser(user)}
+                onClick={() => selectUserF(user)}
               >
                 <CardBody>
                   <div className="flex items-center gap-3 mb-3">

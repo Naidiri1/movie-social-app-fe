@@ -20,13 +20,13 @@ import { IoArrowUndoSharp } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import { Orbitron } from "next/font/google";
 import PhoneNavlist from "./phoneNavlist";
-import { logout } from "../redux/reducers/authSlice";
-import { restoreUserSession } from "../redux/reducers/authSlice";
+// import { logout } from "../redux/reducers/authSlice";
+// import { restoreUserSession } from "../redux/reducers/authSlice";
 import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
 import { UserIcon } from "@heroicons/react/24/outline";
 import CoolTitle from "../components/TitleNav";
-import { useAuth } from "../utils/useAuth";
+import {  selectUser } from '../redux/reducers/userSlice';
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -35,7 +35,6 @@ const orbitron = Orbitron({
  
 const NavbarComponent = () => {
   const router = useRouter();
-  const { userId, token, isReady, username } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
@@ -48,15 +47,13 @@ const NavbarComponent = () => {
       setSearchQuery("");
     }
   }, [pathname]);
+const user = useSelector(selectUser);
+     const userId= user.userId;
+     const username =user.username;
+   const token = sessionStorage.getItem('access_token')
 
-  useEffect(() => {
-    if ((!token && !username === null) || username === undefined || !mounted) {
-      dispatch(restoreUserSession());
-      if (!username) {
-        router.push("/login");
-      }
-    }
-  }, [username, pathname, token]);
+
+
 
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
@@ -73,7 +70,7 @@ const NavbarComponent = () => {
       );
     }
 
-    dispatch(logout());
+    // dispatch(logout());
     channel.postMessage({ type: "logout" });
     router.push("/login");
     channel.close();

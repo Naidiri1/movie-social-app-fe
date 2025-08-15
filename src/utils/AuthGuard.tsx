@@ -1,39 +1,119 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-// import decodeJWT from 'jwt-decode';
-// const Auth = ({ setIsAuth }: any) => {
-//   const pathname = usePathname();
-//   const isAuthPage = pathname === '/login' || pathname === '/signup';
-  
-//   const token = sessionStorage.getItem("access_token");
-  
-//   if (!token && !isAuthPage) {
-//     setIsAuth(false);
-//     // Use window.location - it works even if component unmounts
-//     window.location.href = '/login';
-//   } else {
-//     setIsAuth(!!token);
-//   }
-  
-//   return null;
-// }
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import decodeJWT from 'jwt-decode';
+import { useFetchUserIfNull } from '../utils/sessionRecover';
+import {
+    hideRenewDialog,
+    showRenewDialog,
+    setErrorMessage,
+} from '../redux/reducers/authSlice';
 
-// export default Auth;
 const Auth = ({ setIsAuth }: any) => {
-  useEffect(() => {
-    console.log('[Test] Will redirect in 2 seconds...');
-    const timer = setTimeout(() => {
-      console.log('[Test] Redirecting now!');
-      window.location.href = '/login';
-    }, 2000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return <div>Testing redirect in 2 seconds...</div>;
-}
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const sessionRefreshDuration = 60000;
+    const configFetchedRef = useRef(false);
+    const warningBufferTime = 120;
+
+    useFetchUserIfNull();
+
+    useEffect(() => {
+        const channel = new BroadcastChannel('my_channel');
+
+        const checkTokenExp = (token: any) => {
+            if (token) {
+                // eslint-disable-next-line
+                const decodedToken = decodeJWT(token) as any;
+                const hasValidPermission =
+                    decodedToken.adminPermission ||
+                    decodedToken.developerPermission ||
+                    decodedToken.onboardingPermission ||
+                    decodedToken.readOnlyPermission ||
+                    decodedToken.setupPermission;
+
+                if (decodedToken.exp <= Date.now() / 1000) {
+                    sessionStorage.removeItem('access_token');
+                    setIsAuth(false);
+                    dispatch(hideRenewDialog());
+
+                    router.push('/login');
+                    configFetchedRef.current = false;
+                } else if (!hasValidPermission) {
+                    setIsAuth(false);
+                    configFetchedRef.current = false;
+                    dispatch(
+                        setErrorMessage(
+                            'You do not have permission to access this page.',
+                        ),
+                    );
+                    sessionStorage.removeItem('access_token');
+                } else {
+                    if (
+                        decodedToken.exp - Date.now() / 1000 <=
+                        warningBufferTime
+                    ) {
+                        dispatch(showRenewDialog());
+                    }
+                    
+                }
+            } else {
+                dispatch(hideRenewDialog());
+                setIsAuth(false);
+                router.push('/login');
+                configFetchedRef.current = false;
+            }
+        };
+
+       
+        const handleMessage = (event: any) => {
+            const message = event.data;
+            if (message.type === 'new-token') {
+                sessionStorage.setItem('access_token', message.token);
+                configFetchedRef.current = false;
+                checkTokenExp(message.token);
+            } else if (message.type === 'request-token') {
+                const localToken = sessionStorage.getItem('access_token');
+                if (localToken) {
+                    // eslint-disable-next-line
+                    const decodedToken = decodeJWT(localToken) as any;
+                    if (decodedToken.exp > Date.now() / 1000) {
+                        channel.postMessage({
+                            type: 'new-token',
+                            token: localToken,
+                        });
+                    }
+                }
+            } else if (message.type === 'logout') {
+                sessionStorage.removeItem('access_token');
+                setIsAuth(false);
+                router.push('/login');
+                configFetchedRef.current = false;
+            }
+        };
+
+        if (channel) {
+            channel.postMessage({ type: 'request-token' });
+            channel.onmessage = handleMessage;
+        }
+
+        const localToken = sessionStorage.getItem('access_token');
+        checkTokenExp(localToken);
+
+        const interval = setInterval(() => {
+            const updatedToken = sessionStorage.getItem('access_token');
+            checkTokenExp(updatedToken);
+        }, sessionRefreshDuration);
+
+        return () => {
+            clearInterval(interval);
+            channel.close();
+        };
+    }, []);
+
+    return null;
+};
 
 export default Auth;

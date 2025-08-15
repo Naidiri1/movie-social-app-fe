@@ -9,7 +9,8 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
-import { useAuth } from "../../utils/useAuth";
+ import {  selectUser } from '../../redux/reducers/userSlice';
+import { useSelector } from "react-redux";
 
 export default function FavoriteMovies() {
   const [rowData, setRowData] = useState([]);
@@ -23,7 +24,9 @@ export default function FavoriteMovies() {
   const [itemsPerPage] = useState(8);
   
   
-  const { userId, token, isReady } = useAuth();
+  const user = useSelector(selectUser);
+     const userId= user.userId;
+   const token = sessionStorage.getItem('access_token')  
 
   
   const handleFavoriteMovies = async () => {
@@ -354,14 +357,7 @@ export default function FavoriteMovies() {
   const endIndex = startIndex + itemsPerPage;
   const currentMovies = filteredFavorites.slice(startIndex, endIndex);
 
-  // Don't render until mounted to prevent hydration issues
-  if (!isReady) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
-  }
+  
 
   // Show message if user is not logged in
   if (!token || !userId) {

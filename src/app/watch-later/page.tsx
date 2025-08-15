@@ -9,7 +9,7 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Input, Typography } from "@material-tailwind/react";
-import { useAuth } from "../../utils/useAuth";
+import {  selectUser } from '../../redux/reducers/userSlice';
 
 export default function WatchLaterMovies() {
   const [allWatchLater, setAllWatchLater] = useState([]);
@@ -17,7 +17,6 @@ export default function WatchLaterMovies() {
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-    const { userId, token, isReady } = useAuth();
   
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredWatchLater, setFilteredWatchLater] = useState<any>([]);
@@ -25,7 +24,10 @@ export default function WatchLaterMovies() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
     const [mounted, setMounted] = useState(false);
-   
+
+       const user = useSelector(selectUser);
+     const userId= user.userId;
+   const token = sessionStorage.getItem('access_token')
 
 
   const handleWatchLaterMovies = async () => {

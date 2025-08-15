@@ -5,7 +5,7 @@ import { Input, Button, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../redux/reducers/authSlice";
+import {  selectUser, updateUser, fetchUser  } from '../../redux/reducers/userSlice';
 import popcorn from "../../../public/popcorn.png";
 import bglogin from "../../../public/bglogin.png";
 import Image from "next/image";
@@ -57,11 +57,12 @@ export default function Signup() {
       setSuccessMessage("Signup successful! You are now logged in.");
       setMessage("");
       router.push("./popular");
-         dispatch(setUser({
+         dispatch(updateUser({
         username: loginData.username,
         email: loginData.email,
         userId: loginData.userId ,
       }));
+
 
     } catch (err) {
       setMessage("Server error");

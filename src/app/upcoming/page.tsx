@@ -6,7 +6,9 @@ import CardMovie from "../../components/CardMovie";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-import { useAuth } from "../../utils/useAuth";
+import {  selectUser } from '../../redux/reducers/userSlice';
+import { useSelector } from "react-redux";
+
 const GENRES = [
   { id: 28, name: "Action" },
   { id: 12, name: "Adventure" },
@@ -42,7 +44,9 @@ const UpcomingMovies = () => {
     handleAddWatchLater,
   } = AddMovieHooks();
 
-  const { userId, token, isReady } = useAuth();
+ const user = useSelector(selectUser);
+     const userId= user.userId;
+   const token = sessionStorage.getItem('access_token')
 
  useEffect(() => {
     if(token && userId) {
