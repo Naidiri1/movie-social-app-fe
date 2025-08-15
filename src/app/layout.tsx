@@ -91,43 +91,15 @@
 //   );
 // }
 
-'use client';
-
-import "./globals.css";
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import Auth from "../utils/AuthGuard";
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const [isAuth, setIsAuth] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/signUp";
-
   return (
     <html lang="en">
-      <body suppressHydrationWarning className="h-full">
-        {!mounted ? (
-          <div>Loading...</div>
-        ) : (
-          <Provider store={store}>
-            {/* {!isAuthPage && <Auth setIsAuth={setIsAuth} />} */}
-            <div className="min-h-screen flex flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
-          </Provider>
-        )}
+      <body>
+        <div>{children}</div>
       </body>
     </html>
   );
