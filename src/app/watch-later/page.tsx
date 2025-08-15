@@ -378,7 +378,6 @@ export default function WatchLaterMovies() {
                   }
                   successScore={successScoreIds.has(movie.id)}
                   handleDeleteScore={() => handleDeleteScore(movie)}
-                  handleDeleteMovie={() => handleDeleteMovie(movie)}
                   initialScore={movie.userScore}
                   comment={commentUser[movie.id] || ""}
                   setComment={(newComment) =>
