@@ -1,30 +1,119 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+'use client';
+
+import {
+    createAsyncThunk,
+    createSlice,
+    type PayloadAction,
+} from '@reduxjs/toolkit';
+
 
 interface UserState {
-    username: string | null;
-    email: string | null;
-    loading: boolean;
-    userId: string | null;
+  username: string | null;
+  email: string | null;
+  userId: string | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+  errorMessage: string;
 }
 
 const initialState: UserState = {
-    username: null,
-    email: null,
-    loading: false,
-    userId: '',
+  username: null,
+  email: null,
+  userId: null,
+  loading: false,
+  isAuthenticated: false,
+  errorMessage: '',
 };
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    setUser: (  state, action: any
+    ) => {
+      state.username = action.payload.username;
+      state.email = action.payload.email;
+      state.userId = action.payload.userId;
+      state.isAuthenticated = true;
+      state.loading = false;
+      state.errorMessage = '';
+    },
+    
+    logout: (state) => {
+      state.username = null;
+      state.email = null;
+      state.userId = null;
+      state.isAuthenticated = false;
+      state.loading = false;
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem("access_token");
+      }
+    },
+    
+    setLoading: (state, action: any) => {
+      state.loading = action.payload;
+    },
+    
+    setErrorMessage: (state, action: any) => {
+      state.errorMessage = action.payload;
+      state.loading = false;
+    },
+    
+    clearError: (state) => {
+      state.errorMessage = '';
+    },
+    
+  },
+    extraReducers: (builder) => {
+    builder
+      .addCase(restoreUserSession.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(restoreUserSession.fulfilled, (state, action) => {
+        state.username = action.payload.username;
+        state.email = action.payload.email;
+        state.userId = action.payload.userId;
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.errorMessage = '';
+      })
+      .addCase(restoreUserSession.rejected, (state) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.username = null;
+        state.email = null;
+        state.userId = null;
+      });
+  },
+});
+
+
+export const { 
+  setUser, 
+  logout, 
+  setLoading, 
+  setErrorMessage, 
+  clearError,
+} = authSlice.actions;
+
+export default authSlice.reducer;
+export const selectUsername = (state: any) => state.auth.username;
+export const selectUserId = (state: any) => state.auth.userId;
+export const selectEmail = (state: any) => state.auth.email;
+export const selectIsAuthenticated = (state: any) => state.auth.isAuthenticated;
+export const selectAuthLoading = (state: any) => state.auth.loading;
+export const selectAuthError = (state: any) => state.auth.errorMessage;
 
 export const restoreUserSession = createAsyncThunk(
     'auth/restoreUserSession',
-    async (_, thunkAPI) => {
+     async (_, { rejectWithValue }) => {
         try {
-            const token = sessionStorage.getItem('access_token');
-            if (!token) console.error('No token found');
-
+        
            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/userSession`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
+                 headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '.concat(sessionStorage.access_token),
                 },
             });
 
@@ -33,50 +122,10 @@ export const restoreUserSession = createAsyncThunk(
             }
 
             const data = await response.json();
+             sessionStorage.setItem('token_expiration', data.exp);
             return data; 
         } catch (error) {
-            return thunkAPI.rejectWithValue('Session expired');
+             return rejectWithValue(error);
         }
     }
 );
-
-const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-        logout: (state) => {
-            state.username = null;
-            state.email = null;
-            sessionStorage.removeItem('access_token');
-            state.userId = '';
-        },
-
-        setUser: (state, action: PayloadAction<{ username: string; email: string, userId: string}>) => {
-            state.username = action.payload.username;
-            state.email = action.payload.email;
-            state.userId = action.payload.userId;
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(restoreUserSession.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(restoreUserSession.fulfilled, (state, action: PayloadAction<{ username: string; email: string; userId: string;}>) => {
-                state.username = action.payload.username;
-                state.email = action.payload.email;
-                state.userId = action.payload.userId;
-                state.loading = false;
-            })
-            .addCase(restoreUserSession.rejected, (state) => {
-                state.loading = false;
-                state.username = null;
-                state.email = null;
-                state.userId = '';
-                sessionStorage.removeItem('access_token');
-            });
-    },
-});
-
-export const { logout, setUser } = authSlice.actions; 
-export default authSlice.reducer;

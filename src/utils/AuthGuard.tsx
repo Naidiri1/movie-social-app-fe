@@ -3,28 +3,39 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { restoreUserSession } from "../redux/reducers/authSlice";
-import { AppDispatch } from "../redux/store";
+import { useFetchUserIfNull } from "../utils/sessionRecover";
+import decodeJWT from 'jwt-decode';
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const dispatch = useDispatch<AppDispatch>();
+const Auth = ({ setIsAuth }: any) => { 
   const router = useRouter();
-  const pathname = usePathname();
   const configFetchedRef = useRef(false);
   const { username, loading } = useSelector((state: any) => state.auth);
-
-  const isAuthPage = pathname === "/login" || pathname === "/signup";
-  const token = sessionStorage.getItem("access_token");
-
+  useFetchUserIfNull();
   useEffect(() => {
     const channel = new BroadcastChannel("my-channel");
+       const checkTokenExp = (token: any) => {
+            if (token) {
+                const decodedToken = decodeJWT(token) as any;
+                if (decodedToken.exp <= Date.now() / 1000) {
+                    sessionStorage.removeItem('access_token');
+                    setIsAuth(false);
+                    router.push('/login');
+                    configFetchedRef.current = false;
+                }  
+            } else {
+                setIsAuth(false);
+                router.push('/login');
+                configFetchedRef.current = false;
+            }
+        };
 
-    const handleMessage = (event: MessageEvent) => {
+    const handleMessage = (event: any) => {
       const message = event.data;
 
       if (message.type === "new-token") {
         sessionStorage.setItem("access_token", message.token);
         configFetchedRef.current = false;
+         checkTokenExp(message.token);
       }
 
       if (message.type === "request-token") {
@@ -47,17 +58,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     const token = sessionStorage.getItem("access_token");
     if (token && !username && !configFetchedRef.current) {
-      dispatch(restoreUserSession());
       configFetchedRef.current = true;
     }
 
     if (!token) {
       channel.postMessage({ type: "request-token" });
       router.push('login');
-    }
-
-    if (token && !username) {
-      dispatch(restoreUserSession());
     }
 
      if (!token && !username) {
@@ -67,11 +73,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return () => {
       channel.close();
     };
-  }, [token, username]);
+  }, []);
 
-  if (!username && !isAuthPage && loading) {
-    return <div className="text-white p-4">Loading session...</div>;
-  }
-
-  return <>{children}</>;
+useEffect(() => {
+    if (username) {
+      setIsAuth(true);
+    }
+  }, [username, setIsAuth]);
+  return null;
 }
+export default Auth;
