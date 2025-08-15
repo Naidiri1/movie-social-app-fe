@@ -404,7 +404,6 @@ export default function WatchedMovies() {
                 handleAddMovie={(score: any) => handleAddWatched(movie, score)}
                 successScore={successScoreIds.has(movie.id)}
                 handleDeleteScore={() => handleDeleteScore(movie)}
-                handleDeleteMovie={() => handleDeleteMovie(movie)}
                 initialScore={movie.userScore}
                 comment={commentUser[movie.id] || ""}
                 setComment={(newComment) =>
