@@ -10,6 +10,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Skip all static generation
+  generateStaticParams: false,
 }
 
 module.exports = nextConfig
