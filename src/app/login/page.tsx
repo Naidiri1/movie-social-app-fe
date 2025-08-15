@@ -20,7 +20,8 @@ export default function LoginForm() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  
+  console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
+
   useEffect(() => {
     setIsClient(true);
     if (typeof window !== 'undefined') {
