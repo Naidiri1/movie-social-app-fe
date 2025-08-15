@@ -112,14 +112,15 @@ export const restoreUserSession = createAsyncThunk(
     'auth/restoreUserSession',
      async (_, { rejectWithValue }) => {
         try {
-        
-           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/userSession`, {
-                method: 'GET',
-                 headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '.concat(sessionStorage.access_token),
-                },
-            });
+            const token = sessionStorage.getItem('access_token');
+           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/userSession`,
+             {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
 
             if (!response.ok) {
                console.error('Session invalid');
