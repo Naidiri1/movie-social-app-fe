@@ -7,7 +7,7 @@ import decodeJWT from 'jwt-decode';
 
 const Auth = ({ setIsAuth }: any) => { 
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
   const { username } = useSelector((state: any) => state.auth);
   const hasInitialized = useRef(false);
   const channelRef = useRef<BroadcastChannel | null>(null);
@@ -31,7 +31,7 @@ const Auth = ({ setIsAuth }: any) => {
       if (!token) {
         setIsAuth(false);
         if (!isAuthPage) {
-          router.push('/login');
+          // router.push('/login');
         }
         return false;
       }
@@ -42,7 +42,7 @@ const Auth = ({ setIsAuth }: any) => {
           sessionStorage.removeItem('access_token');
           setIsAuth(false);
           if (!isAuthPage) {
-            router.push('/login');
+            // router.push('/login');
           }
           return false;
         }
@@ -52,7 +52,7 @@ const Auth = ({ setIsAuth }: any) => {
         sessionStorage.removeItem('access_token');
         setIsAuth(false);
         if (!isAuthPage) {
-          router.push('/login');
+          // router.push('/login');
         }
         return false;
       }
@@ -77,7 +77,7 @@ const Auth = ({ setIsAuth }: any) => {
         sessionStorage.removeItem("access_token");
         setIsAuth(false);
         if (!isAuthPage) {
-          router.push("/login");
+          // router.push("/login");
         }
       }
     };
