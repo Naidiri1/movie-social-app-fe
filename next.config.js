@@ -1,14 +1,12 @@
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
-    basePath: '/',
-    trailingSlash: true,
-    eslint: {
+  eslint: {
         ignoreDuringBuilds: true,
     },
-    images: {
-        unoptimized: true
-    }
+  images: {
+    domains: ['image.tmdb.org'],
+  },
 };
 
 module.exports = nextConfig;
