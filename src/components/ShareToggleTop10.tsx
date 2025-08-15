@@ -8,10 +8,11 @@ export default function ShareTop10Toggle() {
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
   useEffect(() => {
     (async () => {
       try {
-        const token = sessionStorage.getItem("access_token");
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/share`,
           {
@@ -36,7 +37,6 @@ export default function ShareTop10Toggle() {
   const toggle = async () => {
     setSaving(true);
     try {
-      const token = sessionStorage.getItem("access_token");
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/share`,
         {

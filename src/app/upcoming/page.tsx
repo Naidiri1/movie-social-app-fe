@@ -46,9 +46,10 @@ const UpcomingMovies = () => {
     genreId: number | null = null,
     page: number = 1
   ) => {
-    const token = sessionStorage.getItem("access_token");
+     
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
 
-    // Build URL with or without genre parameter
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/upcoming`;
     const params = new URLSearchParams();
 

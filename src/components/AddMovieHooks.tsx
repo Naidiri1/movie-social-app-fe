@@ -1,11 +1,12 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState} from "react";
 
 export const AddMovieHooks = () => {
   const { userId } = useSelector((state: RootState) => state.auth);
-  const token = sessionStorage.getItem("access_token");
 
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
   const verifyMovieAlreadyAdded = async (
     movie: any,
     listType: "favorites" | "top10" | "watched" | "watch-later"

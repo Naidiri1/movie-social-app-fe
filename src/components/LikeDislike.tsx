@@ -1,5 +1,5 @@
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
@@ -35,7 +35,8 @@ export default function LikeDislike({
     initialUserStatus
   );
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
   const getApiEndpoint = (type: string): string => {
     const endpoints: Record<string, string> = {
       favorites: "favorites",
@@ -53,7 +54,6 @@ export default function LikeDislike({
 
     setIsUpdating(true);
     try {
-      const token = sessionStorage.getItem("access_token");
 
       const apiEndpoint = getApiEndpoint(entryType);
 

@@ -21,7 +21,9 @@ export default function Top10Movies() {
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const path = usePathname();
   const readOnlySharedLink = path?.startsWith("/share/");
-  const token = sessionStorage.getItem("access_token");
+
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
 
   const handleDeleteMovie = async (movie: Movie) => {
     const response = await fetch(

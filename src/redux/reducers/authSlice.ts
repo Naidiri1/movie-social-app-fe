@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-
+import { useEffect, useState } from 'react'
 interface UserState {
   username: string | null;
   email: string | null;
@@ -18,7 +18,6 @@ export const restoreUserSession = createAsyncThunk(
   "auth/restoreUserSession",
   async (_, thunkAPI) => {
     try {
-      const token = sessionStorage.getItem("access_token");
       if (!token) console.error("No token found");
 
       const response = await fetch(
@@ -42,7 +41,8 @@ export const restoreUserSession = createAsyncThunk(
     }
   }
 );
-
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
 const authSlice = createSlice({
   name: "auth",
   initialState,

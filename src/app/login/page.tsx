@@ -16,7 +16,9 @@ export default function LoginForm() {
   const [success, setSuccess] = useState(false);
   const [displayError, setDisplayError] = useState(false);
   const router = useRouter();
-
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -72,7 +74,6 @@ export default function LoginForm() {
         return;
       }
 
-      sessionStorage.setItem("access_token", result.access_token);
       setSuccess(true);
       setDisplayError(false);
       router.push("/popular");
@@ -85,7 +86,6 @@ export default function LoginForm() {
 
   useEffect(() => {
     const checkSessionAndRedirect = () => {
-      const token = sessionStorage.getItem("access_token");
       if (token) {
         const decodedToken: number = jwt_decode<{ exp: number }>(token).exp;
         try {

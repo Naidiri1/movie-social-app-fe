@@ -32,13 +32,14 @@ const orbitron = Orbitron({
   subsets: ["latin"],
   weight: ["400", "500"],
 });
-
+ 
 const NavbarComponent = () => {
   const router = useRouter();
   const { username } = useSelector((state: RootState) => state.auth);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
-
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
@@ -46,7 +47,6 @@ const NavbarComponent = () => {
       setSearchQuery("");
     }
   }, [pathname]);
-  const token = sessionStorage.getItem("access_token");
 
   useEffect(() => {
     if ((!token && !username === null) || username === undefined) {
@@ -59,7 +59,6 @@ const NavbarComponent = () => {
 
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
-    const token = sessionStorage.getItem("access_token");
     if (token) {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logoutUser`,

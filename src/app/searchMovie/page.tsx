@@ -17,7 +17,9 @@ const SearchResults = () => {
     handleAddToTop10,
     handleAddWatchLater,
   } = AddMovieHooks();
-  const token = sessionStorage.getItem("access_token");
+
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
 
   useEffect(() => {
     if (movieString) {

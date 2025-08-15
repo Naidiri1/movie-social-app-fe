@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { restoreUserSession } from "../redux/reducers/authSlice";
@@ -12,13 +12,22 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const configFetchedRef = useRef(false);
   const { username, loading } = useSelector((state: any) => state.auth);
+  const [isClient, setIsClient] = useState(false);
 
   const isAuthPage = pathname === "/login" || pathname === "/signup";
-  const token = sessionStorage.getItem("access_token");
+ 
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
 
   useEffect(() => {
-    const channel = new BroadcastChannel("my-channel");
+    setIsClient(true);
+  }, []);
 
+  useEffect(() => {
+    if (!isClient) return;
+
+    const channel = new BroadcastChannel("my-channel");
+    
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
 
@@ -28,7 +37,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       }
 
       if (message.type === "request-token") {
-        const token = sessionStorage.getItem("access_token");
         if (token) {
           channel.postMessage({ type: "new-token", token });
         }
@@ -40,37 +48,46 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         router.push("/login");
       }
     };
-    if (channel) {
-      channel.postMessage({ type: "request-token" });
-      channel.onmessage = handleMessage;
-    }
 
-    const token = sessionStorage.getItem("access_token");
+    channel.postMessage({ type: "request-token" });
+    channel.onmessage = handleMessage;
+
+    
     if (token && !username && !configFetchedRef.current) {
       dispatch(restoreUserSession());
       configFetchedRef.current = true;
     }
 
-    if (!token) {
+    if (!token && !isAuthPage) {
       channel.postMessage({ type: "request-token" });
-      router.push("login");
+      setTimeout(() => {
+        const tokenCheck = sessionStorage.getItem("access_token");
+        if (!tokenCheck) {
+          router.push("/login");
+        }
+      }, 100);
     }
 
     if (token && !username) {
       dispatch(restoreUserSession());
     }
 
-    if (!token && !username) {
-      router.push("/login");
-    }
-
     return () => {
       channel.close();
     };
-  }, [token, username]);
+  }, [isClient, username, isAuthPage, dispatch, router]);
+
+  if (!isClient) {
+    return null;
+  }
+
 
   if (!username && !isAuthPage && loading) {
     return <div className="text-white p-4">Loading session...</div>;
+  }
+
+  if (!token && !isAuthPage) {
+    return <div className="text-white p-4">Redirecting to login...</div>;
   }
 
   return <>{children}</>;

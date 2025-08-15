@@ -34,6 +34,9 @@ export default function Popular() {
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [token, setToken] = useState<string | null>(null);
+  
+   useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
 
   const {
     handleAddFavorites,
@@ -46,7 +49,6 @@ export default function Popular() {
     genreId: number | null = null,
     page: number = 1
   ) => {
-    const token = sessionStorage.getItem("access_token");
 
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`;
     const params = new URLSearchParams();

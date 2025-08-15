@@ -67,6 +67,8 @@ export default function SearchUsers() {
 
   const saveStateToSessionStorage = () => {
     try {
+        if (typeof window === 'undefined') return;
+
       sessionStorage.setItem("userSearch_query", searchQuery);
       sessionStorage.setItem(
         "userSearch_results",
@@ -103,6 +105,8 @@ export default function SearchUsers() {
 
   useEffect(() => {
     try {
+        if (typeof window === 'undefined') return;
+
       const savedResults = sessionStorage.getItem("userSearch_results");
       const savedOriginalResults = sessionStorage.getItem(
         "userSearch_originalResults"
@@ -186,6 +190,8 @@ export default function SearchUsers() {
 
   useEffect(() => {
     try {
+        if (typeof window === 'undefined') return;
+
       const savedQuery = sessionStorage.getItem("userSearch_query");
       if (savedQuery) {
         setSearchQuery(savedQuery);
@@ -245,6 +251,8 @@ export default function SearchUsers() {
   }, []);
 
   useEffect(() => {
+      if (typeof window === 'undefined') return;
+
     saveStateToSessionStorage();
   }, [
     searchQuery,
@@ -262,6 +270,8 @@ export default function SearchUsers() {
     setLoading(true);
     setHasSearched(true);
     try {
+        if (typeof window === 'undefined') return;
+
       const token = sessionStorage.getItem("access_token");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/search?query=${encodeURIComponent(searchQuery)}`,
@@ -485,6 +495,7 @@ export default function SearchUsers() {
 
   useEffect(() => {
     return () => {
+     if (typeof window === 'undefined') return;
       sessionStorage.setItem("previousPath", window.location.pathname);
     };
   }, []);
