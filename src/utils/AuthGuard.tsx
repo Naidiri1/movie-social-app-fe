@@ -13,80 +13,113 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const configFetchedRef = useRef(false);
   const { username, loading } = useSelector((state: any) => state.auth);
   const [isClient, setIsClient] = useState(false);
-
-  const isAuthPage = pathname === "/login" || pathname === "/signup";
- 
   const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   useEffect(() => {
     setIsClient(true);
+    if (typeof window !== 'undefined') {
+      const storedToken = sessionStorage.getItem("access_token");
+      setToken(storedToken);
+      setIsCheckingAuth(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient || isCheckingAuth) return;
 
-    const channel = new BroadcastChannel("my-channel");
+    let channel: BroadcastChannel | null = null;
     
-    const handleMessage = (event: MessageEvent) => {
-      const message = event.data;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        channel = new BroadcastChannel("my-channel");
+        
+        const handleMessage = (event: MessageEvent) => {
+          const message = event.data;
 
-      if (message.type === "new-token") {
-        sessionStorage.setItem("access_token", message.token);
-        configFetchedRef.current = false;
-      }
+          if (message.type === "new-token" && typeof window !== 'undefined') {
+            sessionStorage.setItem("access_token", message.token);
+            setToken(message.token);
+            configFetchedRef.current = false;
+          }
 
-      if (message.type === "request-token") {
-        if (token) {
-          channel.postMessage({ type: "new-token", token });
+          if (message.type === "request-token" && token) {
+            channel?.postMessage({ type: "new-token", token });
+          }
+
+          if (message.type === "logout" && typeof window !== 'undefined') {
+            sessionStorage.removeItem("access_token");
+            setToken(null);
+            configFetchedRef.current = false;
+            router.push("/login");
+          }
+        };
+
+        channel.onmessage = handleMessage;
+        
+        if (!token) {
+          channel.postMessage({ type: "request-token" });
         }
       }
+    } catch (error) {
+      console.error("BroadcastChannel error:", error);
+    }
 
-      if (message.type === "logout") {
-        sessionStorage.removeItem("access_token");
-        configFetchedRef.current = false;
-        router.push("/login");
-      }
-    };
-
-    channel.postMessage({ type: "request-token" });
-    channel.onmessage = handleMessage;
-
-    
     if (token && !username && !configFetchedRef.current) {
       dispatch(restoreUserSession());
       configFetchedRef.current = true;
     }
 
     if (!token && !isAuthPage) {
-      channel.postMessage({ type: "request-token" });
-      setTimeout(() => {
-        if (!token) {
-          router.push("/login");
+      const timeoutId = setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          const currentToken = sessionStorage.getItem("access_token");
+          if (!currentToken) {
+            router.push("/login");
+          } else {
+            setToken(currentToken);
+          }
         }
       }, 100);
-    }
-
-    if (token && !username) {
-      dispatch(restoreUserSession());
+      
+      return () => clearTimeout(timeoutId);
     }
 
     return () => {
-      channel.close();
+      if (channel) {
+        channel.close();
+      }
     };
-  }, [isClient, username, isAuthPage, dispatch, router]);
+  }, [isClient, token, username, isAuthPage, dispatch, router, isCheckingAuth]);
 
   if (!isClient) {
     return null;
   }
 
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white p-4">Loading...</div>
+      </div>
+    );
+  }
 
   if (!username && !isAuthPage && loading) {
-    return <div className="text-white p-4">Loading session...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white p-4">Loading session...</div>
+      </div>
+    );
   }
 
   if (!token && !isAuthPage) {
-    return <div className="text-white p-4">Redirecting to login...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white p-4">Redirecting to login...</div>
+      </div>
+    );
   }
 
   return <>{children}</>;
