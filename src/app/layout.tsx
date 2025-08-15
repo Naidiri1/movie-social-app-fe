@@ -16,76 +16,62 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const path = usePathname();
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState<boolean | null>(null); // Use null for loading state
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const isAuthPage =
-    path === "/login" ||
-    path === "/signUp"; 
+  const isAuthPage = path === "/login" || path === "/signUp";
 
   // Don't render until mounted (prevents SSR issues)
   if (!mounted) {
     return (
       <html lang="en">
         <body suppressHydrationWarning>
-          <div>Loading...</div>
-        </body>
-      </html>
-    );
-  }
-
-  // Login/Signup pages - no auth check needed
-  if (isAuthPage) {
-    return (
-      <Provider store={store}>
-        <Auth setIsAuth={setIsAuth} />
-        <html lang="en">
-          <body suppressHydrationWarning className="h-full">
-            <div className="min-h-screen flex flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
-          </body>
-        </html>
-      </Provider>
-    );
-  }
-
-  // Not authenticated - show loading and check auth
-  if (!isAuth) {
-    return (
-      <Provider store={store}>
-        <Auth setIsAuth={setIsAuth} />
-        <html lang="en">
-          <body suppressHydrationWarning className="h-full">
-            <div className="min-h-screen flex flex-col">
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="text-white">Loading...</div>
-              </div>
-            </div>
-          </body>
-        </html>
-      </Provider>
-    );
-  }
-
-  // Authenticated - show full app with navbar/footer
-  return (
-    <Provider store={store}>
-      <Auth setIsAuth={setIsAuth} />
-      <html lang="en">
-        <body suppressHydrationWarning className="h-full">
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <ScrollArrows />
+          <div className="min-h-screen flex items-center justify-center">
+            <div>Loading...</div>
           </div>
         </body>
       </html>
-    </Provider>
+    );
+  }
+
+  // IMPORTANT: Only ONE html/body tag structure
+  return (
+    <html lang="en">
+      <body suppressHydrationWarning className="h-full">
+        <Provider store={store}>
+          {/* Auth component always mounted */}
+          <Auth setIsAuth={setIsAuth} />
+          
+          <div className="min-h-screen flex flex-col">
+            {/* Show loading while auth is being checked */}
+            {isAuth === null ? (
+              <div className="flex items-center justify-center min-h-screen">
+                <div className="text-white">Checking authentication...</div>
+              </div>
+            ) : (
+              <>
+                {/* Only show Navbar if authenticated and not on auth pages */}
+                {isAuth && !isAuthPage && <Navbar />}
+                
+                {/* Main content */}
+                <main className="flex-1">{children}</main>
+                
+                {/* Only show Footer and ScrollArrows if authenticated and not on auth pages */}
+                {isAuth && !isAuthPage && (
+                  <>
+                    <Footer />
+                    <ScrollArrows />
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </Provider>
+      </body>
+    </html>
   );
 }
