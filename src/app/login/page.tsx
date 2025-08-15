@@ -9,6 +9,8 @@ import Image from "next/image";
 import login from "../../../public/login.png";
 import bglogin from "../../../public/bglogin.png";
 
+export const dynamic = 'force-dynamic';
+
 export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +19,15 @@ export default function LoginForm() {
   const [displayError, setDisplayError] = useState(false);
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+    if (typeof window !== 'undefined') {
+      const storedToken = sessionStorage.getItem("access_token");
+      setToken(storedToken);
+    }
+  }, []);
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,9 +84,17 @@ export default function LoginForm() {
         return;
       }
 
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem("access_token", result.access_token);
+      }
+
       setSuccess(true);
       setDisplayError(false);
-      router.push("/popular");
+      
+      setTimeout(() => {
+        router.push("/popular");
+      }, 100);
+      
     } catch (err: any) {
       console.error(err);
       setDisplayError(true);
@@ -85,22 +103,34 @@ export default function LoginForm() {
   };
 
   useEffect(() => {
+    if (!isClient || !token) return;
+    
     const checkSessionAndRedirect = () => {
-      if (token) {
-        const decodedToken: number = jwt_decode<{ exp: number }>(token).exp;
-        try {
-          const sessionValid = decodedToken > Date.now() / 1000;
-          if (sessionValid) {
-            router.push("/popular");
-          }
-        } catch (error) {
-          console.error(error);
+      try {
+        const decodedToken: { exp: number } = jwt_decode(token);
+        const sessionValid = decodedToken.exp > Date.now() / 1000;
+        if (sessionValid) {
+          router.push("/popular");
         }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem("access_token");
+        }
+        setToken(null);
       }
     };
 
     checkSessionAndRedirect();
-  }, [router]);
+  }, [token, router, isClient]); // Added proper dependencies
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen w-full flex justify-center items-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
@@ -122,6 +152,7 @@ export default function LoginForm() {
               color="white"
               value={username}
               onChange={(e: any) => setUsername(e.target.value)}
+              crossOrigin={undefined}
             />
             <Input
               label="Password"
@@ -129,17 +160,20 @@ export default function LoginForm() {
               color="white"
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
+              crossOrigin={undefined}
             />
             <Button
               type="submit"
               fullWidth
               className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
+              placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Sign In
             </Button>
           </form>
           <span className="mt-2 underline">
-            {" "}
             <Link
               href="/forgot-password"
               className="ml-2 text-white text-xl hover:text-blue-500"
@@ -147,16 +181,15 @@ export default function LoginForm() {
               Forgot Password
             </Link>
           </span>
-          {success && <p className="text-green-600 mt-4"> Login successful!</p>}
+          {success && <p className="text-green-600 mt-4">Login successful!</p>}
           {displayError && (
             <p className="text-red-600 mt-4">
-              {" "}
               <strong>{error}</strong>
             </p>
           )}
 
           <p className="text-sm mt-5 text-white">
-            <strong>Don’t have an account?</strong>
+            <strong>Don't have an account?</strong>
             <Link
               href="/signup"
               className="ml-2 text-blue-300 text-xl hover:text-blue-500"
@@ -166,7 +199,7 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <div className="block flex flex-col  lg:block w-1/2 items-center">
+        <div className="block flex flex-col lg:block w-1/2 items-center">
           <Image
             src={login}
             alt="Background"
