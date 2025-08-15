@@ -1,6 +1,5 @@
 'use client';
 export const dynamic = 'force-dynamic';
-"use client";
 
 import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
