@@ -1,25 +1,46 @@
+"use client";
+export const dynamic = 'force-dynamic';
+
 import "./globals.css";
-import { Inter } from 'next/font/google';
-import ClientProviders from '../components/ClientLayout';
+import { ThemeProvider } from "@material-tailwind/react";
+import { Provider } from "react-redux";
+import { store } from "../redux/store";
+import Navbar from "../components/NavBar";
+import { usePathname } from "next/navigation";
+import AuthGuard from "../utils/AuthGuard";
+import Footer from "../components/Footer";
+import ScrollArrows from "../components/ScrollArrows";
 
-const inter = Inter({ subsets: ['latin'] });
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const path = usePathname() || "";
 
-export const metadata = {
-  title: 'Movie Social App',
-  description: 'Share your favorite movies',
-};
+  const isAuthPage =
+    path === "/login" ||
+    path === "/signup" ||
+    path === "/forgot-password" ||
+    path === "/reset-password";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+  const isPublicShare = path.startsWith("/share/");
+
+  const hideNavbarFooter = isAuthPage || isPublicShare;
+
+  const content = (
+    <div className="min-h-screen flex flex-col">
+      {!hideNavbarFooter && <Navbar />}
+      <main className="flex-1">{children}</main>
+      {!hideNavbarFooter && <Footer />}
+      {!hideNavbarFooter && <ScrollArrows />}
+    </div>
+  );
+
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ClientProviders>
-          {children}
-        </ClientProviders>
+      <body suppressHydrationWarning className="h-full">
+        <Provider store={store}>
+          <ThemeProvider>
+            {isAuthPage || isPublicShare ? content : <AuthGuard>{content}</AuthGuard>}
+          </ThemeProvider>
+        </Provider>
       </body>
     </html>
   );

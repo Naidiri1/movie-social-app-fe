@@ -1,4 +1,5 @@
-"use client";
+'use client';
+export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
@@ -9,7 +10,6 @@ import Image from "next/image";
 import login from "../../../public/login.png";
 import bglogin from "../../../public/bglogin.png";
 
-export const dynamic = 'force-dynamic';
 
 export default function LoginForm() {
   const [username, setUsername] = useState("");
