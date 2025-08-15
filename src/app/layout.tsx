@@ -9,7 +9,8 @@ import ScrollArrows from "../components/ScrollArrows";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
-export function RootLayoutClear({
+// MUST be "export default" not just "export"
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
