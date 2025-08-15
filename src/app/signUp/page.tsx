@@ -23,7 +23,7 @@ export default function Signup() {
   const [isValidPassword, setIsvalidPassword] = useState(false);
   const [isValidEmail, setIsvalidEmail] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-
+  const dispatch: any = useDispatch(); 
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -57,17 +57,12 @@ export default function Signup() {
       setSuccessMessage("Signup successful! You are now logged in.");
       setMessage("");
       router.push("./popular");
-       const store = (window as any).__REDUX_STORE__;
-        if (store) {
-          // Dispatch setUser action
-          import("../../redux/reducers/authSlice").then(({ setUser }) => {
-            store.dispatch(setUser({
-              username: loginData.username || username,
-              email: loginData.email || email,
-              userId: loginData.userId || loginData.id,
-            }));
-          });
-        }
+         dispatch(setUser({
+        username: loginData.username,
+        email: loginData.email,
+        userId: loginData.userId ,
+      }));
+
     } catch (err) {
       setMessage("Server error");
       setSuccessMessage("");
