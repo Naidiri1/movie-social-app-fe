@@ -1,70 +1,32 @@
-'use client';
-
-import { Provider } from 'react-redux';
+import type { Metadata } from 'next';
 import './globals.css';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import ClientProviders from '../utils/AuthGuard';
 
-import Link from 'next/link';
-import Auth from '../utils/AuthGuard';
-import { store } from '../redux/store';
-import SessionExpiryWarningDialog from '../components/SessionWarning';
+export const metadata: Metadata = {
+  title: 'Movie Social App',
+  description: 'Your movie social platform',
+};
+
+// This makes it dynamic without needing 'force-dynamic'
+import { cookies } from 'next/headers';
 
 export default function RootLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const path = usePathname();
-    const [isAuth, setIsAuth] = useState(false);
-
-    if (path.endsWith('/login/')) {
-        return (
-            <Provider store={store}>
-                <Auth setIsAuth={setIsAuth} />
-                <html lang="en">
-                    <body>
-                        <title>Loading...</title>
-                        {children}
-                    </body>
-                </html>
-            </Provider>
-        );
-    }
-    if (!isAuth) {
-        return (
-            <Provider store={store}>
-                <html lang="en">
-                    <body>
-                        <title>Loading...</title>
-                        <div className="flex flex-row">
-                            <Auth setIsAuth={setIsAuth} />
-                            <div className="ag-theme-alpine w-full h-full">
-                                <div className="flex items-center bg-[#465460] text-white pl-2 h-9 text-xl font-bold">
-                                    <div>Loading...</div>
-                                </div>
-                            </div>
-                        </div>
-                    </body>
-                </html>
-            </Provider>
-        );
-    } else {
-        return (
-            <Provider store={store}>
-                <html lang="en">
-                    <body>
-                        <title>Loading...</title>
-                        <div className="flex flex-row">
-                            <div className="z-50">
-                            </div>
-                            <SessionExpiryWarningDialog />
-                            <Auth setIsAuth={setIsAuth} />
-                            {children}
-                        </div>
-                    </body>
-                </html>
-            </Provider>
-        );
-    }
+  // Just calling cookies() makes this dynamic
+  const cookieStore = cookies();
+  // You can check for token if you want initial state
+  const token = cookieStore.get('access_token');
+  
+  return (
+    <html lang="en">
+      <body suppressHydrationWarning className="h-full">
+        <ClientProviders hasInitialToken={!!token?.value}>
+          {children}
+        </ClientProviders>
+      </body>
+    </html>
+  );
 }
