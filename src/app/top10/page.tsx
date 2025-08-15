@@ -14,7 +14,7 @@ import Image from "next/image";
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
-  const { userId } = useSelector((state: RootState) => state.auth);
+  const { userId } = useSelector((state: RootState) => state?.auth);
   const [movieData, setMovieData] = useState<(Movie | null)[]>(
     Array(NUM_SLOTS).fill(null)
   );

@@ -21,7 +21,7 @@ const IconCard: React.FC<IconActionsProps> = ({
 }) => {
   const [actionMessage, setActionMessage] = useState("");
   const [activeAction, setActiveAction] = useState("");
-  const { userId } = useSelector((state: RootState) => state.auth);
+  const { userId } = useSelector((state: RootState) => state?.auth);
 
   const handleAction = (type: any) => {
     let message = "";

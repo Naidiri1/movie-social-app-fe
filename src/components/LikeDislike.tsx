@@ -23,7 +23,7 @@ export default function LikeDislike({
   comment,
 }: LikeDislikeProps) {
   const { userId: currentUserId } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state?.auth
   );
 
   const isOwnContent = movieOwnerId === currentUserId;

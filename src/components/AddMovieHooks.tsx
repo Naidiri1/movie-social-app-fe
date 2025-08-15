@@ -3,7 +3,7 @@ import { RootState } from "../redux/store";
 import { useCallback, useEffect, useState} from "react";
 
 export const AddMovieHooks = () => {
-  const { userId } = useSelector((state: RootState) => state.auth);
+  const { userId } = useSelector((state: RootState) => state?.auth);
 
   const [token, setToken] = useState<string | null>(null);
   useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);

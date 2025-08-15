@@ -11,7 +11,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const configFetchedRef = useRef(false);
-  const { username, loading } = useSelector((state: any) => state.auth);
+  const { username, loading } = useSelector((state: any) => state?.auth);
   const [token, setToken] = useState<string | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 

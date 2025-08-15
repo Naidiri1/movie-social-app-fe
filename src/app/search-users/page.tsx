@@ -65,7 +65,7 @@ export default function SearchUsers() {
       watchLater: false,
     });
 
-  const { userId } = useSelector((state: RootState) => state.auth);
+  const { userId } = useSelector((state: RootState) => state?.auth);
   const currentUserId = userId;
 
   const saveStateToSessionStorage = () => {

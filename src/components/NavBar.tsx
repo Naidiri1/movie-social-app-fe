@@ -35,7 +35,7 @@ const orbitron = Orbitron({
  
 const NavbarComponent = () => {
   const router = useRouter();
-  const { username } = useSelector((state: RootState) => state.auth);
+  const { username } = useSelector((state: RootState) => state?.auth);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
   const [token, setToken] = useState<string | null>(null);

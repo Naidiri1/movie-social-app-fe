@@ -14,7 +14,7 @@ import { Button, Card, Input, Typography } from "@material-tailwind/react";
 export default function FavoriteMovies() {
   const [rowData, setRowData] = useState([]);
   const [allFavorites, setAllFavorites] = useState([]);
-  const { userId } = useSelector((state: RootState) => state.auth);
+  const { userId } = useSelector((state: RootState) => state?.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
