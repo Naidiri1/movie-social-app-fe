@@ -40,11 +40,13 @@ export default function RootLayout({
       <body suppressHydrationWarning className="h-full">
         <Provider store={store}>
           <ThemeProvider>
-            {isAuthPage || isPublicShare ? (
+            {/* {isAuthPage || isPublicShare ? (
               content
             ) : (
-              <AuthGuard>{content}</AuthGuard>
-            )}
+              <AuthGuard> */}
+                {content}
+                {/* </AuthGuard>
+            )} */}
           </ThemeProvider>
         </Provider>
       </body>
