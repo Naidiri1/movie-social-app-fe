@@ -518,9 +518,9 @@ export default function SearchUsers() {
 
         <Collapse open={openSections[category]}>
           <div className="mt-4">
-            {userMovies[category].length > 0 ? (
+            {userMovies[category] && userMovies[category].length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {userMovies[category].map((movie, index) => (
+                { userMovies[category] && userMovies[category].map((movie, index) => (
                   <div key={movie.id} className="relative">
                     {category === "top10" && movie.rank && (
                       <div className="absolute top-2 left-12 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm z-10">
@@ -533,7 +533,6 @@ export default function SearchUsers() {
                       successScore={false}
                       handleDeleteScore={() => {}}
                       initialScore={movie.userScore}
-                      handleDeleteMovie={() => {}}
                       comment={movie.comment || ""}
                       setComment={() => {}}
                       handleAddEditComment={() => {}}

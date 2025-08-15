@@ -36,6 +36,18 @@ export default function LikeDislike({
   );
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const getApiEndpoint = (type: string): string => {
+    const endpoints: Record<string, string> = {
+      favorites: "favorites",
+      watched: "watched",
+      top10: "top10",
+      watchLater: "watch-later",
+      "watch-later": "watch-later",
+    };
+
+    return endpoints[type] || type;
+  };
+
   const handleLikeDislike = async (action: "like" | "dislike") => {
     if (isUpdating || isOwnContent || !currentUserId) return;
 
@@ -43,21 +55,22 @@ export default function LikeDislike({
     try {
       const token = sessionStorage.getItem("access_token");
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${entryType}/${entryId}/${action}?userId=${currentUserId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const apiEndpoint = getApiEndpoint(entryType);
+
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${apiEndpoint}/${entryId}/${action}?userId=${currentUserId}`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
-        setLikes(data.likes);
-        setDislikes(data.dislikes);
+        setLikes(data.likes || 0);
+        setDislikes(data.dislikes || 0);
 
         if (data.action === "removed") {
           setUserStatus(null);
@@ -66,7 +79,7 @@ export default function LikeDislike({
         }
       } else {
         const error = await response.json();
-        console.error(error.error || "Failed to update");
+        console.error("API Error:", error.error || "Failed to update");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -76,7 +89,7 @@ export default function LikeDislike({
   };
 
   return (
-    <div className="flex flex-col items-center gap-3 justify-start gap-2 ">
+    <div className="flex flex-col items-center gap-3 justify-start">
       {!isOwnContent ? (
         <>
           <button
