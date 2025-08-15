@@ -12,24 +12,19 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const configFetchedRef = useRef(false);
   const { username, loading } = useSelector((state: any) => state.auth);
-  const [isClient, setIsClient] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   useEffect(() => {
-    setIsClient(true);
-    if (typeof window !== 'undefined') {
       const storedToken = sessionStorage.getItem("access_token");
       setToken(storedToken);
       setIsCheckingAuth(false);
-    }
   }, []);
 
   useEffect(() => {
-    if (!isClient || isCheckingAuth) return;
-
+    
     let channel: BroadcastChannel | null = null;
     
     try {
@@ -92,11 +87,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         channel.close();
       }
     };
-  }, [isClient, token, username, isAuthPage, dispatch, router, isCheckingAuth]);
-
-  if (!isClient) {
-    return null;
-  }
+  }, [ token, username, isAuthPage, dispatch, router, isCheckingAuth]);
 
   if (isCheckingAuth) {
     return (

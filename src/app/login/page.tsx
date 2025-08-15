@@ -21,7 +21,7 @@ export default function LoginForm() {
   const [token, setToken] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
-
+  const api='https://movie-social-app-be-production.up.railway.app'
   useEffect(() => {
     setIsClient(true);
     if (typeof window !== 'undefined') {
@@ -52,7 +52,7 @@ export default function LoginForm() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
+        `${api}/api/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
