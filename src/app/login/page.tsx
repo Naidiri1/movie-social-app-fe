@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
-import jwt_decode from "jwt-decode";
+import jwtDecode from "jwt-decode"; // Correct import for older version
 import Link from "next/link";
 import Image from "next/image";
 import login from "../../../public/login.png";
@@ -20,15 +20,42 @@ export default function LoginForm() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
-  const api='https://movie-social-app-be-production.up.railway.app'
+  const [hasCheckedToken, setHasCheckedToken] = useState(false); // Prevent infinite loop
+  
+  const api = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://movie-social-app-be-production.up.railway.app';
+  
+  // Initialize client
   useEffect(() => {
     setIsClient(true);
-    if (typeof window !== 'undefined') {
+  }, []);
+
+  useEffect(() => {
+    if (isClient && !hasCheckedToken) {
       const storedToken = sessionStorage.getItem("access_token");
       setToken(storedToken);
+      setHasCheckedToken(true);
     }
-  }, []);
+  }, [isClient, hasCheckedToken]);
+  
+  useEffect(() => {
+    if (!token || !hasCheckedToken) return;
+    
+    try {
+      const decodedToken: { exp: number } = jwtDecode(token); // Using jwtDecode
+      const sessionValid = decodedToken.exp > Date.now() / 1000;
+      if (sessionValid) {
+        router.push("/popular");
+      } else {
+        // Token expired
+        sessionStorage.removeItem("access_token");
+        setToken(null);
+      }
+    } catch (error) {
+      console.error("Invalid token:", error);
+      sessionStorage.removeItem("access_token");
+      setToken(null);
+    }
+  }, [token, hasCheckedToken]); 
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +73,7 @@ export default function LoginForm() {
 
     if (!usernameOk || !passwordOk) {
       setDisplayError(true);
-      setError("Please fix the highlighted fields.");
+      setError("Username must be 8+ characters with letters and numbers/special chars. Password must be 8+ characters.");
       return;
     }
 
@@ -65,6 +92,9 @@ export default function LoginForm() {
         result = await res.json();
       } catch {
         console.error("Invalid response from server");
+        setDisplayError(true);
+        setError("Server error - please try again");
+        return;
       }
 
       if (!res.ok) {
@@ -85,19 +115,18 @@ export default function LoginForm() {
         return;
       }
 
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem("access_token", result.access_token);
-      }
-
+      // Save token
+      sessionStorage.setItem("access_token", result.access_token);
       setSuccess(true);
       setDisplayError(false);
       
+      // Navigate after short delay
       setTimeout(() => {
         router.push("/popular");
       }, 100);
       
     } catch (err: any) {
-      console.error(err);
+      console.error("Login error:", err);
       setDisplayError(true);
       setError(err?.message || "User or Password are incorrect, try again!");
     }
@@ -108,7 +137,7 @@ export default function LoginForm() {
     
     const checkSessionAndRedirect = () => {
       try {
-        const decodedToken: { exp: number } = jwt_decode(token);
+        const decodedToken: { exp: number } = jwtDecode(token);
         const sessionValid = decodedToken.exp > Date.now() / 1000;
         if (sessionValid) {
           router.push("/popular");
@@ -154,6 +183,8 @@ export default function LoginForm() {
               value={username}
               onChange={(e: any) => setUsername(e.target.value)}
               crossOrigin={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
             <Input
               label="Password"
@@ -162,6 +193,8 @@ export default function LoginForm() {
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
               crossOrigin={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
             <Button
               type="submit"
@@ -203,7 +236,7 @@ export default function LoginForm() {
         <div className="block flex flex-col lg:block w-1/2 items-center">
           <Image
             src={login}
-            alt="Background"
+            alt="Login"
             className="object-cover brightness-50"
             priority
           />
