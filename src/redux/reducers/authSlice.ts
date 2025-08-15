@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { useEffect, useState } from 'react'
+
 interface UserState {
   username: string | null;
   email: string | null;
@@ -14,11 +14,23 @@ const initialState: UserState = {
   userId: "",
 };
 
+const getToken = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return sessionStorage.getItem("access_token");
+  }
+  return null;
+};
+
 export const restoreUserSession = createAsyncThunk(
   "auth/restoreUserSession",
   async (_, thunkAPI) => {
     try {
-      if (!token) console.error("No token found");
+      const token = getToken();
+      
+      if (!token) {
+        console.error("No token found");
+        return thunkAPI.rejectWithValue("No token");
+      }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/userSession`,
@@ -32,6 +44,7 @@ export const restoreUserSession = createAsyncThunk(
 
       if (!response.ok) {
         console.error("Session invalid");
+        return thunkAPI.rejectWithValue("Session invalid");
       }
 
       const data = await response.json();
@@ -41,8 +54,7 @@ export const restoreUserSession = createAsyncThunk(
     }
   }
 );
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -50,8 +62,10 @@ const authSlice = createSlice({
     logout: (state) => {
       state.username = null;
       state.email = null;
-      sessionStorage.removeItem("access_token");
       state.userId = "";
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem("access_token");
+      }
     },
 
     setUser: (
@@ -89,7 +103,9 @@ const authSlice = createSlice({
         state.username = null;
         state.email = null;
         state.userId = "";
-        sessionStorage.removeItem("access_token");
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem("access_token");
+        }
       });
   },
 });
