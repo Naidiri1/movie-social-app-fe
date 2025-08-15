@@ -17,7 +17,7 @@ const Auth = ({ setIsAuth }: any) => {
   const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/signUp';
   
   // Call the hook
-  useFetchUserIfNull();
+  // useFetchUserIfNull();
   
   // Initialize only once
   useEffect(() => {
