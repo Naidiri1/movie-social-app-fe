@@ -106,7 +106,7 @@ export default function Signup() {
   const handleUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setUsername(input);
-    const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/; // or the no-spaces one
+    const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/; 
     setIsvalidUser(usernameRegex.test(input));
   };
 
