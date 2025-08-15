@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
-import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import Image from "next/image";
 import login from "../../../public/login.png";
@@ -86,12 +85,10 @@ export default function LoginForm() {
     const checkSessionAndRedirect = () => {
       const token = sessionStorage.getItem("access_token");
       if (token) {
-        const decodedToken: number = jwt_decode<{ exp: number }>(token).exp;
         try {
-          const sessionValid = decodedToken > Date.now() / 1000;
-          if (sessionValid) {
+          
             router.push("/popular");
-          }
+          
         } catch (error) {
           console.error(error);
         }
