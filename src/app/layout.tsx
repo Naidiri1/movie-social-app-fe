@@ -4,71 +4,78 @@ import "./globals.css";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import Navbar from "../components/NavBar";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import ScrollArrows from "../components/ScrollArrows";
-import Auth from "../utils/AuthGuard";
+import { usePathname } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
 
+// ===================================
+// FIX 1: Prevent redirect loop with ref
+// ===================================
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const path = usePathname();
-  const [isAuth, setIsAuth] = useState<boolean | null>(null); // Use null for loading state
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const hasChecked = useRef(false);
+  const isRedirecting = useRef(false);
+  
   const isAuthPage = path === "/login" || path === "/signUp";
-
-  // Don't render until mounted (prevents SSR issues)
-  if (!mounted) {
+  
+  useEffect(() => {
+    // Only check once, not on every path change
+    if (hasChecked.current || isRedirecting.current) {
+      console.log('[Layout] Already checked or redirecting, skipping...');
+      return;
+    }
+    
+    hasChecked.current = true;
+    console.log('[Layout] Checking auth for path:', path);
+    
+    const token = sessionStorage.getItem("access_token");
+    console.log('[Layout] Token exists:', !!token, 'isAuthPage:', isAuthPage);
+    
+    if (!token && !isAuthPage) {
+      console.log('[Layout] No token, need to redirect to login');
+      isRedirecting.current = true;
+      setIsAuth(false);
+      
+      // Use replace to avoid history issues
+      window.location.replace('/login');
+      return;
+    }
+    
+    console.log('[Layout] Setting auth to:', !!token);
+    setIsAuth(!!token || isAuthPage); // Allow auth pages even without token
+  }, []); // Empty deps - only run once!
+  
+  // Loading state
+  if (isAuth === null) {
     return (
       <html lang="en">
-        <body suppressHydrationWarning>
-          <div className="min-h-screen flex items-center justify-center">
-            <div>Loading...</div>
-          </div>
+        <body suppressHydrationWarning className="h-full">
+          <Provider store={store}>
+            <div className="min-h-screen flex items-center justify-center">
+              <div>Checking authentication...</div>
+            </div>
+          </Provider>
         </body>
       </html>
     );
   }
-
-  // IMPORTANT: Only ONE html/body tag structure
+ const showNavFooter = isAuth && !isAuthPage;
+  
   return (
     <html lang="en">
       <body suppressHydrationWarning className="h-full">
         <Provider store={store}>
-          {/* Auth component always mounted */}
-          <Auth setIsAuth={setIsAuth} />
-          
           <div className="min-h-screen flex flex-col">
-            {/* Show loading while auth is being checked */}
-            {isAuth === null ? (
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="text-white">Checking authentication...</div>
-              </div>
-            ) : (
-              <>
-                {/* Only show Navbar if authenticated and not on auth pages */}
-                {isAuth && !isAuthPage && <Navbar />}
-                
-                {/* Main content */}
-                <main className="flex-1">{children}</main>
-                
-                {/* Only show Footer and ScrollArrows if authenticated and not on auth pages */}
-                {isAuth && !isAuthPage && (
-                  <>
-                    <Footer />
-                    <ScrollArrows />
-                  </>
-                )}
-              </>
-            )}
+            {showNavFooter && <Navbar />}
+            <main className="flex-1">{children}</main>
+            {showNavFooter && <Footer />}
+            {showNavFooter && <ScrollArrows />}
           </div>
         </Provider>
       </body>
