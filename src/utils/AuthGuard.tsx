@@ -7,6 +7,8 @@ import { useFetchUserIfNull } from "../utils/sessionRecover";
 import decodeJWT from 'jwt-decode';
 
 const Auth = ({ setIsAuth }: any) => { 
+  const pathname = usePathname();
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
   const router = useRouter();
   const configFetchedRef = useRef(false);
   const { username, loading } = useSelector((state: any) => state.auth);
@@ -63,12 +65,12 @@ const Auth = ({ setIsAuth }: any) => {
 
     if (!token) {
       channel.postMessage({ type: "request-token" });
-      router.push('login');
+      router.push('/login');
     }
 
-     if (!token && !username) {
-      router.push('/login')
-    }
+    if (!token && !isAuthPage) { 
+    router.push('/login');
+  }
 
     return () => {
       channel.close();
