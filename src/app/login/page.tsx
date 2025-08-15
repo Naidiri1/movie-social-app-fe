@@ -1,15 +1,13 @@
-'use client';
-export const dynamic = 'force-dynamic';
+"use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Input } from "@material-tailwind/react";
+import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
-import jwtDecode from "jwt-decode"; // Correct import for older version
+import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import Image from "next/image";
 import login from "../../../public/login.png";
 import bglogin from "../../../public/bglogin.png";
-
 
 export default function LoginForm() {
   const [username, setUsername] = useState("");
@@ -18,149 +16,90 @@ export default function LoginForm() {
   const [success, setSuccess] = useState(false);
   const [displayError, setDisplayError] = useState(false);
   const router = useRouter();
-  const [token, setToken] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
-  const [hasCheckedToken, setHasCheckedToken] = useState(false); // Prevent infinite loop
-  
-  const api = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://movie-social-app-be-production.up.railway.app';
-  
-  // Initialize client
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
-  useEffect(() => {
-    if (isClient && !hasCheckedToken) {
-      const storedToken = sessionStorage.getItem("access_token");
-      setToken(storedToken);
-      setHasCheckedToken(true);
-    }
-  }, [isClient, hasCheckedToken]);
-  
-  useEffect(() => {
-    if (!token || !hasCheckedToken) return;
-    
-    try {
-      const decodedToken: { exp: number } = jwtDecode(token); // Using jwtDecode
-      const sessionValid = decodedToken.exp > Date.now() / 1000;
-      if (sessionValid) {
-        router.push("/popular");
-      } else {
-        // Token expired
-        sessionStorage.removeItem("access_token");
-        setToken(null);
-      }
-    } catch (error) {
-      console.error("Invalid token:", error);
-      sessionStorage.removeItem("access_token");
-      setToken(null);
-    }
-  }, [token, hasCheckedToken]); 
-  
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(false);
-    setDisplayError(false);
+  e.preventDefault();
+  setError("");
+  setSuccess(false);
+  setDisplayError(false);
 
-    const u = username.trim();
-    const p = password;
+  const u = username.trim();
+  const p = password;
 
-    const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
+  const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
 
-    const usernameOk = usernameRegex.test(u);
-    const passwordOk = p.length >= 8;
+  const usernameOk = usernameRegex.test(u);
+  const passwordOk = p.length >= 8;
 
-    if (!usernameOk || !passwordOk) {
+
+  if (!usernameOk || !passwordOk) {
+    setDisplayError(true);
+    setError("Please fix the highlighted fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
+      }
+    );
+
+    let result;
+    try {
+      result = await res.json();
+    } catch {
+      console.error("Invalid response from server");
+    }
+
+    if (!res.ok) {
+      const serverMsg = result?.message || result?.error || "User or Password are incorrect, try again!";
+      console.error(serverMsg);
       setDisplayError(true);
-      setError("Username must be 8+ characters with letters and numbers/special chars. Password must be 8+ characters.");
+      setError(serverMsg);
       return;
     }
 
-    try {
-      const res = await fetch(
-        `${api}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: u, password: p }),
-        }
-      );
-
-      let result;
-      try {
-        result = await res.json();
-      } catch {
-        console.error("Invalid response from server");
-        setDisplayError(true);
-        setError("Server error - please try again");
-        return;
-      }
-
-      if (!res.ok) {
-        const serverMsg =
-          result?.message ||
-          result?.error ||
-          "User or Password are incorrect, try again!";
-        console.error(serverMsg);
-        setDisplayError(true);
-        setError(serverMsg);
-        return;
-      }
-
-      if (!result?.access_token) {
-        console.error("Login response missing access_token");
-        setDisplayError(true);
-        setError("Login failed - invalid response from server");
-        return;
-      }
-
-      // Save token
-      sessionStorage.setItem("access_token", result.access_token);
-      setSuccess(true);
-      setDisplayError(false);
-      
-      // Navigate after short delay
-      setTimeout(() => {
-        router.push("/popular");
-      }, 100);
-      
-    } catch (err: any) {
-      console.error("Login error:", err);
+    if (!result?.access_token) {
+      console.error("Login response missing access_token");
       setDisplayError(true);
-      setError(err?.message || "User or Password are incorrect, try again!");
+      setError("Login failed - invalid response from server");
+      return;
     }
-  };
+
+    sessionStorage.setItem("access_token", result.access_token);
+    setSuccess(true);
+    setDisplayError(false);
+    router.push("/popular");
+  } catch (err: any) {
+    console.error(err);
+    setDisplayError(true);
+    setError(err?.message || "User or Password are incorrect, try again!");
+  }
+};
+
 
   useEffect(() => {
-    if (!isClient || !token) return;
-    
     const checkSessionAndRedirect = () => {
-      try {
-        const decodedToken: { exp: number } = jwtDecode(token);
-        const sessionValid = decodedToken.exp > Date.now() / 1000;
-        if (sessionValid) {
-          router.push("/popular");
+      const token = sessionStorage.getItem("access_token");
+      if (token) {
+        const decodedToken: number = jwt_decode<{ exp: number }>(token).exp;
+        try {
+          const sessionValid = decodedToken > Date.now() / 1000;
+          if (sessionValid) {
+            router.push("/popular");
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error("Invalid token:", error);
-        if (typeof window !== 'undefined') {
-          sessionStorage.removeItem("access_token");
-        }
-        setToken(null);
       }
     };
 
     checkSessionAndRedirect();
-  }, [token, router, isClient]); // Added proper dependencies
-
-  if (!isClient) {
-    return (
-      <div className="min-h-screen w-full flex justify-center items-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
-  }
+  }, [router]);
 
   return (
     <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
@@ -182,9 +121,6 @@ export default function LoginForm() {
               color="white"
               value={username}
               onChange={(e: any) => setUsername(e.target.value)}
-              crossOrigin={undefined}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
             />
             <Input
               label="Password"
@@ -192,38 +128,31 @@ export default function LoginForm() {
               color="white"
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
-              crossOrigin={undefined}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />
+           />
             <Button
               type="submit"
               fullWidth
               className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
-              placeholder={undefined}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
             >
               Sign In
             </Button>
           </form>
-          <span className="mt-2 underline">
-            <Link
+           <span className="mt-2 underline"> <Link
               href="/forgot-password"
               className="ml-2 text-white text-xl hover:text-blue-500"
             >
               Forgot Password
-            </Link>
-          </span>
-          {success && <p className="text-green-600 mt-4">Login successful!</p>}
+            </Link></span>
+          {success && <p className="text-green-600 mt-4"> Login successful!</p>}
           {displayError && (
             <p className="text-red-600 mt-4">
+              {" "}
               <strong>{error}</strong>
             </p>
           )}
 
           <p className="text-sm mt-5 text-white">
-            <strong>Don't have an account?</strong>
+            <strong>Don’t have an account?</strong>
             <Link
               href="/signup"
               className="ml-2 text-blue-300 text-xl hover:text-blue-500"
@@ -233,10 +162,10 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <div className="block flex flex-col lg:block w-1/2 items-center">
+        <div className="block flex flex-col  lg:block w-1/2 items-center">
           <Image
             src={login}
-            alt="Login"
+            alt="Background"
             className="object-cover brightness-50"
             priority
           />

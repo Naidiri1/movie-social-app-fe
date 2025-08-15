@@ -2,6 +2,7 @@ import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { useAuth } from "../utils/useAuth";
 
 interface LikeDislikeProps {
   entryId: number;
@@ -22,12 +23,12 @@ export default function LikeDislike({
   initialUserStatus = null,
   comment,
 }: LikeDislikeProps) {
-  const { userId: currentUserId } = useSelector(
-    (state: RootState) => state?.auth
-  );
-
+   const { userId, token, isReady } = useAuth();
+ 
+  const currentUserId = userId;
   const isOwnContent = movieOwnerId === currentUserId;
   const hasComment = comment && comment.trim().length > 0;
+    const [mounted, setMounted] = useState(false);
 
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
@@ -35,8 +36,7 @@ export default function LikeDislike({
     initialUserStatus
   );
   const [isUpdating, setIsUpdating] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+
   const getApiEndpoint = (type: string): string => {
     const endpoints: Record<string, string> = {
       favorites: "favorites",
@@ -49,9 +49,10 @@ export default function LikeDislike({
     return endpoints[type] || type;
   };
 
-  const handleLikeDislike = async (action: "like" | "dislike") => {
+  const handleLikeDislike = async (action: "like" | "dislike") => { 
+    if(!mounted) return
     if (isUpdating || isOwnContent || !currentUserId) return;
-
+   
     setIsUpdating(true);
     try {
 

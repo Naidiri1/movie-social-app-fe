@@ -1,16 +1,19 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useCallback, useEffect, useState} from "react";
+import { useAuth } from "../utils/useAuth";
 
 export const AddMovieHooks = () => {
-  const { userId } = useSelector((state: RootState) => state?.auth);
+  const [mounted, setMounted] = useState(false);
 
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+
+  const { userId, token, isReady, isAuthenticated } = useAuth();
+
   const verifyMovieAlreadyAdded = async (
     movie: any,
     listType: "favorites" | "top10" | "watched" | "watch-later"
   ): Promise<boolean> => {
+    
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${listType}?userId=${userId}`,
       {

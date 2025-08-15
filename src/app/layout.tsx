@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import ScrollArrows from "../components/ScrollArrows";
+import { Providers } from "../components/providers";
 
 export default function RootLayout({
   children,
@@ -44,24 +45,22 @@ export default function RootLayout({
     );
   }
 
-  // Auth pages - no providers needed
   if (isAuthPage || isPublicShare) {
     return (
       <html lang="en">
         <body suppressHydrationWarning className="h-full">
-          <Provider store={store}>
+          <Providers>
             <ThemeProvider>
               <div className="min-h-screen flex flex-col">
                 <main className="flex-1">{children}</main>
               </div>
             </ThemeProvider>
-          </Provider>
+          </Providers>
         </body>
       </html>
     );
   }
 
-  // Normal pages with all features
   return (
     <html lang="en">
       <body suppressHydrationWarning className="h-full">

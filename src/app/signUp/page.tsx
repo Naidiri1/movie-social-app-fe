@@ -1,11 +1,9 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/reducers/authSlice";
 import popcorn from "../../../public/popcorn.png";
@@ -13,7 +11,6 @@ import bglogin from "../../../public/bglogin.png";
 import Image from "next/image";
 
 export default function Signup() {
-  const dispatch = useDispatch<AppDispatch>();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,8 +22,22 @@ export default function Signup() {
   const [isValidUser, setIsvalidUser] = useState(false);
   const [isValidPassword, setIsvalidPassword] = useState(false);
   const [isValidEmail, setIsvalidEmail] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+      setMounted(true);
+      const storedToken = typeof window !== 'undefined' 
+        ? sessionStorage.getItem("access_token") 
+        : null;
+      setToken(storedToken);
+    }, []);
+
+
 
   const handleSignup = async (e: React.FormEvent) => {
+    if(!mounted || !token) return
     e.preventDefault();
     setMessage("");
     if (!isValidUser || !isValidEmail || !isValidPassword) return;
@@ -42,18 +53,21 @@ export default function Signup() {
         setMessage("Signup failed, Username or Email already Exists");
         return;
       }
-      const data = await response.json();
-      sessionStorage.setItem("access_token", data.access_token);
+      const loginData = await response.json();
       setSuccessMessage("Signup successful! You are now logged in.");
       setMessage("");
       router.push("./popular");
-      dispatch(
-        setUser({
-          username: data.username,
-          email: data.email,
-          userId: data.userId,
-        })
-      );
+       const store = (window as any).__REDUX_STORE__;
+        if (store) {
+          // Dispatch setUser action
+          import("../../redux/reducers/authSlice").then(({ setUser }) => {
+            store.dispatch(setUser({
+              username: loginData.username || username,
+              email: loginData.email || email,
+              userId: loginData.userId || loginData.id,
+            }));
+          });
+        }
     } catch (err) {
       setMessage("Server error");
       setSuccessMessage("");

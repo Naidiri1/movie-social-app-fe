@@ -1,5 +1,5 @@
-'use client';
-export const dynamic = 'force-dynamic';
+"use client";
+export const dynamic = "force-dynamic";
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,23 +10,25 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Input, Typography } from "@material-tailwind/react";
+import { useAuth } from "../../utils/useAuth";
 
 export default function WatchedMovies() {
-  const { userId } = useSelector((state: RootState) => state?.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
+    const { userId, token, isReady } = useAuth();
+  
   const [allWatched, setAllwatched] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredWatched, setFilteredWatched] = useState<any[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-  
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
-  
+  const [mounted, setMounted] = useState(false);
+
+
+
   const handleWatchedMovies = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
@@ -78,11 +80,12 @@ export default function WatchedMovies() {
     return Array.from(allGenres).sort();
   };
 
+
   useEffect(() => {
-    if (userId) {
+      if (mounted && token && userId) {
       handleWatchedMovies();
-    }
-  }, [userId]);
+      }
+    }, [mounted, token, userId]);
 
   const handleAddWatched = async (movie: any, score?: number) => {
     const response = await fetch(
@@ -111,7 +114,7 @@ export default function WatchedMovies() {
       const data = await updateData.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
-      
+
       setTimeout(() => {
         setAllwatched(moviesArray);
         setFilteredWatched(moviesArray);
@@ -219,7 +222,7 @@ export default function WatchedMovies() {
 
   const updateFilteredData = (newData: any[]) => {
     const dataArray = Array.isArray(newData) ? newData : [];
-      setAllwatched(dataArray);
+    setAllwatched(dataArray);
 
     if (selectedGenre) {
       const filtered = dataArray.filter((movie: any) => {
@@ -295,7 +298,7 @@ export default function WatchedMovies() {
 
     setFilteredWatched(matchedMovies);
     setCurrentPage(1);
-    setSelectedGenre(null); 
+    setSelectedGenre(null);
   };
 
   useEffect(() => {
@@ -310,13 +313,13 @@ export default function WatchedMovies() {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
+
   const availableGenres = getAvailableGenres();
   const totalPages = Math.ceil(filteredWatched.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentMovies = filteredWatched.slice(startIndex, endIndex);
-  
+
   return (
     <div>
       {availableGenres.length > 1 && (

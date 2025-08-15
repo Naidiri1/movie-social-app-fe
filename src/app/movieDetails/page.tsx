@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -10,10 +9,18 @@ const MovieDetailsPage = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
-  
+    const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    if (id) {
+    setMounted(true);
+    const storedToken = typeof window !== 'undefined' 
+      ? sessionStorage.getItem("access_token") 
+      : null;
+    setToken(storedToken);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && token && id) {
       fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/movieDetails?id=${id}`,
         {
@@ -24,7 +31,7 @@ const MovieDetailsPage = () => {
         .then((data: any) => setMovie(data))
         .catch((err) => console.error("Error fetching movie details:", err));
     }
-  }, [id]);
+  }, [id, mounted]);
 
   if (!movie) return <p>Loading...</p>;
   return (

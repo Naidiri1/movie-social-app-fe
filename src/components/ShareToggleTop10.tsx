@@ -7,10 +7,20 @@ export default function ShareTop10Toggle() {
   const [slug, setSlug] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
-  useEffect(() => {
+useEffect(() => {
+    setMounted(true);
+    const storedToken = typeof window !== 'undefined' 
+      ? sessionStorage.getItem("access_token") 
+      : null;
+    setToken(storedToken);
+  }, []);  
+  
+  
+  useEffect(() => { 
+    if(!mounted) return
     (async () => {
       try {
         const res = await fetch(

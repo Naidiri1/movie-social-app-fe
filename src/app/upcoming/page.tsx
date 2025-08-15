@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
@@ -7,7 +6,7 @@ import CardMovie from "../../components/CardMovie";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-
+import { useAuth } from "../../utils/useAuth";
 const GENRES = [
   { id: 28, name: "Action" },
   { id: 12, name: "Adventure" },
@@ -43,14 +42,20 @@ const UpcomingMovies = () => {
     handleAddWatchLater,
   } = AddMovieHooks();
 
+  const { userId, token, isReady } = useAuth();
+
+ useEffect(() => {
+    if(token && userId) {
+    handleSearchUpcomingMovies();
+    }
+  }, [token, userId]);
+
+
   const handleSearchUpcomingMovies = async (
     genreId: number | null = null,
     page: number = 1
   ) => {
      
-    const [token, setToken] = useState<string | null>(null);
-    useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
-
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/upcoming`;
     const params = new URLSearchParams();
 
@@ -95,9 +100,7 @@ const UpcomingMovies = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    handleSearchUpcomingMovies();
-  }, []);
+
 
   return (
     <div className="w-full max-w-none">

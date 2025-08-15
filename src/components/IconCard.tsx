@@ -3,6 +3,7 @@ import { EyeIcon, BookmarkIcon, Trophy } from "lucide-react";
 import { CgSandClock } from "react-icons/cg";
 import {  useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { useAuth } from "../utils/useAuth";
 
 interface IconActionsProps {
   movie: any;
@@ -21,7 +22,7 @@ const IconCard: React.FC<IconActionsProps> = ({
 }) => {
   const [actionMessage, setActionMessage] = useState("");
   const [activeAction, setActiveAction] = useState("");
-  const { userId } = useSelector((state: RootState) => state?.auth);
+  const { userId, token, isReady } = useAuth();
 
   const handleAction = (type: any) => {
     let message = "";

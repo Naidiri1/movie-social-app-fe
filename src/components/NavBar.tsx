@@ -27,6 +27,7 @@ import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
 import { UserIcon } from "@heroicons/react/24/outline";
 import CoolTitle from "../components/TitleNav";
+import { useAuth } from "../utils/useAuth";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -35,11 +36,12 @@ const orbitron = Orbitron({
  
 const NavbarComponent = () => {
   const router = useRouter();
-  const { username } = useSelector((state: RootState) => state?.auth);
+  const { userId, token, isReady, username } = useAuth();
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+    const [mounted, setMounted] = useState(false);
+
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
@@ -49,7 +51,7 @@ const NavbarComponent = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if ((!token && !username === null) || username === undefined) {
+    if ((!token && !username === null) || username === undefined || !mounted) {
       dispatch(restoreUserSession());
       if (!username) {
         router.push("/login");
@@ -79,6 +81,7 @@ const NavbarComponent = () => {
   };
 
   useEffect(() => {
+    if(!mounted) return 
     const channel = new BroadcastChannel("auth_channel");
     const handleLogoutMessage = (event: any) => {
       if (event.data.type === "logout") {

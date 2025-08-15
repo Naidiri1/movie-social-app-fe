@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,23 +9,25 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Input, Typography } from "@material-tailwind/react";
+import { useAuth } from "../../utils/useAuth";
 
 export default function WatchLaterMovies() {
   const [allWatchLater, setAllWatchLater] = useState([]);
-  const { userId } = useSelector((state: RootState) => state?.auth);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
+    const { userId, token, isReady } = useAuth();
+  
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredWatchLater, setFilteredWatchLater] = useState<any>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-  
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
-  
+    const [mounted, setMounted] = useState(false);
+   
+
+
   const handleWatchLaterMovies = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
@@ -65,8 +66,10 @@ export default function WatchLaterMovies() {
   };
 
   useEffect(() => {
+      if (mounted && token && userId) {
     handleWatchLaterMovies();
-  }, []);
+      }
+    }, [mounted, token, userId]);
 
   const getAvailableGenres = () => {
     const allGenres = new Set<string>();

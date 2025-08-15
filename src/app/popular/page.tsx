@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
@@ -36,8 +35,15 @@ export default function Popular() {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [token, setToken] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
   
-   useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+useEffect(() => {
+    setMounted(true);
+    const storedToken = typeof window !== 'undefined' 
+      ? sessionStorage.getItem("access_token") 
+      : null;
+    setToken(storedToken);
+  }, []);
 
   const {
     handleAddFavorites,
@@ -96,9 +102,11 @@ export default function Popular() {
   };
 
   useEffect(() => {
+      if (mounted && token) {
     PopularMovies();
-  }, []);
-
+      }
+    }, [mounted, token]);
+  
   return (
     <div className="w-full max-w-none">
       <div className="mb-6  flex flex-col items-center justify-center m-5 p-5 bg-gray-900 rounded-lg">

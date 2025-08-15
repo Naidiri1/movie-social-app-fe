@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import React, { useRef, useEffect, useState } from "react";
 import Sortable from "sortablejs";
@@ -14,7 +13,7 @@ import Image from "next/image";
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
-  const { userId } = useSelector((state: RootState) => state?.auth);
+  const  userId  = useSelector((state: RootState) => state?.auth?.userId);
   const [movieData, setMovieData] = useState<(Movie | null)[]>(
     Array(NUM_SLOTS).fill(null)
   );
@@ -24,7 +23,16 @@ export default function Top10Movies() {
   const readOnlySharedLink = path?.startsWith("/share/");
 
   const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        const storedToken = typeof window !== 'undefined' 
+          ? sessionStorage.getItem("access_token") 
+          : null;
+        setToken(storedToken);
+      }, []);
+
 
   const handleDeleteMovie = async (movie: Movie) => {
     const response = await fetch(
@@ -147,9 +155,12 @@ export default function Top10Movies() {
     }
   };
 
-  useEffect(() => {
+    useEffect(() => {
+      if (mounted && token && userId) {
     handleTop10();
-  }, []);
+      }
+    }, [mounted, token, userId]);
+   
 
   const handleTop10 = async () => {
     const response = await fetch(
@@ -173,7 +184,7 @@ export default function Top10Movies() {
   useEffect(() => {
     if (readOnlySharedLink) return;
     if (!sortableContainerRef.current) return;
-
+   
     const sortable = new Sortable(sortableContainerRef.current, {
       animation: 150,
       ghostClass: "opacity-500",

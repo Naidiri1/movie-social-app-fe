@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState } from "react";
 import SearchResult from "@/components/searchResult";
@@ -20,10 +19,18 @@ const SearchResults = () => {
   } = AddMovieHooks();
 
   const [token, setToken] = useState<string | null>(null);
-  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
+    const [mounted, setMounted] = useState(false);
+  
+useEffect(() => {
+    setMounted(true);
+    const storedToken = typeof window !== 'undefined' 
+      ? sessionStorage.getItem("access_token") 
+      : null;
+    setToken(storedToken);
+  }, []);
 
   useEffect(() => {
-    if (movieString) {
+    if (movieString && mounted) {
       fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/search?query=${movieString}`,
         {
@@ -40,7 +47,7 @@ const SearchResults = () => {
           }
         });
     }
-  }, [movieString]);
+  }, [movieString, mounted]);
 
   return (
     <div>

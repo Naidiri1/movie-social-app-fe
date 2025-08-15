@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
 import TMDbStyleMovieCard from "../../../components/top10CardMovie";
@@ -12,9 +11,21 @@ export default function SharePage({ params }: { params: { slug: string } }) {
   const [data, setData] = useState<any[] | null>(null);
   const [commentMap, setCommentMap] = useState<Record<string, string>>({});
   const [displayError, setDispalyError] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
+useEffect(() => {
+    setMounted(true);
+    // Only access sessionStorage after component mounts
+    const storedToken = typeof window !== 'undefined' 
+      ? sessionStorage.getItem("access_token") 
+      : null;
+    setToken(storedToken);
+  }, []);
+
+
+ useEffect(() => {
+    if (mounted && token) {
     (async () => {
       try {
         const res = await fetch(
@@ -25,15 +36,13 @@ export default function SharePage({ params }: { params: { slug: string } }) {
           return;
         }
         const json = await res.json();
-        if (mounted) setData(json.items ?? json);
+      setData(json.items ?? json);
         setDispalyError(false);
       } catch (e: any) {
         setDispalyError(true);
       }
     })();
-    return () => {
-      mounted = false;
-    };
+   }
   }, [slug]);
 
   const handleAddEditComment = () => {};
