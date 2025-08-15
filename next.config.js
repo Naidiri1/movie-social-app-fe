@@ -1,17 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Remove generateStaticParams - it doesn't belong here
+  reactStrictMode: true,
+  swcMinify: true,
   images: {
-    domains: ['image.tmdb.org'],
+    domains: ['image.tmdb.org'], // Add your image domains
+    unoptimized: true, // For static export
   },
-  output: 'standalone',
-  typescript: {
-    ignoreBuildErrors: true,
+  // Force dynamic rendering for all pages
+  experimental: {
+    appDir: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // Skip all static generation
-  generateStaticParams: false,
 }
 
 module.exports = nextConfig
