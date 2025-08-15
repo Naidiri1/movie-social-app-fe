@@ -33,6 +33,8 @@ export default function SearchUsers() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
   const [userMovies, setUserMovies] = useState<UserMoviesState>({
     favorites: [],
     watched: [],
@@ -272,7 +274,6 @@ export default function SearchUsers() {
     try {
         if (typeof window === 'undefined') return;
 
-      const token = sessionStorage.getItem("access_token");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/search?query=${encodeURIComponent(searchQuery)}`,
         {
@@ -338,7 +339,6 @@ export default function SearchUsers() {
     }));
 
     try {
-      const token = sessionStorage.getItem("access_token");
       const endpoints: Record<CategoryType, string> = {
         favorites: "favorites",
         watched: "watched",

@@ -61,8 +61,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     if (!token && !isAuthPage) {
       channel.postMessage({ type: "request-token" });
       setTimeout(() => {
-        const tokenCheck = sessionStorage.getItem("access_token");
-        if (!tokenCheck) {
+        if (!token) {
           router.push("/login");
         }
       }, 100);

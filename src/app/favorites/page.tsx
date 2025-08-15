@@ -19,12 +19,12 @@ export default function FavoriteMovies() {
     new Set()
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const token = sessionStorage.getItem("access_token");
   const [filteredFavorites, setFilteredFavorites] = useState<any>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-
+   const [token, setToken] = useState<string | null>(null);
+  useEffect(() => { setToken(sessionStorage.getItem("access_token")); }, []);
   const handleFavoriteMovies = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
