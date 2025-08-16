@@ -73,7 +73,9 @@ export default function LoginForm() {
     }
     setSuccess(true);
     setDisplayError(false);
+    if(typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'){
     router.push("/popular");
+    }
   } catch (err: any) {
     console.error(err);
     setDisplayError(true);
@@ -88,9 +90,7 @@ export default function LoginForm() {
       const token = sessionStorage.getItem("access_token");
       if (token) {
         try {
-          
             router.push("/popular");
-          
         } catch (error) {
           console.error(error);
         }
