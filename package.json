@@ -33,7 +33,6 @@
     "eslint-plugin-react-hooks": "4.3.0",
     "focus-trap-react": "^10.2.1",
     "fuse.js": "^7.1.0",
-    "jwt-decode": "^3.1.2",
     "lucide-react": "^0.525.0",
     "next": "^13.5.6",
     "postcss": "^8.4.38",
@@ -47,6 +46,9 @@
     "sortablejs": "^1.15.6",
     "tailwindcss": "^3.4.3",
     "typescript": "*"
+  },
+  "overrides": {
+    "sharp": "0.33.1"
   },
   "devDependencies": {
     "@types/sortablejs": "^1.15.8",

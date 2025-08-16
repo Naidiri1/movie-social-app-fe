@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import decodeJWT from 'jwt-decode';
 
 import {
     hideRenewDialog,
@@ -26,19 +25,7 @@ const Auth = ({ setIsAuth }: any) => {
             if (message.type === 'new-token') {
                 sessionStorage.setItem('access_token', message.token);
                 configFetchedRef.current = false;
-            } else if (message.type === 'request-token') {
-                const localToken = sessionStorage.getItem('access_token');
-                if (localToken) {
-                    // eslint-disable-next-line
-                    const decodedToken = decodeJWT(localToken) as any;
-                    if (decodedToken.exp > Date.now() / 1000) {
-                        channel.postMessage({
-                            type: 'new-token',
-                            token: localToken,
-                        });
-                    }
-                }
-            } else if (message.type === 'logout') {
+            }  else if (message.type === 'logout') {
                 sessionStorage.removeItem('access_token');
                 setIsAuth(false);
                 router.push('/login');
