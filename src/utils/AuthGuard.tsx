@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/reducers/userSlice";
@@ -11,14 +11,20 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const configFetchedRef = useRef(false);
+  const [isClient, setIsClient] = useState(false);
   const { username, loading } = useSelector((state: any) => state.auth);
 
   const isAuthPage = pathname === "/login" || pathname === "/signup";
-  const token = sessionStorage.getItem("access_token");
 
   useEffect(() => {
-    const channel = new BroadcastChannel("my-channel");
+    setIsClient(true);
+  }, []);
 
+  useEffect(() => {
+    if (!isClient) return;
+
+    const channel = new BroadcastChannel("my-channel");
+    
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
 
@@ -40,36 +46,37 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         router.push("/login");
       }
     };
-    if (channel) {
-      channel.postMessage({ type: "request-token" });
-      channel.onmessage = handleMessage;
-    }
+
+    channel.postMessage({ type: "request-token" });
+    channel.onmessage = handleMessage;
 
     const token = sessionStorage.getItem("access_token");
+    
     if (token && !username && !configFetchedRef.current) {
       dispatch(fetchUser());
       configFetchedRef.current = true;
     }
 
-    if (!token) {
-      channel.postMessage({ type: "request-token" });
-      router.push("login");
-    }
-
-    if (token && !username) {
-      dispatch(fetchUser());
-    }
-
-    if (!token && !username) {
+    if (!token && !isAuthPage) {
       router.push("/login");
     }
 
     return () => {
       channel.close();
     };
-  }, [token, username]);
+  }, [isClient, username, dispatch, router, isAuthPage]);
 
-  if (!username && !isAuthPage && loading) {
+  if (!isClient) {
+    return null; 
+  }
+
+  const token = typeof window !== 'undefined' ? sessionStorage.getItem("access_token") : null;
+
+  if (!token && !isAuthPage) {
+    return null; 
+  }
+
+  if (loading && !isAuthPage) {
     return <div className="text-white p-4">Loading session...</div>;
   }
 
