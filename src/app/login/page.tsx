@@ -68,8 +68,9 @@ export default function LoginForm() {
       setError("Login failed - invalid response from server");
       return;
     }
-
+    if(typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'){
     sessionStorage.setItem("access_token", result.access_token);
+    }
     setSuccess(true);
     setDisplayError(false);
     router.push("/popular");
@@ -83,6 +84,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     const checkSessionAndRedirect = () => {
+   if(typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'){
       const token = sessionStorage.getItem("access_token");
       if (token) {
         try {
@@ -94,7 +96,7 @@ export default function LoginForm() {
         }
       }
     };
-
+  }
     checkSessionAndRedirect();
   }, [router]);
 

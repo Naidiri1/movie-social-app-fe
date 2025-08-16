@@ -126,7 +126,7 @@ useEffect(() => {
             All
           </Button>
 
-          {GENRES.map((genre) => (
+          {GENRES && GENRES.map((genre: any) => (
             <Button
               key={genre.id}
               size="sm"
@@ -144,7 +144,7 @@ useEffect(() => {
         {selectedGenre && (
           <Typography variant="small" className="text-gray-300 mt-2">
             Showing {rowData.length} popular movies in{" "}
-            {GENRES.find((g) => g.id === selectedGenre)?.name} genre - Page{" "}
+            {GENRES && GENRES.find((g) => g.id === selectedGenre)?.name} genre - Page{" "}
             {currentPage}
           </Typography>
         )}
@@ -163,8 +163,8 @@ useEffect(() => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {rowData.length > 0 ? (
-          rowData.map((movie: any) => (
+        {rowData && rowData.length > 0 ? (
+         rowData && rowData.map((movie: any) => (
             <CardMovie
               key={movie.id}
               movie={movie}
@@ -185,7 +185,7 @@ useEffect(() => {
             />
             <p className="mt-4 text-lg font-medium">
               {selectedGenre
-                ? `No movies found in ${GENRES.find((g) => g.id === selectedGenre)?.name} genre`
+                ? `No movies found in ${GENRES && GENRES.find((g) => g.id === selectedGenre)?.name} genre`
                 : "No Movie Results"}
             </p>
           </div>

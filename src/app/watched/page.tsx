@@ -17,9 +17,6 @@ export default function WatchedMovies() {
     new Set()
   );
 
-       const user = useSelector(selectUser);
-     const userId= user.userId;
-   const token = sessionStorage.getItem('access_token')  
   const [allWatched, setAllwatched] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredWatched, setFilteredWatched] = useState<any[]>([]);
@@ -28,7 +25,25 @@ export default function WatchedMovies() {
   const [itemsPerPage] = useState(8);
   const [mounted, setMounted] = useState(false);
 
-
+   const getToken = () => {
+      if (typeof window !== 'undefined') {
+        return sessionStorage.getItem('access_token');
+      }
+      return null;
+    };
+    
+      const getUserId = () => {
+      if (typeof window !== 'undefined') {
+       const user = useSelector(selectUser);
+        const userId = user.userId;
+        return userId;
+      }
+      return null;
+    };
+         const userId = getUserId();
+  
+  
+     const token = getToken();
 
   const handleWatchedMovies = async () => {
     const response = await fetch(
