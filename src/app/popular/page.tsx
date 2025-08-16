@@ -57,7 +57,7 @@ useEffect(() => {
     genreId: number | null = null,
     page: number = 1
   ) => {
-
+     if(genreId || page || token) return;
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`;
     const params = new URLSearchParams();
 
@@ -82,7 +82,11 @@ useEffect(() => {
       return;
     }
 
+    
     const data = await response.json();
+    if (!data) {
+          return;
+    }
     const results = data.results;
     setRowData(results);
   };
