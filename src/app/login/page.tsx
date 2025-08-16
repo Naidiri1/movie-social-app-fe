@@ -158,7 +158,7 @@ export default function LoginForm() {
           <p className="text-sm mt-5 text-white">
             <strong>Don’t have an account?</strong>
             <Link
-              href="/signup"
+              href="/signUp"
               className="ml-2 text-blue-300 text-xl hover:text-blue-500"
             >
               Signup
