@@ -1,28 +1,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
-// import ClientProviders from '../components/ClientProviders'
-import { cookies } from 'next/headers';
+import { Providers } from '../app/provider';
 
-export const metadata: Metadata = {
-  title: 'Movie Social App',
-  description: 'Your movie social platform',
-};
 
-// Force dynamic to avoid SSR issues
-export const dynamic = 'force-dynamic';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const cookieStore = cookies();
-  const token = cookieStore.get('access_token');
-  console.log(token)
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning className="h-full">
-        {children}
+      <body>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

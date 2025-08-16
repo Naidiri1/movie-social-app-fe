@@ -1,264 +1,172 @@
-// "use client";
+"use client";
 
-// import React, { useEffect, useState } from "react";
-// import { Button, Card, Input, Typography } from "@material-tailwind/react";
-// import { useRouter } from "next/navigation";
-// import Link from "next/link";
-// import Image from "next/image";
-// import login from "../../../public/login.png";
-// import bglogin from "../../../public/bglogin.png";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import login from "../../../public/login.png";
+import bglogin from "../../../public/bglogin.png";
 
-// export default function LoginForm() {
-//   const [username, setUsername] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   const [success, setSuccess] = useState(false);
-//   const [displayError, setDisplayError] = useState(false);
-//   const router = useRouter();
-
-//   const handleLogin = async (e: React.FormEvent) => {
-//   e.preventDefault();
-//   setError("");
-//   setSuccess(false);
-//   setDisplayError(false);
-
-//   const u = username.trim();
-//   const p = password;
-
-//   const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
-
-//   const usernameOk = usernameRegex.test(u);
-//   const passwordOk = p.length >= 8;
-
-
-//   if (!usernameOk || !passwordOk) {
-//     setDisplayError(true);
-//     setError("Please fix the highlighted fields.");
-//     return;
-//   }
-
-//   try {
-//     const res = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
-//       {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ username: u, password: p }),
-//       }
-//     );
-
-//     let result;
-//     try {
-//       result = await res.json();
-//     } catch {
-//       console.error("Invalid response from server");
-//     }
-
-//     if (!res.ok) {
-//       const serverMsg = result?.message || result?.error || "User or Password are incorrect, try again!";
-//       console.error(serverMsg);
-//       setDisplayError(true);
-//       setError(serverMsg);
-//       return;
-//     }
-
-//     if (!result?.access_token) {
-//       console.error("Login response missing access_token");
-//       setDisplayError(true);
-//       setError("Login failed - invalid response from server");
-//       return;
-//     }
-
-//     sessionStorage.setItem("access_token", result.access_token);
-//     setSuccess(true);
-//     setDisplayError(false);
-//     router.push("/popular");
-//   } catch (err: any) {
-//     console.error(err);
-//     setDisplayError(true);
-//     setError(err?.message || "User or Password are incorrect, try again!");
-//   }
-// };
-
-
-//   useEffect(() => {
-//     const checkSessionAndRedirect = () => {
-//       const token = sessionStorage.getItem("access_token");
-//       if (token) {
-//         try {
-          
-//             router.push("/popular");
-          
-//         } catch (error) {
-//           console.error(error);
-//         }
-//       }
-//     };
-
-//     checkSessionAndRedirect();
-//   }, [router]);
-
-//   return (
-//     <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
-//       <Image
-//         src={bglogin}
-//         alt="Background"
-//         fill
-//         className="object-cover brightness-50"
-//         priority
-//       />
-//       <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
-
-//       <div className="relative z-10 flex flex-col items-center justify-center pb-2 lg:flex-row w-full max-w-[700px] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
-//         <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
-//           <h2 className="text-3xl font-bold mb-6">Login</h2>
-//           <form onSubmit={handleLogin} className="flex flex-col gap-4">
-//             <Input
-//               label="Username"
-//               color="white"
-//               value={username}
-//               onChange={(e: any) => setUsername(e.target.value)}
-//             />
-//             <Input
-//               label="Password"
-//               type="password"
-//               color="white"
-//               value={password}
-//               onChange={(e: any) => setPassword(e.target.value)}
-//            />
-//             <Button
-//               type="submit"
-//               fullWidth
-//               className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
-//             >
-//               Sign In
-//             </Button>
-//           </form>
-//            <span className="mt-2 underline"> <Link
-//               href="/forgot-password"
-//               className="ml-2 text-white text-xl hover:text-blue-500"
-//             >
-//               Forgot Password
-//             </Link></span>
-//           {success && <p className="text-green-600 mt-4"> Login successful!</p>}
-//           {displayError && (
-//             <p className="text-red-600 mt-4">
-//               {" "}
-//               <strong>{error}</strong>
-//             </p>
-//           )}
-
-//           <p className="text-sm mt-5 text-white">
-//             <strong>Don’t have an account?</strong>
-//             <Link
-//               href="/signup"
-//               className="ml-2 text-blue-300 text-xl hover:text-blue-500"
-//             >
-//               Signup
-//             </Link>
-//           </p>
-//         </div>
-
-//         <div className="block flex flex-col  lg:block w-1/2 items-center">
-//           <Image
-//             src={login}
-//             alt="Background"
-//             className="object-cover brightness-50"
-//             priority
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../../redux/reducers/authSlice';
-
-export default function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export default function LoginForm() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [displayError, setDisplayError] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError("");
+  setSuccess(false);
+  setDisplayError(false);
 
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-        }
-      );
+  const u = username.trim();
+  const p = password;
 
-      if (!res.ok) {
-        throw new Error('Login failed');
+  const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/;
+
+  const usernameOk = usernameRegex.test(u);
+  const passwordOk = p.length >= 8;
+
+
+  if (!usernameOk || !passwordOk) {
+    setDisplayError(true);
+    setError("Please fix the highlighted fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
       }
+    );
 
-      const data = await res.json();
-
-      // Save token
-      sessionStorage.setItem('access_token', data.access_token || data.token);
-
-      // Update Redux
-      dispatch(setUser({
-        username: data.username || username,
-        email: data.email || '',
-        userId: data.userId || data.id || '',
-      }));
-
-      // Use window.location for full reload
-      window.location.href = '/popular';
-      
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    let result;
+    try {
+      result = await res.json();
+    } catch {
+      console.error("Invalid response from server");
     }
-  };
+
+    if (!res.ok) {
+      const serverMsg = result?.message || result?.error || "User or Password are incorrect, try again!";
+      console.error(serverMsg);
+      setDisplayError(true);
+      setError(serverMsg);
+      return;
+    }
+
+    if (!result?.access_token) {
+      console.error("Login response missing access_token");
+      setDisplayError(true);
+      setError("Login failed - invalid response from server");
+      return;
+    }
+
+    sessionStorage.setItem("access_token", result.access_token);
+    setSuccess(true);
+    setDisplayError(false);
+    router.push("/popular");
+  } catch (err: any) {
+    console.error(err);
+    setDisplayError(true);
+    setError(err?.message || "User or Password are incorrect, try again!");
+  }
+};
+
+
+  useEffect(() => {
+    const checkSessionAndRedirect = () => {
+      const token = sessionStorage.getItem("access_token");
+      if (token) {
+        try {
+          
+            router.push("/popular");
+          
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h1 className="text-2xl font-bold mb-6 text-gray-900">Login</h1>
-        
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 mb-4 border rounded text-gray-900"
-            required
-          />
-          
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 mb-4 border rounded text-gray-900"
-            required
-          />
-          
-          {error && (
-            <p className="text-red-500 mb-4">{error}</p>
+    <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
+      <Image
+        src={bglogin}
+        alt="Background"
+        fill
+        className="object-cover brightness-50"
+        priority
+      />
+      <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
+
+      <div className="relative z-10 flex flex-col items-center justify-center pb-2 lg:flex-row w-full max-w-[700px] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
+        <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
+          <h2 className="text-3xl font-bold mb-6">Login</h2>
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <Input
+              label="Username"
+              color="white"
+              value={username}
+              onChange={(e: any) => setUsername(e.target.value)}
+            />
+            <Input
+              label="Password"
+              type="password"
+              color="white"
+              value={password}
+              onChange={(e: any) => setPassword(e.target.value)}
+           />
+            <Button
+              type="submit"
+              fullWidth
+              className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-200"
+            >
+              Sign In
+            </Button>
+          </form>
+           <span className="mt-2 underline"> <Link
+              href="/forgot-password"
+              className="ml-2 text-white text-xl hover:text-blue-500"
+            >
+              Forgot Password
+            </Link></span>
+          {success && <p className="text-green-600 mt-4"> Login successful!</p>}
+          {displayError && (
+            <p className="text-red-600 mt-4">
+              {" "}
+              <strong>{error}</strong>
+            </p>
           )}
-          
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          >
-            Sign In
-          </button>
-        </form>
+
+          <p className="text-sm mt-5 text-white">
+            <strong>Don’t have an account?</strong>
+            <Link
+              href="/signup"
+              className="ml-2 text-blue-300 text-xl hover:text-blue-500"
+            >
+              Signup
+            </Link>
+          </p>
+        </div>
+
+        <div className="block flex flex-col  lg:block w-1/2 items-center">
+          <Image
+            src={login}
+            alt="Background"
+            className="object-cover brightness-50"
+            priority
+          />
+        </div>
       </div>
     </div>
   );
