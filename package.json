@@ -34,7 +34,7 @@
     "focus-trap-react": "^10.2.1",
     "fuse.js": "^7.1.0",
     "lucide-react": "^0.525.0",
-    "next": "^13.4.7",
+    "next": "13.5.7-canary.16",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-datepicker": "^4.21.0",
@@ -47,8 +47,9 @@
     "tailwindcss": "^3.4.3",
     "typescript": "*"
   },
-  "overrides": {
-    "sharp": "0.33.1"
+   "overrides": {
+    "next": "13.5.7-canary.16",  
+    "sharp": "0.33.1" 
   },
   "devDependencies": {
     "@types/sortablejs": "^1.15.8",
