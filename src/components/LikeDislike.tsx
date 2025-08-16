@@ -24,9 +24,25 @@ export default function LikeDislike({
   comment,
 }: LikeDislikeProps) {
   const user = useSelector(selectUser);
-      const userId= user.userId;
-    const token = sessionStorage.getItem('access_token')
-  const currentUserId = userId;
+   const getToken = () => {
+      if (typeof window !== 'undefined') {
+        return sessionStorage.getItem('access_token');
+      }
+      return null;
+    };
+    
+      const getUserId = () => {
+      if (typeof window !== 'undefined') {
+       const user = useSelector(selectUser);
+        const userId = user.userId;
+        return userId;
+      }
+      return null;
+    };
+         const currentUserId = getUserId();
+  
+  
+     const token = getToken();
   const isOwnContent = movieOwnerId === currentUserId;
   const hasComment = comment && comment.trim().length > 0;
     const [mounted, setMounted] = useState(false);

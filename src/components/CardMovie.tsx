@@ -50,7 +50,7 @@ const CardMovie: React.FC<CardMovieProps> = ({
   handleAddWatchLater,
 }) => {
 if (!movie) {
-    return null; 
+    return; 
   }
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();

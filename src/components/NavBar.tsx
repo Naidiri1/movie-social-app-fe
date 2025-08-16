@@ -1,4 +1,3 @@
-
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import Link from "next/link";
@@ -26,19 +25,19 @@ import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
 import { UserIcon } from "@heroicons/react/24/outline";
 import CoolTitle from "../components/TitleNav";
-import {  selectUser } from '../redux/reducers/userSlice';
+import { selectUser } from "../redux/reducers/userSlice";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
   weight: ["400", "500"],
 });
- 
+
 const NavbarComponent = () => {
   const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
-    const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
@@ -47,13 +46,24 @@ const NavbarComponent = () => {
       setSearchQuery("");
     }
   }, [pathname]);
-const user = useSelector(selectUser);
-     const userId= user.userId;
-     const username =user.username;
-   const token = sessionStorage.getItem('access_token')
+  const getToken = () => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("access_token");
+    }
+    return null;
+  };
 
+  const getUserName = () => {
+    if (typeof window !== "undefined") {
+      const user = useSelector(selectUser);
+      const userId = user.username;
+      return userId;
+    }
+    return null;
+  };
+  const username = getUserName();
 
-
+  const token = getToken();
 
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
@@ -77,7 +87,7 @@ const user = useSelector(selectUser);
   };
 
   useEffect(() => {
-    if(!mounted) return 
+    if (!mounted) return;
     const channel = new BroadcastChannel("auth_channel");
     const handleLogoutMessage = (event: any) => {
       if (event.data.type === "logout") {

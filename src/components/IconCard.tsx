@@ -19,6 +19,9 @@ const IconCard: React.FC<IconActionsProps> = ({
   handleAddToTop10,
   handleAddWatchLater,
 }) => {
+  if (!movie) {
+    return null; 
+  }
   const [actionMessage, setActionMessage] = useState("");
   const [activeAction, setActiveAction] = useState("");
 

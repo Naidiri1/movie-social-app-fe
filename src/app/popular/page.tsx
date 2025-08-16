@@ -88,7 +88,7 @@ useEffect(() => {
           return;
     }
     const results = data.results;
-    setRowData(results);
+    setRowData(results || []);
   };
 
   const filterByGenre = async (genreId: number | null) => {
