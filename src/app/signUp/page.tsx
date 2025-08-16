@@ -25,12 +25,12 @@ export default function Signup() {
   const [isValidPassword, setIsvalidPassword] = useState(false);
   const [isValidEmail, setIsvalidEmail] = useState(false);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     if (!isValidUser || !isValidEmail || !isValidPassword) return;
     try {
-      const response = await fetch("http://localhost:8080/api/auth/signup", {
+      const response = await fetch( `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
@@ -58,7 +58,7 @@ export default function Signup() {
       setSuccessMessage("");
     }
   };
-
+console.log("ddsdsdsds")
   const checks = [
     {
       label: "At least 8 characters",
@@ -130,7 +130,7 @@ export default function Signup() {
 
         <div className="w-full lg:w-1/2 p-8 text-white flex flex-col justify-center">
           <h2 className="text-3xl font-bold mb-6">Sign Up</h2>
-          <form onSubmit={handleSignup} className="flex flex-col gap-4">
+          <form onSubmit={handleSignUp} className="flex flex-col gap-4">
             <Input
               label="Username"
               color="white"

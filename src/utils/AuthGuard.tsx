@@ -14,7 +14,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isClient, setIsClient] = useState(false);
   const { username, loading } = useSelector((state: any) => state.auth);
 
-  const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const isAuthPage = pathname === "/login" || pathname === "/signUp";
 
   useEffect(() => {
     setIsClient(true);
