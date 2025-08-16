@@ -35,22 +35,23 @@ export default function Popular() {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [token, setToken] = useState<string | null>(null);
-    const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
 useEffect(() => {
     setMounted(true);
-    const storedToken = typeof window !== 'undefined' 
+    const storedToken = typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'
       ? sessionStorage.getItem("access_token") 
       : null;
     setToken(storedToken);
   }, []);
 
-  const {
-    handleAddFavorites,
-    handleAddToWatched,
-    handleAddToTop10,
-    handleAddWatchLater,
-  } = AddMovieHooks();
+   const movieHooks = mounted ? AddMovieHooks() : {
+    handleAddFavorites: () => {},
+    handleAddToWatched: () => {},
+    handleAddToTop10: () => {},
+    handleAddWatchLater: () => {},
+  };
+
 
   const PopularMovies = async (
     genreId: number | null = null,
@@ -167,10 +168,10 @@ useEffect(() => {
             <CardMovie
               key={movie.id}
               movie={movie}
-              handleAddFavorites={() => handleAddFavorites(movie)}
-              handleAddToWatched={() => handleAddToWatched(movie)}
-              handleAddToTop10={() => handleAddToTop10(movie)}
-              handleAddWatchLater={() => handleAddWatchLater(movie)}
+              handleAddFavorites={() => movieHooks?.handleAddFavorites(movie)}
+              handleAddToWatched={() => movieHooks?.handleAddToWatched(movie)}
+              handleAddToTop10={() => movieHooks?.handleAddToTop10(movie)}
+              handleAddWatchLater={() => movieHooks?.handleAddWatchLater(movie)}
             />
           ))
         ) : (

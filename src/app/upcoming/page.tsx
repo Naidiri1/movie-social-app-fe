@@ -44,9 +44,25 @@ const UpcomingMovies = () => {
     handleAddWatchLater,
   } = AddMovieHooks();
 
- const user = useSelector(selectUser);
-     const userId= user.userId;
-   const token = sessionStorage.getItem('access_token')
+ const getToken = () => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('access_token');
+    }
+    return null;
+  };
+  
+    const getUserId = () => {
+    if (typeof window !== 'undefined') {
+     const user = useSelector(selectUser);
+      const userId = user.userId;
+      return userId;
+    }
+    return null;
+  };
+       const userId = getUserId();
+
+
+   const token = getToken();
 
  useEffect(() => {
     if(token && userId) {

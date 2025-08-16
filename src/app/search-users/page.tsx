@@ -36,9 +36,25 @@ export default function SearchUsers() {
   const [mounted, setMounted] = useState(false);
 
 
-  const user = useSelector(selectUser);
-     const userId= user.userId;
-   const token = sessionStorage.getItem('access_token')
+   const getUserId = () => {
+      if (typeof window !== 'undefined') {
+       const user = useSelector(selectUser);
+        const userId = user.userId;
+        return userId;
+      }
+      return null;
+    };
+         const userId = getUserId();
+
+ const getToken = () => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('access_token');
+    }
+    return null;
+  }; 
+
+     const token = getToken();
+
 
   const [userMovies, setUserMovies] = useState<UserMoviesState>({
     favorites: [],
@@ -417,6 +433,7 @@ export default function SearchUsers() {
   };
 
   const clearSelectedUser = () => {
+     if (typeof window !== 'undefined') return
     setSearchResults(originalSearchResults);
     setSelectedUser(null);
     setUserMovies({
@@ -461,6 +478,7 @@ export default function SearchUsers() {
   };
 
   const clearAllSearchData = () => {
+     if (typeof window !== 'undefined') return
     const keys = [
       "userSearchQuery",
       "userSearch_query",

@@ -23,17 +23,32 @@ export default function FavoriteMovies() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
   
+ const getToken = () => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('access_token');
+    }
+    return null;
+  };
   
-  const user = useSelector(selectUser);
-     const userId= user.userId;
-   const token = sessionStorage.getItem('access_token')  
+    const getUserId = () => {
+    if (typeof window !== 'undefined') {
+     const user = useSelector(selectUser);
+      const userId = user.userId;
+      return userId;
+    }
+    return null;
+  };
+       const userId = getUserId();
 
-  
+
+   const token = getToken();
   const handleFavoriteMovies = async () => {
+    
+    
     if (!token || !userId) {
+      console.log('No token or userId');
       return;
     }
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,

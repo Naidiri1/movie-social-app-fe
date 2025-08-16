@@ -8,7 +8,15 @@ export const AddMovieHooks = () => {
 
   const user = useSelector(selectUser);
      const userId= user.userId;
-   const token = sessionStorage.getItem('access_token')
+       const [token, setToken] = useState<string | null>(null);
+     
+   useEffect(() => {
+    setMounted(true);
+    const storedToken = typeof window !== 'undefined' 
+      ? sessionStorage.getItem("access_token") 
+      : null;
+    setToken(storedToken);
+  }, []);
 
   const verifyMovieAlreadyAdded = async (
     movie: any,
