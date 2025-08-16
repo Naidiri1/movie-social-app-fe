@@ -16,12 +16,17 @@ export default function LoginForm() {
   const [success, setSuccess] = useState(false);
   const [displayError, setDisplayError] = useState(false);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
   setError("");
   setSuccess(false);
   setDisplayError(false);
+ 
+    useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const u = username.trim();
   const p = password;
@@ -85,23 +90,14 @@ export default function LoginForm() {
 };
 
 
-  useEffect(() => {
-      if (typeof window === 'undefined') return;
-    const checkSessionAndRedirect = () => {
-   if(typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'){
-      const token = sessionStorage.getItem("access_token");
-      if (token) {
-        try {
-            router.push("/popular");
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-  }
-    checkSessionAndRedirect();
-  }, [router]);
-
+   useEffect(() => {
+    if (!mounted) return; // Don't run until mounted
+    
+    const token = sessionStorage.getItem("access_token");
+    if (token) {
+      router.push("/popular");
+    }
+  }, [mounted, router]);
   return (
     <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
       <Image
