@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState } from "react";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
@@ -85,6 +86,7 @@ export default function LoginForm() {
 
 
   useEffect(() => {
+      if (typeof window === 'undefined') return;
     const checkSessionAndRedirect = () => {
    if(typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'){
       const token = sessionStorage.getItem("access_token");
