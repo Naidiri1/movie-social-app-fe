@@ -1,62 +1,40 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface AuthState {
-  username: string;  // NOT null
-  email: string;     // NOT null
-  userId: string;    // NOT null
-  isAuthenticated: boolean;
+interface UserState {
+  username: string | null;
+  email: string | null;
   loading: boolean;
-  errorMessage: string;
-  showRenewDialog: boolean;
+  userId: string | null;
 }
 
-// NEVER use null/undefined
-const initialState: AuthState = {
-  username: '',
-  email: '',
-  userId: '',
-  isAuthenticated: false,
+const initialState: UserState = {
+  username: null,
+  email: null,
   loading: false,
-  errorMessage: '',
-  showRenewDialog: false,
+  userId: "",
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      state.username = action.payload.username || '';
-      state.email = action.payload.email || '';
-      state.userId = action.payload.userId || '';
-      state.isAuthenticated = true;
-      state.loading = false;
-    },
     logout: (state) => {
-      state.username = '';
-      state.email = '';
-      state.userId = '';
-      state.isAuthenticated = false;
-      state.loading = false;
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('access_token');
-      }
+      state.username = null;
+      state.email = null;
+      sessionStorage.removeItem("access_token");
+      state.userId = "";
     },
-    showRenewDialog: (state) => {
-      state.showRenewDialog = true;
-    },
-    hideRenewDialog: (state) => {
-      state.showRenewDialog = false;
-    },
-    setErrorMessage: (state, action) => {
-      state.errorMessage = action.payload || '';
+
+    setUser: (
+      state,
+      action: PayloadAction<{ username: string; email: string; userId: string }>
+    ) => {
+      state.username = action.payload.username;
+      state.email = action.payload.email;
+      state.userId = action.payload.userId;
     },
   },
 });
 
-export const { setUser, logout, showRenewDialog, hideRenewDialog, setErrorMessage } = authSlice.actions;
+export const { logout, setUser } = authSlice.actions;
 export default authSlice.reducer;
-
-// Safe selectors
-export const selectAuth = (state: any) => state?.auth || initialState;
-export const selectIsAuthenticated = (state: any) => state?.auth?.isAuthenticated || false;

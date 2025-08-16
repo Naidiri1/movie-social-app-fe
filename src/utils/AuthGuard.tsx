@@ -1,62 +1,77 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux/reducers/userSlice";
+import { AppDispatch } from "../redux/store";
 
-// DO NOT EXPORT ClientProviders from here!
-// DO NOT IMPORT this file in layout.tsx!
-
-// Simple JWT decode
-function decodeToken(token: string) {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(base64));
-  } catch {
-    return null;
-  }
-}
-
-interface AuthGuardProps {
-  setIsAuth: (value: boolean) => void;
-}
-
-export default function AuthGuard({ setIsAuth }: AuthGuardProps) {
+export default function AuthGuard({ children }: { children: React.ReactNode }) {
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const intervalRef = useRef<NodeJS.Timeout>();
-  
+  const pathname = usePathname();
+  const configFetchedRef = useRef(false);
+  const { username, loading } = useSelector((state: any) => state.auth);
+
+  const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const token = sessionStorage.getItem("access_token");
+
   useEffect(() => {
-    const checkAuth = () => {
-      const token = sessionStorage.getItem('access_token');
-      
-      if (!token) {
-        setIsAuth(false);
-        return;
+    const channel = new BroadcastChannel("my-channel");
+
+    const handleMessage = (event: MessageEvent) => {
+      const message = event.data;
+
+      if (message.type === "new-token") {
+        sessionStorage.setItem("access_token", message.token);
+        configFetchedRef.current = false;
       }
-      
-      const decoded = decodeToken(token);
-      if (decoded && decoded.exp) {
-        const isExpired = decoded.exp <= Date.now() / 1000;
-        
-        if (isExpired) {
-          sessionStorage.removeItem('access_token');
-          setIsAuth(false);
-          router.push('/login');
-        } else {
-          setIsAuth(true);
+
+      if (message.type === "request-token") {
+        const token = sessionStorage.getItem("access_token");
+        if (token) {
+          channel.postMessage({ type: "new-token", token });
         }
       }
-    };
-    
-    checkAuth();
-    intervalRef.current = setInterval(checkAuth, 60000);
-    
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+
+      if (message.type === "logout") {
+        sessionStorage.removeItem("access_token");
+        configFetchedRef.current = false;
+        router.push("/login");
       }
     };
-  }, [setIsAuth, router]);
-  
-  return null;
+    if (channel) {
+      channel.postMessage({ type: "request-token" });
+      channel.onmessage = handleMessage;
+    }
+
+    const token = sessionStorage.getItem("access_token");
+    if (token && !username && !configFetchedRef.current) {
+      dispatch(fetchUser());
+      configFetchedRef.current = true;
+    }
+
+    if (!token) {
+      channel.postMessage({ type: "request-token" });
+      router.push("login");
+    }
+
+    if (token && !username) {
+      dispatch(fetchUser());
+    }
+
+    if (!token && !username) {
+      router.push("/login");
+    }
+
+    return () => {
+      channel.close();
+    };
+  }, [token, username]);
+
+  if (!username && !isAuthPage && loading) {
+    return <div className="text-white p-4">Loading session...</div>;
+  }
+
+  return <>{children}</>;
 }

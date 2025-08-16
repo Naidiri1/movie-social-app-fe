@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import {  selectUser, updateUser, fetchUser  } from '../../redux/reducers/userSlice';
+import { setUser } from "../../redux/reducers/authSlice";
 import popcorn from "../../../public/popcorn.png";
 import bglogin from "../../../public/bglogin.png";
 import Image from "next/image";
 
 export default function Signup() {
+  const dispatch = useDispatch<AppDispatch>();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,27 +24,13 @@ export default function Signup() {
   const [isValidUser, setIsvalidUser] = useState(false);
   const [isValidPassword, setIsvalidPassword] = useState(false);
   const [isValidEmail, setIsvalidEmail] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const dispatch: any = useDispatch(); 
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-      setMounted(true);
-      const storedToken = typeof window !== 'undefined' 
-        ? sessionStorage.getItem("access_token") 
-        : null;
-      setToken(storedToken);
-    }, []);
-
-
 
   const handleSignup = async (e: React.FormEvent) => {
-    if(!mounted || !token) return
     e.preventDefault();
     setMessage("");
     if (!isValidUser || !isValidEmail || !isValidPassword) return;
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`, {
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
@@ -53,17 +41,18 @@ export default function Signup() {
         setMessage("Signup failed, Username or Email already Exists");
         return;
       }
-      const loginData = await response.json();
+      const data = await response.json();
+      sessionStorage.setItem("access_token", data.access_token);
       setSuccessMessage("Signup successful! You are now logged in.");
       setMessage("");
       router.push("./popular");
-         dispatch(updateUser({
-        username: loginData.username,
-        email: loginData.email,
-        userId: loginData.userId ,
-      }));
-
-
+      dispatch(
+        setUser({
+          username: data.username,
+          email: data.email,
+          userId: data.userId,
+        })
+      );
     } catch (err) {
       setMessage("Server error");
       setSuccessMessage("");
@@ -107,7 +96,7 @@ export default function Signup() {
   const handleUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setUsername(input);
-    const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/; 
+    const usernameRegex = /^(?=.*[A-Za-z])(?=.*(?:\d|[^A-Za-z0-9])).{8,}$/; // or the no-spaces one
     setIsvalidUser(usernameRegex.test(input));
   };
 
