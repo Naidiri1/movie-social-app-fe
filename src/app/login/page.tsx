@@ -91,13 +91,13 @@ export default function LoginForm() {
 
 
    useEffect(() => {
-    if (!mounted) return; // Don't run until mounted
+    if (!mounted) return; 
     
     const token = sessionStorage.getItem("access_token");
     if (token) {
       router.push("/popular");
     }
-  }, [mounted, router]);
+  }, [mounted]);
   return (
     <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
       <Image
