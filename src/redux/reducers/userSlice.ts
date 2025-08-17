@@ -48,7 +48,6 @@ export const fetchUser = createAsyncThunk(
       }
       
       const data = await response.json();
-      console.log('Fetched user data:', data); // Debug log
       
       return {
         userId: data.userId || '',

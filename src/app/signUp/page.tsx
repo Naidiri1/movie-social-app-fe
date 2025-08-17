@@ -58,7 +58,6 @@ export default function Signup() {
       setSuccessMessage("");
     }
   };
-console.log("ddsdsdsds")
   const checks = [
     {
       label: "At least 8 characters",

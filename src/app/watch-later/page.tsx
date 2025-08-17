@@ -28,7 +28,6 @@ export default function WatchLaterMovies() {
 
   const user = useSelector(selectUser);
   const userId = user.userId;
-  console.log(userId)
   const token = sessionStorage.getItem("access_token");
   
   const handleWatchLaterMovies = async () => {
