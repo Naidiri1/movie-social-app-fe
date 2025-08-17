@@ -11,16 +11,9 @@ const SearchResults = () => {
   const [rowCardData, setRowCardData] = useState([]);
   const movieString = SearchResult();
   const [displayImgResult, setDisplayImgResult] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
-    
-  useEffect(() => {
-      setMounted(true);
-      const storedToken = typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'
-        ? sessionStorage.getItem("access_token") 
-        : null;
-      setToken(storedToken);
-    }, []);
+  const token = sessionStorage.getItem("access_token");
+
 
  const movieHooks = mounted ? AddMovieHooks() : {
     handleAddFavorites: () => {},
@@ -28,17 +21,6 @@ const SearchResults = () => {
     handleAddToTop10: () => {},
     handleAddWatchLater: () => {},
   };
-
-
-
-  
-useEffect(() => {
-    setMounted(true);
-    const storedToken = typeof window !== 'undefined' 
-      ? sessionStorage.getItem("access_token") 
-      : null;
-    setToken(storedToken);
-  }, []);
 
   useEffect(() => {
     if (movieString && mounted) {

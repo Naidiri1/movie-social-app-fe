@@ -19,8 +19,8 @@ import { IoArrowUndoSharp } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import { Orbitron } from "next/font/google";
 import PhoneNavlist from "./phoneNavlist";
-// import { logout } from "../redux/reducers/authSlice";
-// import { restoreUserSession } from "../redux/reducers/authSlice";
+import { logout } from "../redux/reducers/authSlice";
+import { fetchUser } from "../redux/reducers/userSlice";
 import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
 import { UserIcon } from "@heroicons/react/24/outline";
@@ -34,6 +34,7 @@ const orbitron = Orbitron({
 
 const NavbarComponent = () => {
   const router = useRouter();
+    const user = useSelector(selectUser);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
@@ -41,11 +42,20 @@ const NavbarComponent = () => {
 
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
+
+
   useEffect(() => {
     if (pathname !== "/searchMovie" && pathname !== "/movieDetails") {
       setSearchQuery("");
     }
   }, [pathname]);
+
+    useEffect(() => {
+    if (!user || !user.userId || !user.username) {
+     dispatch(fetchUser());
+    }
+  }, [pathname]);
+
   const getToken = () => {
     if (typeof window !== "undefined") {
       return sessionStorage.getItem("access_token");

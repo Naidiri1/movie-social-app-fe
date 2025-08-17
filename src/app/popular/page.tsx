@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
@@ -34,30 +34,20 @@ export default function Popular() {
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [token, setToken] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-  
-useEffect(() => {
-    setMounted(true);
-    const storedToken = typeof window !== 'undefined'  && typeof sessionStorage !== 'undefined'
-      ? sessionStorage.getItem("access_token") 
-      : null;
-    setToken(storedToken);
-  }, []);
 
-   const movieHooks = mounted ? AddMovieHooks() : {
-    handleAddFavorites: () => {},
-    handleAddToWatched: () => {},
-    handleAddToTop10: () => {},
-    handleAddWatchLater: () => {},
-  };
-
+  const {
+    handleAddFavorites,
+    handleAddToWatched,
+    handleAddToTop10,
+    handleAddWatchLater,
+  } = AddMovieHooks();
 
   const PopularMovies = async (
     genreId: number | null = null,
     page: number = 1
   ) => {
-     if(genreId || page || token) return;
+    const token = sessionStorage.getItem("access_token");
+
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`;
     const params = new URLSearchParams();
 
@@ -82,13 +72,9 @@ useEffect(() => {
       return;
     }
 
-    
     const data = await response.json();
-    if (!data) {
-          return;
-    }
     const results = data.results;
-    setRowData(results || []);
+    setRowData(results);
   };
 
   const filterByGenre = async (genreId: number | null) => {
@@ -107,11 +93,9 @@ useEffect(() => {
   };
 
   useEffect(() => {
-      if (mounted && token) {
     PopularMovies();
-      }
-    }, [mounted, token]);
-  
+  }, []);
+
   return (
     <div className="w-full max-w-none">
       <div className="mb-6  flex flex-col items-center justify-center m-5 p-5 bg-gray-900 rounded-lg">
@@ -130,7 +114,7 @@ useEffect(() => {
             All
           </Button>
 
-          {GENRES && GENRES.map((genre: any) => (
+          {GENRES.map((genre) => (
             <Button
               key={genre.id}
               size="sm"
@@ -148,7 +132,7 @@ useEffect(() => {
         {selectedGenre && (
           <Typography variant="small" className="text-gray-300 mt-2">
             Showing {rowData.length} popular movies in{" "}
-            {GENRES && GENRES.find((g) => g.id === selectedGenre)?.name} genre - Page{" "}
+            {GENRES.find((g) => g.id === selectedGenre)?.name} genre - Page{" "}
             {currentPage}
           </Typography>
         )}
@@ -167,15 +151,15 @@ useEffect(() => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {rowData && rowData.length > 0 ? (
-         rowData && rowData.map((movie: any) => (
+        {rowData.length > 0 ? (
+          rowData.map((movie: any) => (
             <CardMovie
               key={movie.id}
               movie={movie}
-              handleAddFavorites={() => movieHooks?.handleAddFavorites(movie)}
-              handleAddToWatched={() => movieHooks?.handleAddToWatched(movie)}
-              handleAddToTop10={() => movieHooks?.handleAddToTop10(movie)}
-              handleAddWatchLater={() => movieHooks?.handleAddWatchLater(movie)}
+              handleAddFavorites={() => handleAddFavorites(movie)}
+              handleAddToWatched={() => handleAddToWatched(movie)}
+              handleAddToTop10={() => handleAddToTop10(movie)}
+              handleAddWatchLater={() => handleAddWatchLater(movie)}
             />
           ))
         ) : (
@@ -189,7 +173,7 @@ useEffect(() => {
             />
             <p className="mt-4 text-lg font-medium">
               {selectedGenre
-                ? `No movies found in ${GENRES && GENRES.find((g) => g.id === selectedGenre)?.name} genre`
+                ? `No movies found in ${GENRES.find((g) => g.id === selectedGenre)?.name} genre`
                 : "No Movie Results"}
             </p>
           </div>

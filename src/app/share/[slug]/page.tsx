@@ -11,17 +11,8 @@ export default function SharePage({ params }: { params: { slug: string } }) {
   const [data, setData] = useState<any[] | null>(null);
   const [commentMap, setCommentMap] = useState<Record<string, string>>({});
   const [displayError, setDispalyError] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-
-useEffect(() => {
-    setMounted(true);
-    // Only access sessionStorage after component mounts
-    const storedToken = typeof window !== 'undefined' 
-      ? sessionStorage.getItem("access_token") 
-      : null;
-    setToken(storedToken);
-  }, []);
+  const token = sessionStorage.getItem("access_token");
 
 
  useEffect(() => {

@@ -9,41 +9,23 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Input, Typography } from "@material-tailwind/react";
- import {  selectUser } from '../../redux/reducers/userSlice';
+import { selectUser } from '@/redux/reducers/userSlice';
 
 export default function WatchedMovies() {
+  const user = useSelector(selectUser);
+
+  const userId = user.userId;
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-
   const [allWatched, setAllwatched] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const token = sessionStorage.getItem("access_token");
   const [filteredWatched, setFilteredWatched] = useState<any[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-  const [mounted, setMounted] = useState(false);
-
-   const getToken = () => {
-      if (typeof window !== 'undefined') {
-        return sessionStorage.getItem('access_token');
-      }
-      return null;
-    };
-    
-      const getUserId = () => {
-      if (typeof window !== 'undefined') {
-       const user = useSelector(selectUser);
-        const userId = user.userId;
-        return userId;
-      }
-      return null;
-    };
-         const userId = getUserId();
-  
-  
-     const token = getToken();
 
   const handleWatchedMovies = async () => {
     const response = await fetch(
@@ -96,12 +78,11 @@ export default function WatchedMovies() {
     return Array.from(allGenres).sort();
   };
 
-
   useEffect(() => {
-      if (mounted && token && userId) {
+    if (userId) {
       handleWatchedMovies();
-      }
-    }, [mounted, token, userId]);
+    }
+  }, [userId]);
 
   const handleAddWatched = async (movie: any, score?: number) => {
     const response = await fetch(

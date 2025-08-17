@@ -56,9 +56,6 @@ const TMDbStyleMovieCard = ({
   handleAddEditComment,
   handleDeleteComment,
 }: Props) => {
-  if (!movie) {
-    return null; 
-  }
   const router = useRouter();
   const [isDisabled, setIsDisabled] = useState(false);
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";

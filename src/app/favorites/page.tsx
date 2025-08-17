@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
@@ -8,73 +9,43 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
- import {  selectUser } from '../../redux/reducers/userSlice';
-import { useSelector } from "react-redux";
+import { selectUser } from '../../redux/reducers/userSlice';
 
 export default function FavoriteMovies() {
   const [rowData, setRowData] = useState([]);
   const [allFavorites, setAllFavorites] = useState([]);
-  const [filteredFavorites, setFilteredFavorites] = useState<any>([]);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
-  const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(new Set());
+  const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
+    new Set()
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const token = sessionStorage.getItem("access_token");
+  const [filteredFavorites, setFilteredFavorites] = useState<any>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+  const user = useSelector(selectUser);
+  const userId =user.userId;
   
- const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('access_token');
-    }
-    return null;
-  };
-  
-    const getUserId = () => {
-    if (typeof window !== 'undefined') {
-     const user = useSelector(selectUser);
-      const userId = user.userId;
-      return userId;
-    }
-    return null;
-  };
-       const userId = getUserId();
-
-
-   const token = getToken();
   const handleFavoriteMovies = async () => {
-    
-    
-    if (!token || !userId) {
-      console.log('No token or userId');
-      return;
-    }
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) {
-        console.error("Failed to fetch movies");
-        return;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
+    );
 
+    if (!response.ok) {
+      console.error("Failed to fetch movies");
+    }
+
+    if (response.ok) {
       const data = await response.json();
       setRowData(data);
       setAllFavorites(data);
       setFilteredFavorites(data);
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
     }
   };
-
-  useEffect(() => {
-    if (token && userId) {
-      handleFavoriteMovies();
-    }
-  }, [token, userId]);
 
   const filterByGenre = (genreName: string | null) => {
     setSelectedGenre(genreName);
@@ -110,6 +81,10 @@ export default function FavoriteMovies() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  useEffect(() => {
+    handleFavoriteMovies();
+  }, []);
+
   const updateFilteredData = (newData: any) => {
     setRowData(newData);
     setAllFavorites(newData);
@@ -128,193 +103,157 @@ export default function FavoriteMovies() {
   };
 
   const handleAddFavorites = async (movie: any, score?: number) => {
-    if (!token || !userId) return;
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userScore: score ?? null,
+          comment: movie.comment,
+          commentEnabled: movie.commentEnabled,
+        }),
+      }
+    );
+    if (response.ok) {
+      setSuccessScoreIds((prev) => new Set(prev).add(movie.id));
+      const updateData = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userScore: score ?? null,
-            comment: movie.comment,
-            commentEnabled: movie.commentEnabled,
-          }),
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      if (response.ok) {
-        setSuccessScoreIds((prev) => new Set(prev).add(movie.id));
-        const updateData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const data = await updateData.json();
-        
-        setTimeout(() => {
-          updateFilteredData(data);
+      const data = await updateData.json();
+      setTimeout(() => {
+        updateFilteredData(data);
 
-          const commentMap: { [movieId: string]: string } = {};
-          data.forEach((movie: any) => {
-            commentMap[movie.id] = movie.comment || "";
-          });
-          setComment(commentMap);
+        const commentMap: { [movieId: string]: string } = {};
+        data.forEach((movie: any) => {
+          commentMap[movie.id] = movie.comment || "";
+        });
+        setComment(commentMap);
 
-          setSuccessScoreIds((prev) => {
-            const updated = new Set(prev);
-            updated.delete(movie.id);
-            return updated;
-          });
-        }, 3000);
-      }
-    } catch (error) {
-      console.error("Error updating favorite:", error);
+        setSuccessScoreIds((prev) => {
+          const updated = new Set(prev);
+          updated.delete(movie.id);
+          return updated;
+        });
+      }, 3000);
     }
   };
 
   const handleDeleteScore = async (movie: Movie) => {
-    if (!token || !userId) return;
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userScore: null,
+          comment: movie.comment,
+          commentEnabled: movie.commentEnabled,
+        }),
+      }
+    );
+    if (response.ok) {
+      const updateData = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userScore: null,
-            comment: movie.comment,
-            commentEnabled: movie.commentEnabled,
-          }),
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      if (response.ok) {
-        const updateData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const data = await updateData.json();
-        updateFilteredData(data);
-      }
-    } catch (error) {
-      console.error("Error deleting score:", error);
+      const data = await updateData.json();
+      updateFilteredData(data);
     }
   };
 
   const handleDeleteMovie = async (movie: Movie) => {
-    if (!token || !userId) return;
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response.ok) {
+      const updateData = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
         {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      if (response.ok) {
-        const updateData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const data = await updateData.json();
-        updateFilteredData(data);
-      }
-    } catch (error) {
-      console.error("Error deleting movie:", error);
+      const data = await updateData.json();
+      updateFilteredData(data);
     }
   };
 
   const handleAddEditComment = async (movie: any) => {
-    if (!token || !userId) return;
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userScore: movie.userScore,
+          comment: commentUser[movie.id] ?? "",
+          commentEnabled: movie.commentEnabled,
+        }),
+      }
+    );
+    if (response.ok) {
+      const updateData = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userScore: movie.userScore,
-            comment: commentUser[movie.id] ?? "",
-            commentEnabled: movie.commentEnabled,
-          }),
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      if (response.ok) {
-        const updateData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const data = await updateData.json();
-        updateFilteredData(data);
-      }
-    } catch (error) {
-      console.error("Error updating comment:", error);
+      const data = await updateData.json();
+      updateFilteredData(data);
     }
   };
 
   const handleDeleteComment = async (movie: any) => {
-    if (!token || !userId) return;
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites/${movie.id}?userId=${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userScore: movie.userScore,
+          comment: "",
+          commentEnabled: movie.commentEnabled,
+        }),
+      }
+    );
+    if (response.ok) {
+      const updateData = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userScore: movie.userScore,
-            comment: "",
-            commentEnabled: movie.commentEnabled,
-          }),
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      if (response.ok) {
-        const updateData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const scoreUpdated = await updateData.json();
-        const commentMap: { [movieId: string]: string } = {};
-        scoreUpdated.forEach((movie: any) => {
-          commentMap[movie.id] = movie.comment || "";
-        });
-        setComment(commentMap);
-        updateFilteredData(scoreUpdated);
-      }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
+      const scoreUpdated = await updateData.json();
+      const commentMap: { [movieId: string]: string } = {};
+      scoreUpdated.forEach((movie: any) => {
+        commentMap[movie.id] = movie.comment || "";
+      });
+      setComment(commentMap);
+      updateFilteredData(scoreUpdated);
     }
   };
 
@@ -324,37 +263,28 @@ export default function FavoriteMovies() {
       return;
     }
 
-    if (!token || !userId) return;
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) {
-        console.error("Failed to fetch movies");
-        return;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
+    );
 
-      const data = await response.json();
+    if (!response.ok) console.error("Failed to fetch movies");
 
-      const fuse = new Fuse(data, {
-        keys: ["title"],
-        threshold: 0.4,
-      });
+    const data = await response.json();
 
-      const result = fuse.search(searchQuery);
-      const matchedMovies = result.map((r) => r.item);
+    const fuse = new Fuse(data, {
+      keys: ["title"],
+      threshold: 0.4,
+    });
 
-      setFilteredFavorites(matchedMovies);
-      setCurrentPage(1);
-      setSelectedGenre(null);
-    } catch (error) {
-      console.error("Error searching:", error);
-    }
+    const result = fuse.search(searchQuery);
+    const matchedMovies = result.map((r) => r.item);
+
+    setFilteredFavorites(matchedMovies);
+    setCurrentPage(1);
+    setSelectedGenre(null);
   };
 
   useEffect(() => {
@@ -370,17 +300,6 @@ export default function FavoriteMovies() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentMovies = filteredFavorites.slice(startIndex, endIndex);
-
-  
-
-  // Show message if user is not logged in
-  if (!token || !userId) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
-        <p className="text-lg font-medium">Please log in to view your favorites</p>
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -422,8 +341,7 @@ export default function FavoriteMovies() {
           </div>
         </div>
       )}
-      
-      <div className="w-full justify-center items-center flex">
+      <div className="w-full justify-center  items-center flex ">
         <div className="relative w-full m-5 text-white md:w-80">
           <Input
             type="search"
@@ -440,6 +358,7 @@ export default function FavoriteMovies() {
             onClick={handleSearch}
             className="absolute top-1 right-1 flex items-center rounded bg-red-800 py-1 pt-2 px-3 text-sm text-white hover:bg-gray-700 transition-all"
             type="button"
+            placeholder="Search Movie..."
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -457,9 +376,8 @@ export default function FavoriteMovies() {
           </button>
         </div>
       </div>
-      
       {filteredFavorites.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
+        <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-none">
           {currentMovies.map((movie: any) => (
             <div key={movie.id} className="relative">
               <button
@@ -504,7 +422,6 @@ export default function FavoriteMovies() {
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
         </div>
       )}
-      
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 mb-4">
           <div className="flex items-center gap-1">

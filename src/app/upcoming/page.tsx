@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
@@ -6,8 +6,6 @@ import CardMovie from "../../components/CardMovie";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-import {  selectUser } from '../../redux/reducers/userSlice';
-import { useSelector } from "react-redux";
 
 const GENRES = [
   { id: 28, name: "Action" },
@@ -44,38 +42,13 @@ const UpcomingMovies = () => {
     handleAddWatchLater,
   } = AddMovieHooks();
 
- const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('access_token');
-    }
-    return null;
-  };
-  
-    const getUserId = () => {
-    if (typeof window !== 'undefined') {
-     const user = useSelector(selectUser);
-      const userId = user.userId;
-      return userId;
-    }
-    return null;
-  };
-       const userId = getUserId();
-
-
-   const token = getToken();
-
- useEffect(() => {
-    if(token && userId) {
-    handleSearchUpcomingMovies();
-    }
-  }, [token, userId]);
-
-
   const handleSearchUpcomingMovies = async (
     genreId: number | null = null,
     page: number = 1
   ) => {
-     
+    const token = sessionStorage.getItem("access_token");
+
+    // Build URL with or without genre parameter
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/upcoming`;
     const params = new URLSearchParams();
 
@@ -120,7 +93,9 @@ const UpcomingMovies = () => {
     setLoading(false);
   };
 
-
+  useEffect(() => {
+    handleSearchUpcomingMovies();
+  }, []);
 
   return (
     <div className="w-full max-w-none">

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useRef, useEffect, useState } from "react";
 import Sortable from "sortablejs";
@@ -10,12 +10,13 @@ import ShareTop10Toggle from "../../components/ShareToggleTop10";
 import { usePathname } from "next/navigation";
 import movieImg from "../../../public/movie.png";
 import Image from "next/image";
-import {  selectUser } from '../../redux/reducers/userSlice';
+import { selectUser } from '../../redux/reducers/userSlice';
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
-  const  user  = useSelector(selectUser);
-  const userId =user.userId;
+  const user = useSelector(selectUser);
+
+  const userId = user.userId;
   const [movieData, setMovieData] = useState<(Movie | null)[]>(
     Array(NUM_SLOTS).fill(null)
   );
@@ -23,18 +24,7 @@ export default function Top10Movies() {
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const path = usePathname();
   const readOnlySharedLink = path?.startsWith("/share/");
-
-  const [token, setToken] = useState<string | null>(null);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const storedToken = typeof window !== 'undefined' 
-          ? sessionStorage.getItem("access_token") 
-          : null;
-        setToken(storedToken);
-      }, []);
-
+  const token = sessionStorage.getItem("access_token");
 
   const handleDeleteMovie = async (movie: Movie) => {
     const response = await fetch(
@@ -157,12 +147,9 @@ export default function Top10Movies() {
     }
   };
 
-    useEffect(() => {
-      if (mounted && token && userId) {
+  useEffect(() => {
     handleTop10();
-      }
-    }, [mounted, token, userId]);
-   
+  }, []);
 
   const handleTop10 = async () => {
     const response = await fetch(
@@ -186,7 +173,7 @@ export default function Top10Movies() {
   useEffect(() => {
     if (readOnlySharedLink) return;
     if (!sortableContainerRef.current) return;
-   
+
     const sortable = new Sortable(sortableContainerRef.current, {
       animation: 150,
       ghostClass: "opacity-500",

@@ -34,27 +34,9 @@ export default function SearchUsers() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-
-   const getUserId = () => {
-      if (typeof window !== 'undefined') {
-       const user = useSelector(selectUser);
-        const userId = user.userId;
-        return userId;
-      }
-      return null;
-    };
-         const userId = getUserId();
-
- const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('access_token');
-    }
-    return null;
-  }; 
-
-     const token = getToken();
-
+  const user = useSelector(selectUser);
+  const userId =user.userId;
+  const token = sessionStorage.getItem("access_token");
 
   const [userMovies, setUserMovies] = useState<UserMoviesState>({
     favorites: [],

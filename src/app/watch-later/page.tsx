@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import Fuse from "fuse.js";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
 import { Button, Input, Typography } from "@material-tailwind/react";
-import {  selectUser } from '../../redux/reducers/userSlice';
+import { selectUser } from "../../redux/reducers/userSlice";
 
 export default function WatchLaterMovies() {
   const [allWatchLater, setAllWatchLater] = useState([]);
@@ -17,33 +17,20 @@ export default function WatchLaterMovies() {
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-  
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredWatchLater, setFilteredWatchLater] = useState<any>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-    const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-    const getToken = () => {
-       if (typeof window !== 'undefined') {
-         return sessionStorage.getItem('access_token');
-       }
-       return null;
-     };
-     
-       const getUserId = () => {
-       if (typeof window !== 'undefined') {
-        const user = useSelector(selectUser);
-         const userId = user.userId;
-         return userId;
-       }
-       return null;
-     };
-     const userId = getUserId();
-   
-   
-      const token = getToken();
+
+  const user = useSelector(selectUser);
+  const userId = user.userId;
+  console.log(userId)
+  const token = sessionStorage.getItem("access_token");
+  
   const handleWatchLaterMovies = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
@@ -58,11 +45,12 @@ export default function WatchLaterMovies() {
 
     if (response.ok) {
       const data = await response.json();
-      const results = data;
-      setAllWatchLater(results);
-      setFilteredWatchLater(results);
+      
+      setAllWatchLater(data);
+      setFilteredWatchLater(data);
     }
   };
+
 
   const filterByGenre = (genreName: string | null) => {
     setSelectedGenre(genreName);
@@ -82,10 +70,8 @@ export default function WatchLaterMovies() {
   };
 
   useEffect(() => {
-      if (mounted && token && userId) {
-    handleWatchLaterMovies();
-      }
-    }, [mounted, token, userId]);
+      handleWatchLaterMovies();
+  }, []);
 
   const getAvailableGenres = () => {
     const allGenres = new Set<string>();
