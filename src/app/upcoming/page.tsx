@@ -34,6 +34,7 @@ const UpcomingMovies = () => {
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+    const token = sessionStorage.getItem("access_token");
 
   const {
     handleAddFavorites,
@@ -46,7 +47,6 @@ const UpcomingMovies = () => {
     genreId: number | null = null,
     page: number = 1
   ) => {
-    const token = sessionStorage.getItem("access_token");
 
     // Build URL with or without genre parameter
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/upcoming`;

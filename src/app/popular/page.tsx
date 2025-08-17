@@ -41,12 +41,12 @@ export default function Popular() {
     handleAddToTop10,
     handleAddWatchLater,
   } = AddMovieHooks();
+    const token = sessionStorage.getItem("access_token");
 
   const PopularMovies = async (
     genreId: number | null = null,
     page: number = 1
   ) => {
-    const token = sessionStorage.getItem("access_token");
 
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/popular`;
     const params = new URLSearchParams();
@@ -94,7 +94,7 @@ export default function Popular() {
 
   useEffect(() => {
     PopularMovies();
-  }, []);
+  }, [token]);
 
   return (
     <div className="w-full max-w-none">
