@@ -71,7 +71,7 @@ export default function WatchLaterMovies() {
 
   useEffect(() => {
       handleWatchLaterMovies();
-  }, []);
+  }, [userId]);
 
   const getAvailableGenres = () => {
     const allGenres = new Set<string>();

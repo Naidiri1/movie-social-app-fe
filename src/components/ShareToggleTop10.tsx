@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { Switch } from "@material-tailwind/react";
 
@@ -6,22 +7,11 @@ export default function ShareTop10Toggle() {
   const [slug, setSlug] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  const [token, setToken] = useState<string | null>(null);
-useEffect(() => {
-    setMounted(true);
-    const storedToken = typeof window !== 'undefined' 
-      ? sessionStorage.getItem("access_token") 
-      : null;
-    setToken(storedToken);
-  }, []);  
-  
-  
-  useEffect(() => { 
-    if(!mounted) return
+  useEffect(() => {
     (async () => {
       try {
+        const token = sessionStorage.getItem("access_token");
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/share`,
           {
@@ -46,6 +36,7 @@ useEffect(() => {
   const toggle = async () => {
     setSaving(true);
     try {
+      const token = sessionStorage.getItem("access_token");
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/share`,
         {

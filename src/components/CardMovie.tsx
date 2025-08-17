@@ -49,9 +49,6 @@ const CardMovie: React.FC<CardMovieProps> = ({
   handleAddToTop10,
   handleAddWatchLater,
 }) => {
-if (!movie) {
-    return; 
-  }
   const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
   const router = useRouter();
 

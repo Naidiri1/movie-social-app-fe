@@ -83,7 +83,7 @@ export default function FavoriteMovies() {
 
   useEffect(() => {
     handleFavoriteMovies();
-  }, []);
+  }, [userId]);
 
   const updateFilteredData = (newData: any) => {
     setRowData(newData);

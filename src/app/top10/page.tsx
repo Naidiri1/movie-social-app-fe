@@ -10,7 +10,8 @@ import ShareTop10Toggle from "../../components/ShareToggleTop10";
 import { usePathname } from "next/navigation";
 import movieImg from "../../../public/movie.png";
 import Image from "next/image";
-import { selectUser } from '../../redux/reducers/userSlice';
+import { selectUser } from "../../redux/reducers/userSlice";
+import { RiDragMove2Fill } from "react-icons/ri";
 
 export default function Top10Movies() {
   const NUM_SLOTS = 10;
@@ -149,7 +150,7 @@ export default function Top10Movies() {
 
   useEffect(() => {
     handleTop10();
-  }, []);
+  }, [userId]);
 
   const handleTop10 = async () => {
     const response = await fetch(
@@ -195,6 +196,11 @@ export default function Top10Movies() {
   return (
     <div className="w-full flex flex-col">
       <ShareTop10Toggle />
+      <div className="flex text-md flex-row  pl-5 items-center justify-left">
+        <p className="pr-2">Drag your movie to change ranking </p>
+        <RiDragMove2Fill />
+      </div>
+
       <div
         ref={sortableContainerRef}
         className={` ${movieData.length === 0 ? "flex justify-center items-center" : "grid grid-cols-1 md:grid-cols-2"} `}

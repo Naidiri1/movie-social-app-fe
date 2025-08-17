@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/reducers/userSlice";
 import { AppDispatch } from "../redux/store";
+import { selectUser } from "../redux/reducers/userSlice";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,8 +13,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const configFetchedRef = useRef(false);
   const [isClient, setIsClient] = useState(false);
-  const { username, loading } = useSelector((state: any) => state.auth);
-
+  const { loading } = useSelector((state: any) => state.auth);
+  const user = useSelector(selectUser);
+  const username = user.username;
+  const userId = user.userId;
+  const token = sessionStorage.getItem("access_token");
   const isAuthPage = pathname === "/login" || pathname === "/signUp";
 
   useEffect(() => {
@@ -24,7 +28,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     if (!isClient) return;
 
     const channel = new BroadcastChannel("my-channel");
-    
+
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
 
@@ -51,7 +55,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     channel.onmessage = handleMessage;
 
     const token = sessionStorage.getItem("access_token");
-    
     if (token && !username && !configFetchedRef.current) {
       dispatch(fetchUser());
       configFetchedRef.current = true;
@@ -70,8 +73,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return null; 
   }
 
-  const token = typeof window !== 'undefined' ? sessionStorage.getItem("access_token") : null;
-
   if (!token && !isAuthPage) {
     return null; 
   }
@@ -79,6 +80,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   if (loading && !isAuthPage) {
     return <div className="text-white p-4">Loading session...</div>;
   }
+
 
   return <>{children}</>;
 }

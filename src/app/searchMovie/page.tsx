@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import SearchResult from "@/components/searchResult";
@@ -11,19 +11,17 @@ const SearchResults = () => {
   const [rowCardData, setRowCardData] = useState([]);
   const movieString = SearchResult();
   const [displayImgResult, setDisplayImgResult] = useState(false);
-    const [mounted, setMounted] = useState(false);
   const token = sessionStorage.getItem("access_token");
 
-
- const movieHooks = mounted ? AddMovieHooks() : {
-    handleAddFavorites: () => {},
-    handleAddToWatched: () => {},
-    handleAddToTop10: () => {},
-    handleAddWatchLater: () => {},
-  };
+  const {
+    handleAddFavorites,
+    handleAddToWatched,
+    handleAddToTop10,
+    handleAddWatchLater,
+  } = AddMovieHooks();
 
   useEffect(() => {
-    if (movieString && mounted) {
+    if (movieString) {
       fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movies/search?query=${movieString}`,
         {
@@ -40,7 +38,7 @@ const SearchResults = () => {
           }
         });
     }
-  }, [movieString, mounted]);
+  }, [movieString]);
 
   return (
     <div>
@@ -49,14 +47,14 @@ const SearchResults = () => {
           <CardMovie
             key={movie.id}
             movie={movie}
-           handleAddFavorites={() => movieHooks?.handleAddFavorites(movie)}
-              handleAddToWatched={() => movieHooks?.handleAddToWatched(movie)}
-              handleAddToTop10={() => movieHooks?.handleAddToTop10(movie)}
-              handleAddWatchLater={() => movieHooks?.handleAddWatchLater(movie)}
+            handleAddFavorites={() => handleAddFavorites(movie)}
+            handleAddToWatched={() => handleAddToWatched(movie)}
+            handleAddToTop10={() => handleAddToTop10(movie)}
+            handleAddWatchLater={() => handleAddWatchLater(movie)}
           />
         ))}
       </div>
-      {rowCardData.length < 0 && displayImgResult && (
+      {rowCardData.length === 0 && displayImgResult && (
         <div className="flex flex-col items-center justify-center h-[500px] w-full text-white">
           <Image
             src={noResult}

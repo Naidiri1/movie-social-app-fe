@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
@@ -19,7 +18,7 @@ export default function WatchedMovies() {
   const [successScoreIds, setSuccessScoreIds] = useState<Set<number>>(
     new Set()
   );
-  const [allWatched, setAllwatched] = useState<any[]>([]);
+  const [allWatched, setAllWatched] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const token = sessionStorage.getItem("access_token");
   const [filteredWatched, setFilteredWatched] = useState<any[]>([]);
@@ -44,13 +43,22 @@ export default function WatchedMovies() {
       const data = await response.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
+      
+      setAllWatched(moviesArray);
       setFilteredWatched(moviesArray);
+      
+      const commentMap: { [movieId: string]: string } = {};
+      moviesArray.forEach((movie: any) => {
+        commentMap[movie.id] = movie.comment || "";
+      });
+      setComment(commentMap);
     }
   };
 
   const filterByGenre = (genreName: string | null) => {
     setSelectedGenre(genreName);
     setCurrentPage(1);
+    setSearchQuery(""); 
 
     if (genreName === null) {
       setFilteredWatched(allWatched);
@@ -113,8 +121,9 @@ export default function WatchedMovies() {
       const moviesArray = Array.isArray(results) ? results : [];
 
       setTimeout(() => {
-        setAllwatched(moviesArray);
-        setFilteredWatched(moviesArray);
+        setAllWatched(moviesArray); 
+        updateFilteredData(moviesArray); 
+        
         const commentMap: { [movieId: string]: string } = {};
         moviesArray.forEach((movie: any) => {
           commentMap[movie.id] = movie.comment || "";
@@ -156,8 +165,8 @@ export default function WatchedMovies() {
       const data = await updateData.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
-      setAllwatched(moviesArray);
-      setFilteredWatched(moviesArray);
+      setAllWatched(moviesArray); 
+      updateFilteredData(moviesArray);
     }
   };
 
@@ -182,8 +191,8 @@ export default function WatchedMovies() {
       const data = await updateData.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
-      setAllwatched(moviesArray);
-      setFilteredWatched(moviesArray);
+      setAllWatched(moviesArray); 
+      updateFilteredData(moviesArray);
     }
   };
 
@@ -213,15 +222,24 @@ export default function WatchedMovies() {
       const data = await updateData.json();
       const results = data?.content || data || [];
       const moviesArray = Array.isArray(results) ? results : [];
+      setAllWatched(moviesArray);
       updateFilteredData(moviesArray);
     }
   };
 
   const updateFilteredData = (newData: any[]) => {
     const dataArray = Array.isArray(newData) ? newData : [];
-    setAllwatched(dataArray);
+    setAllWatched(dataArray); 
 
-    if (selectedGenre) {
+    if (searchQuery?.trim()) {
+      const fuse = new Fuse(dataArray, {
+        keys: ["title"],
+        threshold: 0.4,
+      });
+      const result = fuse.search(searchQuery);
+      const matchedMovies = result.map((r) => r.item);
+      setFilteredWatched(matchedMovies);
+    } else if (selectedGenre) {
       const filtered = dataArray.filter((movie: any) => {
         if (movie.genres && Array.isArray(movie.genres)) {
           return movie.genres.includes(selectedGenre);
@@ -260,52 +278,43 @@ export default function WatchedMovies() {
       const scoreUpdated = await updateData.json();
       const results = scoreUpdated?.content || scoreUpdated || [];
       const moviesArray = Array.isArray(results) ? results : [];
+      setAllWatched(moviesArray);
       updateFilteredData(moviesArray);
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!searchQuery?.trim()) {
-      filterByGenre(selectedGenre);
-      return;
-    }
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
+      if (selectedGenre) {
+        filterByGenre(selectedGenre);
+      } else {
+        setFilteredWatched(allWatched);
       }
-    );
-    if (!response.ok) {
-      console.error("Failed to fetch movies");
       return;
     }
 
-    const data = await response.json();
-    const results = data?.content || data || [];
-    const moviesArray = Array.isArray(results) ? results : [];
-
-    const fuse = new Fuse(moviesArray, {
+    const fuse = new Fuse(allWatched, {
       keys: ["title"],
       threshold: 0.4,
     });
     const result = fuse.search(searchQuery);
-
     const matchedMovies = result.map((r) => r.item);
 
     setFilteredWatched(matchedMovies);
     setCurrentPage(1);
-    setSelectedGenre(null);
+    setSelectedGenre(null); 
   };
 
   useEffect(() => {
-    if (searchQuery === "" || searchQuery === undefined) {
-      setFilteredWatched(allWatched);
-      setSelectedGenre(null);
-      setCurrentPage(1);
+    if (searchQuery === "") {
+      if (selectedGenre) {
+        filterByGenre(selectedGenre);
+      } else {
+        setFilteredWatched(allWatched);
+        setCurrentPage(1);
+      }
     }
-  }, [searchQuery, allWatched]);
-
+  }, [searchQuery]); 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });

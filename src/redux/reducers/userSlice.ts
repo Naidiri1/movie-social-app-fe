@@ -28,10 +28,6 @@ export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (_, { rejectWithValue }) => {
     try {
-      if (typeof window === 'undefined') {
-        return rejectWithValue('SSR');
-      }
-      
       const token = sessionStorage.getItem('access_token');
       if (!token) {
         return rejectWithValue('No token');

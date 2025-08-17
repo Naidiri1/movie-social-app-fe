@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import TMDbStyleMovieCard from "../../../components/top10CardMovie";
@@ -11,12 +11,9 @@ export default function SharePage({ params }: { params: { slug: string } }) {
   const [data, setData] = useState<any[] | null>(null);
   const [commentMap, setCommentMap] = useState<Record<string, string>>({});
   const [displayError, setDispalyError] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const token = sessionStorage.getItem("access_token");
 
-
- useEffect(() => {
-    if (mounted && token) {
+  useEffect(() => {
+    let mounted = true;
     (async () => {
       try {
         const res = await fetch(
@@ -27,13 +24,15 @@ export default function SharePage({ params }: { params: { slug: string } }) {
           return;
         }
         const json = await res.json();
-      setData(json.items ?? json);
+        if (mounted) setData(json.items ?? json);
         setDispalyError(false);
       } catch (e: any) {
         setDispalyError(true);
       }
     })();
-   }
+    return () => {
+      mounted = false;
+    };
   }, [slug]);
 
   const handleAddEditComment = () => {};

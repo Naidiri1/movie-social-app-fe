@@ -1,28 +1,18 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useCallback, useEffect, useState} from "react";
-import {  selectUser } from '../redux/reducers/userSlice';
+import { useCallback } from "react";
+import { selectUser } from '../redux/reducers/userSlice';
 
 export const AddMovieHooks = () => {
-  const [mounted, setMounted] = useState(false);
-
   const user = useSelector(selectUser);
-     const userId= user.userId;
-       const [token, setToken] = useState<string | null>(null);
-     
-   useEffect(() => {
-    setMounted(true);
-    const storedToken = typeof window !== 'undefined' 
-      ? sessionStorage.getItem("access_token") 
-      : null;
-    setToken(storedToken);
-  }, []);
+   const userId =user.userId;
+   console.log(userId)
+  const token = sessionStorage.getItem("access_token");
 
   const verifyMovieAlreadyAdded = async (
     movie: any,
     listType: "favorites" | "top10" | "watched" | "watch-later"
   ): Promise<boolean> => {
-    
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${listType}?userId=${userId}`,
       {
@@ -45,7 +35,7 @@ export const AddMovieHooks = () => {
         return;
       } else {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
           {
             method: "POST",
             headers: {
@@ -73,7 +63,7 @@ export const AddMovieHooks = () => {
     } catch (error) {
       console.error("Error adding to favorites:", error);
     }
-  }, []);
+}, [userId, token]);
 
   const handleAddToWatched = useCallback(async (movie: any) => {
     try {
@@ -110,7 +100,7 @@ export const AddMovieHooks = () => {
     } catch (error) {
       console.error("Failed to add to favorites", error);
     }
-  }, []);
+}, [userId, token]);
 
   const handleAddToTop10 = useCallback(
     async (movie: any) => {
@@ -213,7 +203,7 @@ export const AddMovieHooks = () => {
     } catch (error) {
       console.error("Failed to add to watch later", error);
     }
-  }, []);
+}, [userId, token]);
 
   return {
     handleAddFavorites,

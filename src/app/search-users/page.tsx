@@ -15,14 +15,14 @@ import {
   ChevronUpIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { BookmarkIcon, EyeIcon, Trophy } from "lucide-react";
 import { CgSandClock } from "react-icons/cg";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import Image from "next/image";
 import movieImg from "../../../public/movie.png";
-import {  selectUser } from '../../redux/reducers/userSlice';
-import { useSelector } from "react-redux";
+import { selectUser } from "@/redux/reducers/userSlice";
 
 export default function SearchUsers() {
   type CategoryType = "favorites" | "watched" | "top10" | "watchLater";
@@ -33,10 +33,8 @@ export default function SearchUsers() {
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [hasSearched, setHasSearched] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const user = useSelector(selectUser);
-  const userId =user.userId;
-  const token = sessionStorage.getItem("access_token");
+  const currentUserId = user.userId;
 
   const [userMovies, setUserMovies] = useState<UserMoviesState>({
     favorites: [],
@@ -67,12 +65,8 @@ export default function SearchUsers() {
       watchLater: false,
     });
 
-  const currentUserId = userId;
-
   const saveStateToSessionStorage = () => {
     try {
-      if (typeof window === "undefined") return;
-
       sessionStorage.setItem("userSearch_query", searchQuery);
       sessionStorage.setItem(
         "userSearch_results",
@@ -109,82 +103,77 @@ export default function SearchUsers() {
 
   useEffect(() => {
     try {
-      if (typeof window === "undefined") return;
-      if (mounted && token && userId) {
-        const savedResults = sessionStorage.getItem("userSearch_results");
-        const savedOriginalResults = sessionStorage.getItem(
-          "userSearch_originalResults"
-        );
+      const savedResults = sessionStorage.getItem("userSearch_results");
+      const savedOriginalResults = sessionStorage.getItem(
+        "userSearch_originalResults"
+      );
 
-        if (savedResults && savedOriginalResults) {
-          const savedQuery = sessionStorage.getItem("userSearch_query");
-          if (savedQuery) {
-            setSearchQuery(savedQuery);
-          }
-
-          const parsedResults = JSON.parse(savedResults);
-          setSearchResults(parsedResults);
-
-          const parsedOriginal = JSON.parse(savedOriginalResults);
-          setOriginalSearchResults(parsedOriginal);
-
-          const savedSelectedUser = sessionStorage.getItem(
-            "userSearch_selectedUser"
-          );
-          if (savedSelectedUser && savedSelectedUser !== "null") {
-            const parsed = JSON.parse(savedSelectedUser);
-            setSelectedUser(parsed);
-          } else {
-            setSearchQuery("");
-            setSearchResults([]);
-            setOriginalSearchResults([]);
-            setHasSearched(false);
-            setSelectedUser(null);
-
-            const keys = [
-              "userSearch_query",
-              "userSearch_results",
-              "userSearch_selectedUser",
-              "userSearch_userMovies",
-              "userSearch_openSections",
-              "userSearch_loadedCategories",
-              "userSearch_hasSearched",
-              "userSearch_originalResults",
-            ];
-            keys.forEach((key) => sessionStorage.removeItem(key));
-          }
-
-          const savedUserMovies = sessionStorage.getItem(
-            "userSearch_userMovies"
-          );
-          if (savedUserMovies) {
-            const parsed = JSON.parse(savedUserMovies);
-            setUserMovies(parsed);
-          }
-
-          const savedOpenSections = sessionStorage.getItem(
-            "userSearch_openSections"
-          );
-          if (savedOpenSections) {
-            const parsed = JSON.parse(savedOpenSections);
-            setOpenSections(parsed);
-          }
-
-          const savedLoadedCategories = sessionStorage.getItem(
-            "userSearch_loadedCategories"
-          );
-          if (savedLoadedCategories) {
-            const parsed = JSON.parse(savedLoadedCategories);
-            setLoadedCategories(parsed);
-          }
-
-          const savedHasSearched = sessionStorage.getItem(
-            "userSearch_hasSearched"
-          );
-          if (savedHasSearched) {
-            setHasSearched(JSON.parse(savedHasSearched));
-          }
+      if (savedResults && savedOriginalResults) {
+        const savedQuery = sessionStorage.getItem("userSearch_query");
+        if (savedQuery) {
+          setSearchQuery(savedQuery);
         }
+
+        const parsedResults = JSON.parse(savedResults);
+        setSearchResults(parsedResults);
+
+        const parsedOriginal = JSON.parse(savedOriginalResults);
+        setOriginalSearchResults(parsedOriginal);
+
+        const savedSelectedUser = sessionStorage.getItem(
+          "userSearch_selectedUser"
+        );
+        if (savedSelectedUser && savedSelectedUser !== "null") {
+          const parsed = JSON.parse(savedSelectedUser);
+          setSelectedUser(parsed);
+        }
+
+        const savedUserMovies = sessionStorage.getItem("userSearch_userMovies");
+        if (savedUserMovies) {
+          const parsed = JSON.parse(savedUserMovies);
+          setUserMovies(parsed);
+        }
+
+        const savedOpenSections = sessionStorage.getItem(
+          "userSearch_openSections"
+        );
+        if (savedOpenSections) {
+          const parsed = JSON.parse(savedOpenSections);
+          setOpenSections(parsed);
+        }
+
+        const savedLoadedCategories = sessionStorage.getItem(
+          "userSearch_loadedCategories"
+        );
+        if (savedLoadedCategories) {
+          const parsed = JSON.parse(savedLoadedCategories);
+          setLoadedCategories(parsed);
+        }
+
+        const savedHasSearched = sessionStorage.getItem(
+          "userSearch_hasSearched"
+        );
+        if (savedHasSearched) {
+          setHasSearched(JSON.parse(savedHasSearched));
+        }
+      } else {
+        setSearchQuery("");
+        setSearchResults([]);
+        setOriginalSearchResults([]);
+        setHasSearched(false);
+        setSelectedUser(null);
+
+        const keys = [
+          "userSearch_query",
+          "userSearch_results",
+          "userSearch_selectedUser",
+          "userSearch_userMovies",
+          "userSearch_openSections",
+          "userSearch_loadedCategories",
+          "userSearch_hasSearched",
+          "userSearch_originalResults",
+        ];
+        keys.forEach((key) => sessionStorage.removeItem(key));
       }
     } catch (error) {
       console.error("Error loading saved state:", error);
@@ -197,8 +186,6 @@ export default function SearchUsers() {
 
   useEffect(() => {
     try {
-      if (typeof window === "undefined" && !mounted) return;
-
       const savedQuery = sessionStorage.getItem("userSearch_query");
       if (savedQuery) {
         setSearchQuery(savedQuery);
@@ -258,10 +245,7 @@ export default function SearchUsers() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (mounted && token) {
-      saveStateToSessionStorage();
-    }
+    saveStateToSessionStorage();
   }, [
     searchQuery,
     searchResults,
@@ -278,8 +262,7 @@ export default function SearchUsers() {
     setLoading(true);
     setHasSearched(true);
     try {
-      if (typeof window === "undefined") return;
-
+      const token = sessionStorage.getItem("access_token");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/search?query=${encodeURIComponent(searchQuery)}`,
         {
@@ -345,6 +328,7 @@ export default function SearchUsers() {
     }));
 
     try {
+      const token = sessionStorage.getItem("access_token");
       const endpoints: Record<CategoryType, string> = {
         favorites: "favorites",
         watched: "watched",
@@ -415,7 +399,6 @@ export default function SearchUsers() {
   };
 
   const clearSelectedUser = () => {
-     if (typeof window !== 'undefined') return
     setSearchResults(originalSearchResults);
     setSelectedUser(null);
     setUserMovies({
@@ -460,7 +443,6 @@ export default function SearchUsers() {
   };
 
   const clearAllSearchData = () => {
-     if (typeof window !== 'undefined') return
     const keys = [
       "userSearchQuery",
       "userSearch_query",
@@ -503,7 +485,6 @@ export default function SearchUsers() {
 
   useEffect(() => {
     return () => {
-      if (typeof window === "undefined") return;
       sessionStorage.setItem("previousPath", window.location.pathname);
     };
   }, []);

@@ -1,8 +1,8 @@
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import {  selectUser } from '../redux/reducers/userSlice';
+import { selectUser } from '../redux/reducers/userSlice';
 
 interface LikeDislikeProps {
   entryId: number;
@@ -23,29 +23,11 @@ export default function LikeDislike({
   initialUserStatus = null,
   comment,
 }: LikeDislikeProps) {
-  const user = useSelector(selectUser);
-   const getToken = () => {
-      if (typeof window !== 'undefined') {
-        return sessionStorage.getItem('access_token');
-      }
-      return null;
-    };
-    
-      const getUserId = () => {
-      if (typeof window !== 'undefined') {
-       const user = useSelector(selectUser);
-        const userId = user.userId;
-        return userId;
-      }
-      return null;
-    };
-         const currentUserId = getUserId();
-  
-  
-     const token = getToken();
+    const user = useSelector(selectUser);
+
+  const currentUserId =user.userId;
   const isOwnContent = movieOwnerId === currentUserId;
   const hasComment = comment && comment.trim().length > 0;
-    const [mounted, setMounted] = useState(false);
 
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
@@ -66,12 +48,12 @@ export default function LikeDislike({
     return endpoints[type] || type;
   };
 
-  const handleLikeDislike = async (action: "like" | "dislike") => { 
-    if(!mounted) return
+  const handleLikeDislike = async (action: "like" | "dislike") => {
     if (isUpdating || isOwnContent || !currentUserId) return;
-   
+
     setIsUpdating(true);
     try {
+      const token = sessionStorage.getItem("access_token");
 
       const apiEndpoint = getApiEndpoint(entryType);
 

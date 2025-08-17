@@ -1,3 +1,5 @@
+"use client";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import Link from "next/link";
@@ -25,7 +27,7 @@ import { AppDispatch } from "../redux/store";
 import { CgSandClock } from "react-icons/cg";
 import { UserIcon } from "@heroicons/react/24/outline";
 import CoolTitle from "../components/TitleNav";
-import { selectUser } from "../redux/reducers/userSlice";
+import { selectUser } from '../redux/reducers/userSlice';
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -34,49 +36,30 @@ const orbitron = Orbitron({
 
 const NavbarComponent = () => {
   const router = useRouter();
-    const user = useSelector(selectUser);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openNav, setOpenNav] = React.useState(false);
-  const [mounted, setMounted] = useState(false);
-
+  const user = useSelector(selectUser);
+  const username =user.username;
+  
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
-
-
   useEffect(() => {
     if (pathname !== "/searchMovie" && pathname !== "/movieDetails") {
       setSearchQuery("");
     }
   }, [pathname]);
+  const token = sessionStorage.getItem("access_token");
 
-    useEffect(() => {
-    if (!user || !user.userId || !user.username) {
-     dispatch(fetchUser());
+  useEffect(() => {
+    if (!token || username === null || username === undefined) {
+        router.push("/login");
     }
-  }, [pathname]);
-
-  const getToken = () => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("access_token");
-    }
-    return null;
-  };
-
-  const getUserName = () => {
-    if (typeof window !== "undefined") {
-      const user = useSelector(selectUser);
-      const userId = user.username;
-      return userId;
-    }
-    return null;
-  };
-  const username = getUserName();
-
-  const token = getToken();
+  }, [username, pathname, token]);
 
   const handleLogout = async () => {
     const channel = new BroadcastChannel("auth_channel");
+    const token = sessionStorage.getItem("access_token");
     if (token) {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logoutUser`,
@@ -90,14 +73,13 @@ const NavbarComponent = () => {
       );
     }
 
-    // dispatch(logout());
+    dispatch(logout());
     channel.postMessage({ type: "logout" });
     router.push("/login");
     channel.close();
   };
 
   useEffect(() => {
-    if (!mounted) return;
     const channel = new BroadcastChannel("auth_channel");
     const handleLogoutMessage = (event: any) => {
       if (event.data.type === "logout") {

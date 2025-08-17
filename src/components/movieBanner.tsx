@@ -27,9 +27,6 @@ const GENRE_MAP: { [key: number]: string } = {
 };
 
 const MovieBanner: React.FC<MovieActionsProps> =  ({ movie} ) => {  
-    if (!movie) {
-    return null; 
-  }
     const backdrop = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
   const poster = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
 
