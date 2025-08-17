@@ -1,8 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useCallback } from "react";
-import { selectUser } from '../redux/reducers/userSlice';
-
+import { selectUser } from "../redux/reducers/userSlice";
 
 export const AddMovieHooks = () => {
   const user = useSelector(selectUser);
@@ -22,13 +21,12 @@ export const AddMovieHooks = () => {
 
     if (response.ok) {
       const movieData = await response.json();
-      console.log(`Response from ${listType}:`, movieData);
-      
+
       let movieList: any[] = [];
-      
+
       if (Array.isArray(movieData)) {
         movieList = movieData;
-      } else if (movieData && typeof movieData === 'object') {
+      } else if (movieData && typeof movieData === "object") {
         if (movieData.content && Array.isArray(movieData.content)) {
           movieList = movieData.content;
         } else if (movieData.results && Array.isArray(movieData.results)) {
@@ -37,112 +35,110 @@ export const AddMovieHooks = () => {
           movieList = [];
         }
       }
-      
-      const exists = movieList.some((item: any) => 
-        item.movieId === movie.id || 
-        item.movieId === String(movie.id) ||
-        item.id === movie.id 
+
+      const exists = movieList.some(
+        (item: any) =>
+          item.movieId === movie.id ||
+          item.movieId === String(movie.id) ||
+          item.id === movie.id
       );
       return exists;
     }
 
     return false;
   };
-  
-  const handleAddFavorites = useCallback(async (movie: any) => {
-    try {
-      const alreadyExist = await verifyMovieAlreadyAdded(movie, "favorites");
-      if (alreadyExist) {
-        return;
-      } else {
+
+  const handleAddFavorites = useCallback(
+    async (movie: any) => {
+      try {
+        const alreadyExist = await verifyMovieAlreadyAdded(movie, "favorites");
+        if (alreadyExist) {
+          return;
+        } else {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                movieId: movie.id,
+                title: movie.title,
+                posterPath: movie.poster_path,
+                comment: "",
+                userScore: null,
+                commentEnabled: true,
+                releasedDate: movie.release_date,
+                movieDescription: movie.overview,
+                publicScore: parseFloat(movie.vote_average.toFixed(1)),
+                genreIds: movie.genre_ids,
+              }),
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+          }
+        }
+      } catch (error) {
+        console.error("Error adding to favorites:", error);
+      }
+    },
+    [userId, token]
+  );
+
+  const handleAddToWatched = useCallback(
+    async (movie: any) => {
+      try {
+        const alreadyExists = await verifyMovieAlreadyAdded(movie, "watched");
+
+        if (alreadyExists) {
+          return;
+        }
+
+        const requestBody = {
+          movieId: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path,
+          comment: "",
+          userScore: null,
+          commentEnabled: true,
+          releasedDate: movie.release_date,
+          movieDescription: movie.overview,
+          publicScore: parseFloat(movie.vote_average.toFixed(1)),
+          genreIds: movie.genre_ids,
+        };
+
         const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/favorites?userId=${userId}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              movieId: movie.id,
-              title: movie.title,
-              posterPath: movie.poster_path,
-              comment: "",
-              userScore: null,
-              commentEnabled: true,
-              releasedDate: movie.release_date,
-              movieDescription: movie.overview,
-              publicScore: parseFloat(movie.vote_average.toFixed(1)),
-              genreIds: movie.genre_ids, 
-            }),
+            body: JSON.stringify(requestBody),
           }
         );
+
         if (response.ok) {
           const data = await response.json();
+        } else {
+          const errorText = await response.text();
+          console.error(
+            "Failed to add to watched. Status:",
+            response.status,
+            "Error:",
+            errorText
+          );
         }
+      } catch (error) {
+        console.error("Error adding to watched:", error);
       }
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-    }
-}, [userId, token]);
-
-
-  const handleAddToWatched = useCallback(async (movie: any) => {
-    try {
-      console.log("Starting to add movie to watched:", movie.title);
-      console.log("Checking if already exists in watched...");
-      
-      const alreadyExists = await verifyMovieAlreadyAdded(movie, "watched");
-      
-      if (alreadyExists) {
-        console.log("Movie already in watched list");
-        return;
-      }
-      
-      console.log("Movie not in watched list, adding now...");
-      
-      const requestBody = {
-        movieId: movie.id,
-        title: movie.title,
-        posterPath: movie.poster_path,
-        comment: "",
-        userScore: null,
-        commentEnabled: true,
-        releasedDate: movie.release_date,
-        movieDescription: movie.overview,
-        publicScore: parseFloat(movie.vote_average.toFixed(1)),
-        genreIds: movie.genre_ids,
-      };
-      
-      console.log("Request URL:", `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`);
-      console.log("Request body:", requestBody);
-      
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watched?userId=${userId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-      
-      console.log("Response status:", response.status);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Successfully added to watched:", data);
-      } else {
-        const errorText = await response.text();
-        console.error("Failed to add to watched. Status:", response.status, "Error:", errorText);
-      }
-    } catch (error) {
-      console.error("Error adding to watched:", error);
-    }
-  }, [userId, token]);
-
+    },
+    [userId, token]
+  );
 
   const handleAddToTop10 = useCallback(
     async (movie: any) => {
@@ -195,7 +191,7 @@ export const AddMovieHooks = () => {
               movieDescription: movie.overview,
               publicScore: parseFloat(movie.vote_average.toFixed(1)),
               rank: 10,
-              genreIds: movie.genre_ids, 
+              genreIds: movie.genre_ids,
             }),
           }
         );
@@ -210,42 +206,48 @@ export const AddMovieHooks = () => {
     [userId]
   );
 
-  const handleAddWatchLater = useCallback(async (movie: any) => {
-    try {
-      const alreadyExist = await verifyMovieAlreadyAdded(movie, "watch-later");
-      if (alreadyExist) {
-        return;
-      } else {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              movieId: movie.id,
-              title: movie.title,
-              posterPath: movie.poster_path,
-              comment: "",
-              userScore: null,
-              commentEnabled: true,
-              releasedDate: movie.release_date,
-              movieDescription: movie.overview,
-              publicScore: parseFloat(movie.vote_average.toFixed(1)),
-              genreIds: movie.genre_ids, 
-            }),
-          }
+  const handleAddWatchLater = useCallback(
+    async (movie: any) => {
+      try {
+        const alreadyExist = await verifyMovieAlreadyAdded(
+          movie,
+          "watch-later"
         );
-        if (response.ok) {
-          const data = await response.json();
+        if (alreadyExist) {
+          return;
+        } else {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/watch-later?userId=${userId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                movieId: movie.id,
+                title: movie.title,
+                posterPath: movie.poster_path,
+                comment: "",
+                userScore: null,
+                commentEnabled: true,
+                releasedDate: movie.release_date,
+                movieDescription: movie.overview,
+                publicScore: parseFloat(movie.vote_average.toFixed(1)),
+                genreIds: movie.genre_ids,
+              }),
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+          }
         }
+      } catch (error) {
+        console.error("Failed to add to watch later", error);
       }
-    } catch (error) {
-      console.error("Failed to add to watch later", error);
-    }
-}, [userId, token]);
+    },
+    [userId, token]
+  );
 
   return {
     handleAddFavorites,
