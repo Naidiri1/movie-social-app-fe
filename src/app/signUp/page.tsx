@@ -28,7 +28,10 @@ export default function Signup() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
-    if (!isValidUser || !isValidEmail || !isValidPassword) return;
+    if (!isValidUser || !isValidEmail || !isValidPassword){
+    setMessage("Check the requirements for username, email and passwords, try again! ");
+     return;
+    }
     try {
       const response = await fetch( `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`, {
         method: "POST",
@@ -37,7 +40,6 @@ export default function Signup() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
         setMessage("Signup failed, Username or Email already Exists");
         return;
       }

@@ -88,6 +88,7 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   };
   const path = usePathname() || "";
   const isReadOnly = path.startsWith("/search-users");
+  const top10noScoreDisplay = path.startsWith("/search-users");
 
   useEffect(() => {
     if (movie.comment) {
@@ -130,9 +131,37 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
   };
 
   const genres = getGenreNames(movie);
-
+  const pathname = usePathname();
+  const isSearchUserPage = pathname?.includes("/search-users");
+  const isTop10 = movie.entryType === "top10" || movie?.entryType === "top10";
+  const showRank = isSearchUserPage && isTop10 && movie?.rank;
   return (
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[23rem] mx-auto shadow-lg">
+      {showRank && (
+        <div
+          className="
+            absolute 
+            top-0 
+            left-0
+            right-0
+            bg-gradient-to-r
+            from-red-700
+            to-red-600 
+            text-white 
+            py-1
+            text-center
+            font-bold 
+            text-xs
+            sm:text-xs
+            z-10
+            shadow-md
+            border-b
+            border-red-800
+          "
+        >
+          <span className="drop-shadow-lg">TOP {movie.rank}</span>
+        </div>
+      )}
       <CardHeader className="bg-black" floated={false} color="white">
         <div className="relative w-[350px] h-[200px]">
           <Image
@@ -173,7 +202,6 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
             </div>
           </div>
         )}
-
         <Typography
           color="white"
           className="flex items-center gap-1.5 mb-4 font-normal"
@@ -195,55 +223,58 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
           </span>
           {averageScoreConsistency(movie.publicScore)}
         </Typography>
-        <Typography
-          color="white"
-          className="flex items-center  gap-2 font-normal"
-        >
-          <span className="flex items-center gap-1">
-            {!isReadOnly ? "My Score:" : "User's Score:"}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="yellow"
-              className="-mt-0.5 h-5 w-5 text-yellow-700"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {movie.userScore != null ? (
-              movie.userScore
-            ) : (
-              <span className="text-yellow-500 text-xl">
-                {!isReadOnly ? "?" : "NR"}
-              </span>
+
+        {!top10noScoreDisplay && (
+          <Typography
+            color="white"
+            className="flex items-center  gap-2 font-normal"
+          >
+            <span className="flex items-center gap-1">
+              {!isReadOnly ? "My Score:" : "User's Score:"}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="yellow"
+                className="-mt-0.5 h-5 w-5 text-yellow-700"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {movie.userScore != null ? (
+                movie.userScore
+              ) : (
+                <span className="text-yellow-500 text-xl">
+                  {!isReadOnly ? "?" : "NR"}
+                </span>
+              )}
+            </span>
+            {!isReadOnly && (
+              <div className="flex ml-[2rem] flex-row">
+                {movie.userScore != null && (
+                  <div className="flex flex-col items-center cursor-pointer">
+                    <FaEdit
+                      onClick={handleDisplayRating}
+                      className="h-4 w-4 text-orange-400 hover:text-yellow-500"
+                    />
+                    <p className="mt-1 text-xs">Edit</p>
+                  </div>
+                )}
+                {movie.userScore != null && (
+                  <div className="flex ml-3 flex-col items-center cursor-pointer">
+                    <RiDeleteBin6Line
+                      onClick={() => handleDeleteScore(movie)}
+                      className="h-4 w-4 text-orange-400 hover:text-red-500"
+                    />
+                    <p className="mt-1 text-xs">Delete</p>
+                  </div>
+                )}
+              </div>
             )}
-          </span>
-          {!isReadOnly && (
-            <div className="flex ml-[2rem] flex-row">
-              {movie.userScore != null && (
-                <div className="flex flex-col items-center cursor-pointer">
-                  <FaEdit
-                    onClick={handleDisplayRating}
-                    className="h-4 w-4 text-orange-400 hover:text-yellow-500"
-                  />
-                  <p className="mt-1 text-xs">Edit</p>
-                </div>
-              )}
-              {movie.userScore != null && (
-                <div className="flex ml-3 flex-col items-center cursor-pointer">
-                  <RiDeleteBin6Line
-                    onClick={() => handleDeleteScore(movie)}
-                    className="h-4 w-4 text-orange-400 hover:text-red-500"
-                  />
-                  <p className="mt-1 text-xs">Delete</p>
-                </div>
-              )}
-            </div>
-          )}
-        </Typography>
+          </Typography>
+        )}
         <Typography
           className="text-xs mt-2 overflow-y-auto min-h-[4.5rem] max-h-[4.5rem] pr-1"
           color="white"

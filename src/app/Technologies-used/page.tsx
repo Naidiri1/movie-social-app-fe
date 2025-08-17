@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Link from "next/link";
 
 const technologies = {
@@ -166,22 +166,50 @@ export default function TechnologiesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-4 text-center border border-gray-700">
-            <div className="text-3xl font-bold text-blue-400">30+</div>
-            <div className="text-sm text-gray-400">Technologies</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-12">
+          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-2 xs:p-3 sm:p-4 text-center border border-gray-700">
+            <div className="text-2xl xs:text-3xl sm:text-3xl md:text-3xl font-bold text-blue-400">
+              30+
+            </div>
+            <div className="text-[10px] xs:text-xs sm:text-sm text-gray-400">
+              Technologies
+            </div>
           </div>
-          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-4 text-center border border-gray-700">
-            <div className="text-3xl font-bold text-purple-400">Full Stack</div>
-            <div className="text-sm text-gray-400">Application</div>
+
+          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-2 xs:p-3 sm:p-4 text-center border border-gray-700">
+            <div className="font-bold text-purple-400">
+              <span className="text-xl xs:text-2xl sm:text-3xl md:text-3xl hidden sm:inline">
+                Full Stack
+              </span>
+              <span className="text-lg xs:text-xl sm:hidden">
+                Full
+                <br />
+                Stack
+              </span>
+            </div>
+            <div className="text-[10px] xs:text-xs sm:text-sm text-gray-400">
+              Application
+            </div>
           </div>
-          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-4 text-center border border-gray-700">
-            <div className="text-3xl font-bold text-green-400">Modern</div>
-            <div className="text-sm text-gray-400">Architecture</div>
+
+          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-2 xs:p-3 sm:p-4 text-center border border-gray-700">
+            <div className="text-xl xs:text-2xl sm:text-3xl md:text-3xl font-bold text-green-400">
+              Modern
+            </div>
+            <div className="text-[10px] xs:text-xs sm:text-sm text-gray-400">
+              Architecture
+            </div>
           </div>
-          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-4 text-center border border-gray-700">
-            <div className="text-3xl font-bold text-red-400">Responsive</div>
-            <div className="text-sm text-gray-400">Design</div>
+
+          <div className="bg-gray-800/50 backdrop-blur rounded-lg p-2 xs:p-3 sm:p-4 text-center border border-gray-700">
+            <div className="font-bold text-red-400">
+              <span className="text-sm xs:text-base sm:text-xl md:text-2xl lg:text-2xl">
+                Responsive
+              </span>
+            </div>
+            <div className="text-[10px] xs:text-xs sm:text-sm text-gray-400">
+              Design
+            </div>
           </div>
         </div>
 

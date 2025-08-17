@@ -10,6 +10,8 @@ interface Movie {
   commentEnabled?: boolean;
   publicScore: number;
   username: string;
+  entryType:string;
+  rank: number;
 }
 
 interface ItemType {

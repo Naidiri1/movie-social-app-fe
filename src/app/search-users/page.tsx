@@ -523,11 +523,6 @@ export default function SearchUsers() {
                 {userMovies[category] &&
                   userMovies[category].map((movie, index) => (
                     <div key={movie.id} className="relative">
-                      {category === "top10" && movie.rank && (
-                        <div className="absolute top-2 left-12 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm z-10">
-                          {movie.rank}
-                        </div>
-                      )}
                       <CrudCardMovie
                         movie={{ ...movie, entryType: category }}
                         handleAddMovie={() => {}}
