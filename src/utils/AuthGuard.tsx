@@ -13,15 +13,19 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const configFetchedRef = useRef(false);
   const [isClient, setIsClient] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const { loading } = useSelector((state: any) => state.auth);
   const user = useSelector(selectUser);
-  const username = user.username;
-  const userId = user.userId;
-  const token = sessionStorage.getItem("access_token");
+  const username = user?.username;
+  const userId = user?.userId;
   const isAuthPage = pathname === "/login" || pathname === "/signUp";
 
   useEffect(() => {
     setIsClient(true);
+    if (typeof window !== "undefined") {
+      const storedToken = sessionStorage.getItem("access_token");
+      setToken(storedToken);
+    }
   }, []);
 
   useEffect(() => {
@@ -34,18 +38,20 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
       if (message.type === "new-token") {
         sessionStorage.setItem("access_token", message.token);
+        setToken(message.token);
         configFetchedRef.current = false;
       }
 
       if (message.type === "request-token") {
-        const token = sessionStorage.getItem("access_token");
-        if (token) {
-          channel.postMessage({ type: "new-token", token });
+        const currentToken = sessionStorage.getItem("access_token");
+        if (currentToken) {
+          channel.postMessage({ type: "new-token", token: currentToken });
         }
       }
 
       if (message.type === "logout") {
         sessionStorage.removeItem("access_token");
+        setToken(null);
         configFetchedRef.current = false;
         router.push("/login");
       }
@@ -54,13 +60,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     channel.postMessage({ type: "request-token" });
     channel.onmessage = handleMessage;
 
-    const token = sessionStorage.getItem("access_token");
-    if (token && !username && !configFetchedRef.current) {
+    const currentToken = sessionStorage.getItem("access_token");
+    if (currentToken && !username && !configFetchedRef.current) {
       dispatch(fetchUser());
       configFetchedRef.current = true;
     }
 
-    if (!token && !isAuthPage) {
+    if (!currentToken && !isAuthPage) {
       router.push("/login");
     }
 
@@ -70,17 +76,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [isClient, username, dispatch, router, isAuthPage]);
 
   if (!isClient) {
-    return null; 
+    return null;
   }
 
   if (!token && !isAuthPage) {
-    return null; 
+    return null;
   }
 
   if (loading && !isAuthPage) {
     return <div className="text-white p-4">Loading session...</div>;
   }
-
 
   return <>{children}</>;
 }
