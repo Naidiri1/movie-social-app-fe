@@ -10,23 +10,25 @@ Iriscope is a full-stack social platform that transforms how movie enthusiasts d
 
 ### 🔐 Authentication & User Management
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/7f9e5063-6c5c-4b87-bc4d-1734886872c1" type="video/mp4">
-</video>
+
+
+https://github.com/user-attachments/assets/7f82c595-ee7e-4bcb-a592-d032f3f6a3dc
+
+
 
 Secure user authentication with personalized profiles and JWT-based session management.
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/948ab528-968c-4a2f-9131-3c7b6a6825e6" type="video/mp4">
-</video>
+
+
+https://github.com/user-attachments/assets/76542ff6-2c40-4f68-9977-310e2b8c10d2
+
+
 
 ---
 
 ### 🎭 Smart Genre Navigation & Discovery
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/260fea36-953f-4097-bda5-71054e686dd9" type="video/mp4">
-</video>
+ https://github.com/user-attachments/assets/260fea36-953f-4097-bda5-71054e686dd9
 
 - **Dynamic genre menu** showing real-time movie counts per category
 - **Smart pagination** with current page indicator
@@ -37,9 +39,7 @@ Secure user authentication with personalized profiles and JWT-based session mana
 
 ### 📚 Personalized Movie Collections
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/b7184c1a-47ad-4832-9639-cb3abd5afb25" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/b7184c1a-47ad-4832-9639-cb3abd5afb25 
 
 Organize your movie experience with custom lists:
 - **Favorites** - Your all-time beloved films
@@ -52,9 +52,7 @@ Organize your movie experience with custom lists:
 
 ### ⭐ Interactive Review System
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/7f55e479-0574-4f8c-9a96-39d8a6898722" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/7f55e479-0574-4f8c-9a96-39d8a6898722 
 
 - Write detailed reviews with star ratings
 - Edit and delete your reviews anytime
@@ -79,9 +77,7 @@ Organize your movie experience with custom lists:
 
 ### 🔗 Secure Sharing System
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/a8ba85bf-a921-4a60-9c7d-efb8f2705117" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/c50e1289-7278-4c6b-82b7-04386455a545 
 
 - **Privacy-first sharing** with toggle on/off functionality
 - Generate secure, unique links to share your Top 10
@@ -93,9 +89,7 @@ Organize your movie experience with custom lists:
 
 ### 🔍 Advanced Search Capabilities
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/8bdb5b94-422e-4317-8bcf-417618778e9d" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/8bdb5b94-422e-4317-8bcf-417618778e9d 
 
 - **Global search** across entire movie database
 - **Category-specific search** within Favorites, Watched, or Watch Later
@@ -106,9 +100,7 @@ Organize your movie experience with custom lists:
 
 ### 👥 Social Engagement Features
 
-<video width="100%" controls>
-<source src="https://github.com/user-attachments/assets/99d0b174-d645-4289-a12d-8966a653ede5" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/99d0b174-d645-4289-a12d-8966a653ede5 
 
 - **Like/dislike** community reviews
 - **Explore user profiles** to discover new movies
@@ -127,7 +119,8 @@ Organize your movie experience with custom lists:
 - **Real-time updates** without page refresh
 
 ### Backend
-- **Spring Boot** (Java) RESTful API
+- **Spring Boot**
+-  **Java - RESTful API**
 - **PostgreSQL** database with complex relationships
 - **JWT authentication** for security
 - **Efficient pagination** for large datasets
@@ -148,22 +141,22 @@ Organize your movie experience with custom lists:
 ## 🚀 Installation
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- Java 17 or higher
-- PostgreSQL (v12 or higher)
+- Next.js
+- Javascript
+- Spring Boot
+- Java 17
+- PostgreSQL 
 - npm or yarn
 - TMDB API key ([Get one here](https://www.themoviedb.org/settings/api))
-## 🚀 Frontend Setup
 
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
-- TMDB API key ([Get one here](https://www.themoviedb.org/settings/api))
+## 🚀 Frontend Setup
 
 ### Installation Steps
 
-1. **Clone the frontend repository**
+
 ```bash
+ **Clone the frontend repository**
+
 git clone https://github.com/Naidiri1/movie-social-app-fe.git
 cd movie-social-app-fe
 
@@ -179,6 +172,16 @@ REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
 
 npm start
 
+**Configure environment variables**
+
+Create a `.env` file in the root directory and add:
+
+```env
+REACT_APP_API_URL=http://localhost:8080/api
+REACT_APP_TMDB_API_KEY=your_tmdb_api_key
+REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
+
+The application will open at http://localhost:3000
 
 
 
