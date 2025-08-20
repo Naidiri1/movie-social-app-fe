@@ -1,41 +1,184 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Iriscope - Full-Stack Social Movie Platform 🎬
 
-## Getting Started
+**[Live Demo](https://movie-social-app-fe-57kb.vercel.app/login)** | **[Frontend GitHub](https://github.com/Naidiri1/movie-social-app-fe))** | **[Backend GitHub](https://github.com/Naidiri1/movie-social-app-be)** | **[Video Walkthrough](https://youtu.be/duTqdjZNbug)**
 
-First, run the development server:
+## Overview
+
+Iriscope is a full-stack social platform that transforms how movie enthusiasts discover, track, and share their cinematic journey. Built with modern web technologies, it combines the power of social networking with comprehensive movie database functionality.
+
+## ✨ Key Features
+
+### 🔐 Authentication & User Management
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/7f9e5063-6c5c-4b87-bc4d-1734886872c1" type="video/mp4">
+</video>
+
+Secure user authentication with personalized profiles and JWT-based session management.
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/948ab528-968c-4a2f-9131-3c7b6a6825e6" type="video/mp4">
+</video>
+
+---
+
+### 🎭 Smart Genre Navigation & Discovery
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/260fea36-953f-4097-bda5-71054e686dd9" type="video/mp4">
+</video>
+
+- **Dynamic genre menu** showing real-time movie counts per category
+- **Smart pagination** with current page indicator
+- **Quick navigation dropdown** for jumping to top/bottom of extensive lists
+- Seamless browsing through thousands of movies
+
+---
+
+### 📚 Personalized Movie Collections
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/b7184c1a-47ad-4832-9639-cb3abd5afb25" type="video/mp4">
+</video>
+
+Organize your movie experience with custom lists:
+- **Favorites** - Your all-time beloved films
+- **Watched** - Track your viewing history
+- **Watch Later** - Never forget a recommendation
+- **Top 10** - Your personal hall of fame
+- Import from Popular & Upcoming sections with one click
+
+---
+
+### ⭐ Interactive Review System
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/7f55e479-0574-4f8c-9a96-39d8a6898722" type="video/mp4">
+</video>
+
+- Write detailed reviews with star ratings
+- Edit and delete your reviews anytime
+- Manage your movie library with full CRUD operations
+- Community-driven ratings and insights
+
+---
+
+### 🏆 Drag & Drop Top 10 Rankings
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/c50e1289-7278-4c6b-82b7-04386455a545" type="video/mp4">
+</video>
+
+**Unique ranking system** where users can:
+- Drag and reorder movies to create perfect Top 10 lists
+- Add personalized comments to each ranking
+- No ratings needed - just pure preference ordering
+- Dynamic real-time updates as you reorganize
+
+---
+
+### 🔗 Secure Sharing System
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/a8ba85bf-a921-4a60-9c7d-efb8f2705117" type="video/mp4">
+</video>
+
+- **Privacy-first sharing** with toggle on/off functionality
+- Generate secure, unique links to share your Top 10
+- Non-users can view your rankings and reviews
+- Instant link deactivation for complete control
+- Share your movie taste without requiring others to sign up
+
+---
+
+### 🔍 Advanced Search Capabilities
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/8bdb5b94-422e-4317-8bcf-417618778e9d" type="video/mp4">
+</video>
+
+- **Global search** across entire movie database
+- **Category-specific search** within Favorites, Watched, or Watch Later
+- Instant results with smart filtering
+- Find any movie in seconds
+
+---
+
+### 👥 Social Engagement Features
+
+<video width="100%" controls>
+<source src="https://github.com/user-attachments/assets/99d0b174-d645-4289-a12d-8966a653ede5" type="video/mp4">
+</video>
+
+- **Like/dislike** community reviews
+- **Explore user profiles** to discover new movies
+- **Taste matching** - find users with similar preferences
+- Build your movie community
+
+---
+
+## 🛠️ Technical Highlights
+
+### Frontend
+- **React** with hooks for dynamic UI
+- **TypeScript** for type safety
+- **Redux Toolkit** for state management
+- **Material Tailwind CSS** for responsive design
+- **Real-time updates** without page refresh
+
+### Backend
+- **Spring Boot** (Java) RESTful API
+- **PostgreSQL** database with complex relationships
+- **JWT authentication** for security
+- **Efficient pagination** for large datasets
+- **TMDB API integration** for movie data
+
+### Deployment
+- **Frontend:** Vercel
+- **Backend & Database:** Railway
+
+### Key Features Implementation
+- Custom drag-and-drop algorithm for ranking system
+- Secure link generation with cryptographic tokens
+- Optimistic UI updates for seamless interaction
+- Advanced caching strategies for performance
+
+---
+
+## 🚀 Installation
+
+### Prerequisites
+- Node.js (v14 or higher)
+- Java 17 or higher
+- PostgreSQL (v12 or higher)
+- npm or yarn
+- TMDB API key ([Get one here](https://www.themoviedb.org/settings/api))
+## 🚀 Frontend Setup
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+- TMDB API key ([Get one here](https://www.themoviedb.org/settings/api))
+
+### Installation Steps
+
+1. **Clone the frontend repository**
+```bash
+git clone https://github.com/Naidiri1/movie-social-app-fe.git
+cd movie-social-app-fe
+
+**Install dependencies**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+npm install
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a .env file in the root directory:
+REACT_APP_API_URL=http://localhost:8080/api
+REACT_APP_TMDB_API_KEY=your_tmdb_api_key
+REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+npm start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# movie-social-app-fe
-Movie Social App Front End 
->>>>>>> b6c7f033fbc5823685c812e72b1d671a1adfa34f
