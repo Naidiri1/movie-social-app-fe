@@ -4,8 +4,7 @@
 
 ## 🌟 Project Overview  
 
-Most streaming platforms only let you consume content — they don’t help you **organize, reflect, and share** your movie journey.  
-Iriscope is a full-stack web application that combines **social networking** with a **personal movie library**, allowing users to:  
+Iriscope is a full-stack web application that combines **social networking** with a **personal movie library**, it helps to organize, reflect, and share  users to:  
 - Track watched, favorite, and “watch later” movies  
 - Rank their Top 10 with a custom drag-and-drop system  
 - Write and share reviews securely with the community
@@ -36,6 +35,43 @@ https://github.com/user-attachments/assets/76542ff6-2c40-4f68-9977-310e2b8c10d2
 
 ---
 
+https://github.com/user-attachments/assets/7a496db6-46e1-4990-984b-bf1db4f4b9b2
+
+## 🔐 Password Reset (Email Link)
+
+Iriscope supports a secure, single-use, **30-minute** password-reset flow.
+
+### How it works
+1) **Request** — User enters their **email or username** on `/forgot-password`.  
+2) **Token issued** — Backend generates a random token, stores **only its SHA-256 hash** with **expiresAt = now + 30 minutes**, and emails the **raw token** in a reset link.  
+3) **Reset** — User opens `/reset-password?token=...`, submits a new password.  
+4) **Verify & finalize** — Backend checks the token is **unused** and **not expired**, updates the user’s password (**BCrypt**), and marks the token **used**.
+
+> Privacy: The `/forgot-password` endpoint always returns success to avoid leaking whether an email/username exists.
+
+### API Endpoints
+| Method | Path                    | Body (JSON)                                      | Notes |
+|------: |-------------------------|--------------------------------------------------|------|
+| POST   | `/auth/forgot-password` | `{ "email": "user@x.com" }` or `{ "username": "name" }` | Always responds **200 OK** (no enumeration). |
+| POST   | `/auth/reset-password`  | `{ "token": "<raw>", "newPassword": "…" }`       | **400** if token invalid/expired/used; **200** on success. |
+
+### Frontend UX
+- Pages: **`/forgot-password`** (request link) and **`/reset-password?token=...`** (set new password).  
+- Validations: min password length, confirm password, redirect to **`/login`** after success.  
+- Messaging: “If an account exists, we sent a reset link.”
+
+### Security
+- **Single-use**, **time-limited (30 min)** tokens.  
+- Store **token hashes** only; send the **raw token** in the URL.  
+- **BCrypt** for password storage.  
+- Consider rate-limiting `/auth/forgot-password` and logging attempts.
+
+### Configuration
+- **Frontend base URL** used in emails (backend):  
+  ```properties
+  app.frontend.base-url=https://YOUR-VERCEL-DOMAIN.vercel.app
+
+  
 ### 🎭 Smart Genre Navigation & Discovery
 
  https://github.com/user-attachments/assets/260fea36-953f-4097-bda5-71054e686dd9
