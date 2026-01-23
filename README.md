@@ -1,6 +1,6 @@
 # Iriscope - Full-Stack Social Movie Platform 🎬
 
-**[Live Demo](https://movie-social-app-fe-57kb.vercel.app/login)** | **[Frontend GitHub](https://github.com/Naidiri1/movie-social-app-fe)** | **[Backend GitHub](https://github.com/Naidiri1/movie-social-app-be)** | **[Video Walkthrough](https://youtu.be/duTqdjZNbug)**
+**[Live Demo](https://iriscopemovies.com/login)** | **[Frontend GitHub](https://github.com/Naidiri1/movie-social-app-fe)** | **[Backend GitHub](https://github.com/Naidiri1/movie-social-app-be)** | **[Video Walkthrough](https://youtu.be/duTqdjZNbug)**
 
 ## 🌟 Project Overview  
 
@@ -69,7 +69,7 @@ Iriscope supports a secure, single-use, **30-minute** password-reset flow.
 ### Configuration
 - **Frontend base URL** used in emails (backend):  
   ```properties
-  app.frontend.base-url=https://YOUR-VERCEL-DOMAIN.vercel.app
+ 
 
   
 ### 🎭 Smart Genre Navigation & Discovery
@@ -173,8 +173,8 @@ https://github.com/user-attachments/assets/99d0b174-d645-4289-a12d-8966a653ede5
 ### DevOps & Deployment(AWS Migration)
 - **Phase 1** (Initial deployment)
   
-- **Frontend:** Vercel (Next.js build)  
-- **Backend & DB:** Railway (Spring Boot + PostgreSQL)  
+- **Frontend:** S3 (Next.js build)  
+- **Backend & DB:** EC2 (Spring Boot + PostgreSQL)  
 - **Environment configs:** `.env` setup with API keys and secrets
 
 - **Phase 2** (AWS migration — production-style hosting)
@@ -216,7 +216,7 @@ Validated schema + row counts after restore to ensure data integrity
 - **Data Modeling:** Normalized DB schema for Favorites, Watched, and Top 10 without duplication.  
 - **Algorithms:** Built custom drag-and-drop ranking system leveraging arrays and React state reconciliation.  
 - **Team Practices:** Used GitHub Projects for task tracking, pull requests for code reviews, and issue templates for bug triage.
-- **Deployment Debugging:** Faced repeated failed builds (~100 redeploys on Vercel) due to Material Tailwind incompatibility with Next.js 14. Resolved by downgrading to a stable release, documenting the fix, and validating successful production deployment.
+- **Deployment Debugging:** Faced repeated failed builds (100 redeploys on Vercel) due to Material Tailwind incompatibility with Next.js 14. Resolved by downgrading to a stable release, documenting the fix, and validating successful production deployment.
 ---
 ## 📊 Impact  
 
