@@ -11,7 +11,7 @@ Iriscope is a full-stack web application that combines **social networking** wit
 - Populate their libraries based on popular and upcoming films
 - Search users'profiles and like/dislike comments motivating user to engage to the community
 
-Built with **React + TypeScript + Redux (frontend)** and **Spring Boot + PostgreSQL (backend)**, Iriscope demonstrates production-ready engineering patterns, authentication, performance optimization, and deployment.  
+Built with **React + TypeScript + Redux (frontend)** and **Spring Boot + PostgreSQL (backend)**, hosted Front end, back end and database on **AWS (EC2, RDS, S3, CloudFront)** Iriscope demonstrates production-ready engineering patterns, authentication, performance optimization, and deployment.  
 
 ---
 
@@ -170,10 +170,35 @@ https://github.com/user-attachments/assets/99d0b174-d645-4289-a12d-8966a653ede5
 - **REST API design** – consistent, versioned endpoints  
 - **TMDb API integration** – external data ingestion  
 
-### DevOps & Deployment  
+### DevOps & Deployment(AWS Migration)
+- **Phase 1** (Initial deployment)
+  
 - **Frontend:** Vercel (Next.js build)  
 - **Backend & DB:** Railway (Spring Boot + PostgreSQL)  
 - **Environment configs:** `.env` setup with API keys and secrets
+
+- **Phase 2** (AWS migration — production-style hosting)
+Frontend: S3 + CloudFront
+
+Built the frontend and deployed static assets to an S3 bucket
+
+Served globally through CloudFront CDN for fast load times + caching
+
+(Optional mention if true) Configured HTTPS using ACM and a custom domain via Route 53
+
+Backend: EC2 (Spring Boot JAR)
+
+Deployed the Spring Boot app to an EC2 instance
+
+Managed runtime config through environment variables (JWT secret, TMDb token, allowed frontend origin, etc.)
+
+Used SSH + Linux commands to manage deployments (scp, java -jar, logs)
+
+Database: RDS PostgreSQL
+
+Migrated production data from Railway → RDS using pg_dump / restore
+
+Validated schema + row counts after restore to ensure data integrity
   
 ---
 
