@@ -6,6 +6,7 @@
     "libyear": "libyear --threshold-drift-collective=2",
     "dev": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write ."

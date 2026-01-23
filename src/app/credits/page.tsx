@@ -1,9 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
-import Image from "next/image";
+// Using regular img tags for S3/CloudFront compatibility
 import Link from "next/link";
-import iriscope from "../../../public/iriscope.png";
-import TMDB from "../../../public/TMDB.png";
 
 export default function CreditsPage() {
   return (
@@ -21,12 +19,11 @@ export default function CreditsPage() {
         <section className="bg-gray-800/50 backdrop-blur rounded-lg p-8 mb-8 border border-gray-700">
           <div className="flex flex-col md:flex-row items-center gap-6 mb-6">
             <div className="relative w-[160px] h-[100px] mb-4">
-              <Image
-                src={TMDB}
-                alt="Iriscope Logo"
-                fill
-                className="object-contain"
-                priority
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/TMDB.png"
+                alt="TMDB Logo"
+                className="absolute inset-0 w-full h-full object-contain"
               />
             </div>
             <div className="flex-1">
@@ -133,12 +130,11 @@ export default function CreditsPage() {
         <section className="bg-gray-800/50 backdrop-blur rounded-lg p-8 mb-8 border border-gray-700">
           <div className="flex flex-col items-center mb-6">
             <div className="relative w-[160px] h-[100px] mb-4">
-              <Image
-                src={iriscope}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/iriscope.png"
                 alt="Iriscope Logo"
-                fill
-                className="object-contain"
-                priority
+                className="absolute inset-0 w-full h-full object-contain"
               />
             </div>
             <h2 className="text-2xl font-bold text-yellow-400">

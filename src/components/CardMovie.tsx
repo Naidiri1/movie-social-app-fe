@@ -7,9 +7,8 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
-import Image from "next/image";
+// Using regular img tags for S3/CloudFront compatibility
 import IconCard from "./IconCard";
-import fallback1 from "../../public/fallback1.jpg";
 import { useRouter } from "next/navigation";
 
 interface CardMovieProps {
@@ -81,15 +80,13 @@ const CardMovie: React.FC<CardMovieProps> = ({
     <Card className="flex flex-col justify-between h-full bg-black text-white max-w-[22rem] mx-auto shadow-lg">
       <CardHeader className="bg-black" floated={false} color="white">
         <div className="relative w-[300px] h-[450px]">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={
-              movie.poster_path ? IMG_BASE_URL + movie.poster_path : fallback1
+              movie.poster_path ? IMG_BASE_URL + movie.poster_path : "/fallback1.jpg"
             }
             alt={movie.title}
-            fill
-            className="rounded-t-xl object-cover"
-            sizes="300px"
-            priority
+            className="absolute inset-0 w-full h-full rounded-t-xl object-cover"
           />
         </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />

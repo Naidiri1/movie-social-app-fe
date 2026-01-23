@@ -5,9 +5,7 @@ import { Button, Input } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
-import Image from "next/image";
-import login from "../../../public/login.png";
-import bglogin from "../../../public/bglogin.png";
+// Using regular img tags for S3/CloudFront compatibility
 
 export default function LoginForm() {
   const [username, setUsername] = useState("");
@@ -104,12 +102,11 @@ export default function LoginForm() {
 
   return (
     <div className="relative min-h-screen w-full p-2 flex justify-center items-center ">
-      <Image
-        src={bglogin}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/bglogin.png"
         alt="Background"
-        fill
-        className="object-cover brightness-50"
-        priority
+        className="absolute inset-0 w-full h-full object-cover brightness-50"
       />
       <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
 
@@ -167,11 +164,13 @@ export default function LoginForm() {
         </div>
 
         <div className="block flex flex-col  lg:block w-1/2 items-center">
-          <Image
-            src={login}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/login.png"
             alt="Background"
+            width={300}
+            height={300}
             className="object-cover brightness-50"
-            priority
           />
         </div>
       </div>

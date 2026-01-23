@@ -8,8 +8,7 @@ import TMDbStyleMovieCard from "../../components/top10CardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import ShareTop10Toggle from "../../components/ShareToggleTop10";
 import { usePathname } from "next/navigation";
-import movieImg from "../../../public/movie.png";
-import Image from "next/image";
+// Using regular img tags for S3/CloudFront compatibility
 import { selectUser } from "../../redux/reducers/userSlice";
 import { RiDragMove2Fill } from "react-icons/ri";
 
@@ -24,7 +23,7 @@ export default function Top10Movies() {
   const sortableContainerRef = useRef<HTMLDivElement | null>(null);
   const [commentUser, setComment] = useState<{ [movieId: string]: string }>({});
   const path = usePathname();
-  const readOnlySharedLink = path?.startsWith("/share/");
+  const readOnlySharedLink = path?.startsWith("/share");
   const token = sessionStorage.getItem("access_token");
 
   const handleDeleteMovie = async (movie: Movie) => {
@@ -246,12 +245,12 @@ export default function Top10Movies() {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
-            <Image
-              src={movieImg}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/movie.png"
               alt="No movie results"
               width={300}
               height={350}
-              priority
             />
             <p className="mt-4 text-lg font-medium">No Movie Results</p>
           </div>

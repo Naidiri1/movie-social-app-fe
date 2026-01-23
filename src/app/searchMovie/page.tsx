@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import SearchResult from "@/components/searchResult";
 import CardMovie from "@/components/CardMovie";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
-import noResult from "../../../public/noResults.png";
-import Image from "next/image";
+// Using regular img tags for S3/CloudFront compatibility
 
 const SearchResults = () => {
   const [rowCardData, setRowCardData] = useState([]);
@@ -56,12 +55,12 @@ const SearchResults = () => {
       </div>
       {rowCardData.length === 0 && displayImgResult && (
         <div className="flex flex-col items-center justify-center h-[500px] w-full text-white">
-          <Image
-            src={noResult}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/noResults.png"
             alt="No movie results"
             width={500}
             height={450}
-            priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
           <p className="mt-4 text-lg font-medium">Try again!</p>

@@ -1,7 +1,6 @@
 "use client";
-import Image from "next/image";
+// Using regular img tags for S3/CloudFront compatibility
 import { Typography } from "@material-tailwind/react";
-import iriscope from "../../public/iriscope.png";
 import Link from "next/link";
 
 export default function Footer() {
@@ -13,12 +12,11 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-4 lg:gap-3">
           <div className="flex items-center justify-center">
             <div className="relative w-[140px] h-[90px] sm:w-[160px] sm:h-[100px] lg:w-[120px] lg:h-[70px]">
-              <Image
-                src={iriscope}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/iriscope.png"
                 alt="Iriscope Logo"
-                fill
-                className="object-contain"
-                priority
+                className="absolute inset-0 w-full h-full object-contain"
               />
             </div>
           </div>

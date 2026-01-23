@@ -1,5 +1,4 @@
-import Image from "next/image";
-import fallback1 from "../../public/fallback1.jpg";
+// Using regular img tags for S3/CloudFront compatibility
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoAddCircleOutline, IoCloseSharp } from "react-icons/io5";
@@ -99,7 +98,7 @@ const TMDbStyleMovieCard = ({
 
   const genres = getGenreNames(movie);
   const path = usePathname() || "";
-  const readOnlySharedLink = path.startsWith("/share/");
+  const readOnlySharedLink = path.startsWith("/share");
 
   return (
     <div className="w-full h-full flex flex-col bg-white dark:bg-zinc-900 rounded-lg shadow-md p-4 cursor-move">
@@ -111,14 +110,13 @@ const TMDbStyleMovieCard = ({
 
           <div className="flex flex-row gap-4 flex-1">
             <div className="relative w-[100px] h-[150px] flex-shrink-0 overflow-hidden rounded-md">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={
-                  movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1
+                  movie.posterPath ? IMG_BASE_URL + movie.posterPath : "/fallback1.jpg"
                 }
                 alt={movie.title}
-                fill
-                priority
-                className="object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
 

@@ -7,9 +7,7 @@ import Link from "next/link";
 import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/reducers/authSlice";
-import popcorn from "../../../public/popcorn.png";
-import bglogin from "../../../public/bglogin.png";
-import Image from "next/image";
+// Using regular img tags for S3/CloudFront compatibility
 
 export default function Signup() {
   const dispatch = useDispatch<AppDispatch>();
@@ -47,7 +45,7 @@ export default function Signup() {
       sessionStorage.setItem("access_token", data.access_token);
       setSuccessMessage("Signup successful! You are now logged in.");
       setMessage("");
-      router.push("./popular");
+      router.push("/popular");
       dispatch(
         setUser({
           username: data.username,
@@ -110,22 +108,23 @@ export default function Signup() {
 
   return (
     <div className="relative p-2 min-h-screen w-full flex justify-center items-center overflow-hidden">
-      <Image
-        src={bglogin}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/bglogin.png"
         alt="Background"
-        fill
-        className="object-cover brightness-50"
-        priority
+        className="absolute inset-0 w-full h-full object-cover brightness-50"
       />
       <div className="absolute inset-0 backdrop-blur-md bg-black/10"></div>
 
       <div className="relative z-10 flex pb-2 p-3 mb-5 items-center flex-col lg:flex-row w-full max-w-[700px] h-[auto] bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg">
         <div className="block flex flex-col  justify-center lg:block w-1/2 ">
-          <Image
-            src={popcorn}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/popcorn.png"
             alt="Background"
+            width={300}
+            height={300}
             className="object-cover brightness-50"
-            priority
           />
         </div>
 

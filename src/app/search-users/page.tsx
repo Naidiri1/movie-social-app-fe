@@ -20,8 +20,7 @@ import { RootState } from "../../redux/store";
 import { BookmarkIcon, EyeIcon, Trophy } from "lucide-react";
 import { CgSandClock } from "react-icons/cg";
 import CrudCardMovie from "../../components/CrudCardMovie";
-import Image from "next/image";
-import movieImg from "../../../public/movie.png";
+// Using regular img tags for S3/CloudFront compatibility
 import { selectUser } from "@/redux/reducers/userSlice";
 
 export default function SearchUsers() {
@@ -551,8 +550,9 @@ export default function SearchUsers() {
               </div>
             ) : (
               <div className="text-center flex flex-col items-center justify-center py-8">
-                <Image
-                  src={movieImg}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/movie.png"
                   alt="No movies"
                   width={200}
                   height={200}
@@ -672,12 +672,12 @@ export default function SearchUsers() {
         searchResults.length === 0 &&
         !loading && (
           <div className="flex flex-col items-center justify-center h-[500px] w-full text-white">
-            <Image
-              src={movieImg}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/movie.png"
               alt="No user results"
               width={300}
               height={350}
-              priority
             />
             <p className="mt-4 text-lg font-medium">No User Results</p>
             <p className="mt-2 text-gray-400">

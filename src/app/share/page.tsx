@@ -1,18 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import TMDbStyleMovieCard from "../../../components/top10CardMovie";
-import Image from "next/image";
-import userError from "../../../../public/userError.png";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import TMDbStyleMovieCard from "../../components/top10CardMovie";
+// Using regular img tags for S3/CloudFront compatibility
 
-export default function SharePage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+// Separate component that uses useSearchParams (must be wrapped in Suspense)
+function ShareContent() {
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("id");
 
   const [data, setData] = useState<any[] | null>(null);
   const [commentMap, setCommentMap] = useState<Record<string, string>>({});
-  const [displayError, setDispalyError] = useState(false);
+  const [displayError, setDisplayError] = useState(false);
 
   useEffect(() => {
+    if (!slug) {
+      setDisplayError(true);
+      return;
+    }
+
     let mounted = true;
     (async () => {
       try {
@@ -20,14 +27,14 @@ export default function SharePage({ params }: { params: { slug: string } }) {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/share/${slug}`
         );
         if (!res.ok) {
-          setDispalyError(true);
+          setDisplayError(true);
           return;
         }
         const json = await res.json();
         if (mounted) setData(json.items ?? json);
-        setDispalyError(false);
+        setDisplayError(false);
       } catch (e: any) {
-        setDispalyError(true);
+        setDisplayError(true);
       }
     })();
     return () => {
@@ -38,8 +45,24 @@ export default function SharePage({ params }: { params: { slug: string } }) {
   const handleAddEditComment = () => {};
   const handleDeleteComment = () => {};
 
+  if (!slug) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <div className="relative w-[400px] h-[400px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/userError.png"
+            alt={"Error"}
+            className="absolute inset-0 w-full h-full object-contain"
+          />
+        </div>
+        <p className="text-white">Invalid share link!</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full itesm-center justify-center flex flex-col">
+    <>
       {data && (
         <h2 className="relative mt-5 mb-5 flex flex-col items-center justify-center text-center text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white tracking-wide">
           {data?.[0]?.username && (
@@ -71,7 +94,7 @@ export default function SharePage({ params }: { params: { slug: string } }) {
           data.map((movie: any, index) => (
             <div
               key={movie?.id ?? index}
-              className="flex items-start highlight  m-5 bg-white dark:bg-zinc-900 rounded-lg shadow"
+              className="flex items-start highlight m-5 bg-white dark:bg-zinc-900 rounded-lg shadow"
             >
               <div className="w-6 pt-2 pr-1 items-center mt-[5rem] mr-5 ml-5 text-2xl font-bold text-white text-right">
                 {index + 1}
@@ -98,20 +121,35 @@ export default function SharePage({ params }: { params: { slug: string } }) {
           ))}
       </div>
       {!data && displayError ? (
-        <div className="flex flex-col items-center justify-center ">
+        <div className="flex flex-col items-center justify-center">
           <div className="relative w-[400px] h-[400px]">
-            <Image
-              src={userError}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/userError.png"
               alt={"Error"}
-              fill
-              className=""
-              sizes="300px"
-              priority
+              className="absolute inset-0 w-full h-full object-contain"
             />
           </div>
           <p>User Top 10 not Available!</p>
         </div>
       ) : null}
+    </>
+  );
+}
+
+// Main page component with Suspense wrapper (required for useSearchParams in static export)
+export default function SharePage() {
+  return (
+    <div className="w-full items-center justify-center flex flex-col">
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        }
+      >
+        <ShareContent />
+      </Suspense>
     </div>
   );
 }

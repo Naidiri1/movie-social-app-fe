@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
 import CardMovie from "../../components/CardMovie";
 import { AddMovieHooks } from "../../components/AddMovieHooks";
-import Image from "next/image";
-import movieImg from "../../../public/movie.png";
+// Using regular img tags for S3/CloudFront compatibility
 
 const GENRES = [
   { id: 28, name: "Action" },
@@ -164,12 +163,12 @@ export default function Popular() {
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center h-[400px] w-full text-white">
-            <Image
-              src={movieImg}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/movie.png"
               alt="No movie results"
               width={300}
               height={350}
-              priority
             />
             <p className="mt-4 text-lg font-medium">
               {selectedGenre

@@ -18,7 +18,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const user = useSelector(selectUser);
   const username = user?.username;
   const userId = user?.userId;
-  const isAuthPage = pathname === "/login" || pathname === "/signUp";
+  // Handle both with and without trailing slash (trailingSlash: true in next.config.js)
+  const normalizedPath = pathname?.replace(/\/$/, "") || "";
+  const isAuthPage = normalizedPath === "/login" || normalizedPath === "/signUp";
 
   useEffect(() => {
     setIsClient(true);
@@ -76,11 +78,19 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [isClient, username, dispatch, router, isAuthPage]);
 
   if (!isClient) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    );
   }
 
   if (!token && !isAuthPage) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    );
   }
 
   if (loading && !isAuthPage) {

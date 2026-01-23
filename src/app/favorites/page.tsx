@@ -6,8 +6,7 @@ import { RootState } from "../../redux/store";
 import CrudCardMovie from "../../components/CrudCardMovie";
 import { IoCloseSharp } from "react-icons/io5";
 import Fuse from "fuse.js";
-import Image from "next/image";
-import movieImg from "../../../public/movie.png";
+// Using regular img tags for S3/CloudFront compatibility
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { selectUser } from '../../redux/reducers/userSlice';
 
@@ -412,12 +411,12 @@ export default function FavoriteMovies() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-[400px] w-full text-white">
-          <Image
-            src={movieImg}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/movie.png"
             alt="No movie results"
             width={300}
             height={350}
-            priority
           />
           <p className="mt-4 text-lg font-medium">No Movie Results</p>
         </div>

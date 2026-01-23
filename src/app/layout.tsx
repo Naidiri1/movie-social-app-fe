@@ -16,16 +16,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const path = usePathname() || "";
+  // Normalize path by removing trailing slash (trailingSlash: true in next.config.js)
+  const normalizedPath = path.replace(/\/$/, "") || "/";
+  
   useEffect(() => {
     document.title = "Iriscope";
   }, []);
+  
   const isAuthPage =
-    path === "/login" ||
-    path === "/signUp" ||
-    path === "/forgot-password" ||
-    path === "/reset-password";
+    normalizedPath === "/login" ||
+    normalizedPath === "/signUp" ||
+    normalizedPath === "/forgot-password" ||
+    normalizedPath === "/reset-password";
 
-  const isPublicShare = path.startsWith("/share/");
+  const isPublicShare = normalizedPath.startsWith("/share");
 
   const hideNavbarFooter = isAuthPage || isPublicShare;
 

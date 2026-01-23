@@ -58,7 +58,7 @@ export default function ShareTop10Toggle() {
     }
   };
 
-  const shareUrl = slug ? `${window.location.origin}/share/${slug}` : "";
+  const shareUrl = slug ? `${window.location.origin}/share?id=${slug}` : "";
 
   const copy = async () => {
     if (!shareUrl) return;

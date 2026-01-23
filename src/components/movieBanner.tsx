@@ -1,4 +1,4 @@
-import Image from 'next/image';
+// Using regular img tags for S3/CloudFront compatibility
 
 interface MovieActionsProps {
   movie: any;
@@ -65,25 +65,24 @@ const MovieBanner: React.FC<MovieActionsProps> =  ({ movie} ) => {
   return (
     <div className="relative w-full min-h-screen pb-5 text-white">
       <div className="absolute  inset-0  z-0">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={backdrop}
           alt="Backdrop"
-          fill
-          className="object-cover brightness-30"
-          priority
+          className="absolute inset-0 w-full h-full object-cover brightness-30"
         />
       </div>
       <div className="absolute inset-0  bg-black/10"></div>
 
       <div className="relative z-10 flex flex-col md:flex-row items-start gap-6 px-6 py-10 md:px-20">
         <div className="w-full md:w-1/3 lg:w-1/3 flex-shrink-0">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={poster}
             alt={movie.title}
             width={400}
             height={450}
             className="rounded-xl shadow-lg"
-            
           />
         </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full  bg-gradient-to-tl  from-transparent via-transparent to-black/90 " />

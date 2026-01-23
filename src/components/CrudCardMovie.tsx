@@ -7,8 +7,7 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
-import Image from "next/image";
-import fallback1 from "../../public/fallback1.jpg";
+// Using regular img tags for S3/CloudFront compatibility
 import { useRouter } from "next/navigation";
 import RatingSlider from "../components/ratingTool";
 import { FaEdit } from "react-icons/fa";
@@ -164,13 +163,11 @@ const CrudCardMovie: React.FC<CardMovieProps> = ({
       )}
       <CardHeader className="bg-black" floated={false} color="white">
         <div className="relative w-[350px] h-[200px]">
-          <Image
-            src={movie.posterPath ? IMG_BASE_URL + movie.posterPath : fallback1}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={movie.posterPath ? IMG_BASE_URL + movie.posterPath : "/fallback1.jpg"}
             alt={movie.title}
-            fill
-            className="rounded-t-xl object-cover"
-            sizes="300px"
-            priority
+            className="absolute inset-0 w-full h-full rounded-t-xl object-cover"
           />
         </div>
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/90 " />
